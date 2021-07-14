@@ -1,0 +1,622 @@
+#include "Maps.h"
+
+#include "Game.h"
+
+void Map::setMob(int x, int y, int mobID)
+{
+	if (std::find(mobs.begin(), mobs.end(), mobID) == mobs.end())
+	{
+		mobs.push_back(mobID);
+	}
+
+	gGame->mMobManager->SetMobX(mobID, x);
+	gGame->mMobManager->SetMobY(mobID, y);
+}
+
+void Map::setCharacter(int x, int y, int characterID)
+{
+	if (std::find(characters.begin(), characters.end(), characterID) == characters.end())
+	{
+		characters.push_back(characterID);
+	}
+	// then update it
+	gGame->mCharacterManager->SetPlayerX(characterID,x);
+	gGame->mCharacterManager->SetPlayerY(characterID,y);
+}
+
+int Map::getCharacterAt(int x, int y)
+{
+	int found = 0;
+
+	auto g = std::find_if(
+		characters.begin(), characters.end(),
+		[&](int charID) { return ((gGame->mCharacterManager->GetPlayerX(charID) == x) && (gGame->mCharacterManager->GetPlayerY(charID) == y)); }
+	);
+
+	if (g != characters.end())
+	{
+		found = *g;
+	}
+
+	return found;
+}
+
+int Map::getMobAt(int x, int y)
+{
+	int found = 0;
+
+	auto g = std::find_if(
+		mobs.begin(), mobs.end(),
+		[&](int mobID) { return ((gGame->mMobManager->GetMobX(mobID) == x) && (gGame->mMobManager->GetMobY(mobID) == y)); }
+	);
+
+	if (g != mobs.end())
+	{
+		found = *g;
+	}
+
+	return found;
+}
+
+void Map::getManagedEntityAt(int x, int y, int& manager, int& entityID)
+{
+	manager = MANAGER_MAX;
+
+	int c = getCharacterAt(x, y);
+	if(c != 0)
+	{
+		manager = MANAGER_CHARACTER;
+		entityID = c;
+		return;
+	}
+
+	int m = getMobAt(x, y);
+	if (m != 0)
+	{
+		manager = MANAGER_MOB;
+		entityID = manager;
+		return;
+	}
+
+	c = 0;
+}
+
+int Map::removeCharacter(int characterID)
+{
+	auto p = std::find(characters.begin(), characters.end(), characterID);
+
+	if(p == characters.end())
+	{
+		return 0;
+	}
+
+	return *p;
+}
+
+int Map::removeMob(int mobID)
+{
+	auto p = std::find(mobs.begin(), mobs.end(), mobID);
+
+	if (p == mobs.end())
+	{
+		return 0;
+	}
+
+	return *p;
+}
+
+
+MapManager::MapManager()
+{
+
+}
+
+MapManager::~MapManager()
+{
+
+}
+
+Map* MapManager::getMap(int index)
+{
+	return maps[index];
+}
+
+bool MapManager::TargetHandler(int entityID, int returnCode)
+{
+	return true;
+}
+
+bool MapManager::TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months)
+{
+	return true;
+}
+
+
+//builds a new map, adds it to the map store, returns the id (distinct for indoor and outdoor maps)
+int MapManager::createMap(bool outdoor)
+{
+	Map* m = new Map();
+	m->outdoor = outdoor;
+	int id = maps.size();
+	maps.push_back(m);
+	return id;
+}
+
+bool MapManager::isInFOV(int sourceManager, int sourceID, int targetManager, int targetID, int range)
+{
+	int baseX, baseY;
+
+	switch (sourceManager)
+	{
+		case MANAGER_CHARACTER:
+		{
+			baseX = gGame->mCharacterManager->GetPlayerX(sourceID);
+			baseY = gGame->mCharacterManager->GetPlayerY(sourceID);
+		}
+		break;
+
+		case MANAGER_MOB:
+		{
+			baseX = gGame->mMobManager->GetMobX(sourceID);
+			baseY = gGame->mMobManager->GetMobY(sourceID);
+		}
+	break;
+	}
+
+	Map* m = getMap(gGame->GetCurrentMap());
+	m->map->computeFov(baseX, baseY, range, true, FOV_BASIC);
+
+	int targetX, targetY;
+	switch (targetManager)
+	{
+		case MANAGER_CHARACTER:
+		{
+			targetX = gGame->mCharacterManager->GetPlayerX(targetID);
+			targetY = gGame->mCharacterManager->GetPlayerY(targetID);
+		}
+		break;
+
+		case MANAGER_MOB:
+		{
+			targetX = gGame->mMobManager->GetMobX(targetID);
+			targetY = gGame->mMobManager->GetMobY(targetID);
+		}
+		break;
+	}
+
+	return m->map->isInFov(targetX, targetY);
+
+}
+
+std::vector<int> MapManager::filterByFOV(int sourceManager, int sourceID, int targetManager, std::vector<int> targets, int range)
+{
+	std::vector<int> output;
+
+	int baseX, baseY;
+
+	switch (sourceManager)
+	{
+		case MANAGER_CHARACTER:
+		{
+			baseX = gGame->mCharacterManager->GetPlayerX(sourceID);
+			baseY = gGame->mCharacterManager->GetPlayerY(sourceID);
+		}
+		break;
+
+		case MANAGER_MOB:
+		{
+			baseX = gGame->mMobManager->GetMobX(sourceID);
+			baseY = gGame->mMobManager->GetMobY(sourceID);
+		}
+		break;
+	}
+
+	Map* m = getMap(gGame->GetCurrentMap());
+	m->map->computeFov(baseX, baseY, range, true,FOV_BASIC);
+
+	gGame->RecalculateFOV(); // this makes the player fix the FOV next time we render
+	
+	for(int target : targets)
+	{
+		int targetX, targetY;
+		switch(targetManager)
+		{
+		case MANAGER_CHARACTER:
+			{
+				targetX = gGame->mCharacterManager->GetPlayerX(target);
+				targetY = gGame->mCharacterManager->GetPlayerY(target);
+			}
+			break;
+
+		case MANAGER_MOB:
+			{
+				targetX = gGame->mMobManager->GetMobX(target);
+				targetY = gGame->mMobManager->GetMobY(target);
+			}
+			break;
+		}
+		
+		bool fov = m->map->isInFov(targetX, targetY);
+		if (fov)
+			output.push_back(target);
+	}
+
+	return output;
+}
+
+
+MapManager* MapManager::LoadMaps()
+{
+	MapManager* newManager = new MapManager();
+	gLog->Log("Map Manager", "Started");
+	return newManager;
+}
+
+int MapManager::buildEmptyMap(int width, int height, int type)
+{
+	bool outdoor = true;
+	if (type == MAP_DUNGEON)
+		outdoor = false;
+	
+	int index = createMap(outdoor);
+
+	Map* newMap = maps[index];
+
+	newMap->width = width;
+	newMap->height = height;
+
+	newMap->mapType = type;
+	
+	newMap->content.resize(width * height);
+	newMap->transition.resize(width * height);
+	newMap->items.resize(width * height);
+
+	newMap->mobs.resize(width * height);
+	newMap->characters.resize(width * height);
+	
+	newMap->map = new TCODMap(width, height);
+    newMap->map->clear(true, true);
+        
+	return index;
+}
+
+// builds an outdoor map from an array of strings (could be loaded from a file etc)
+int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
+{
+	int map_width = SAMPLE_SCREEN_WIDTH;
+	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
+
+	int index = buildEmptyMap(outdoor ? map_width / 2 : map_width, map_height, outdoor ? MAP_WILDERNESS : MAP_DUNGEON);
+	Map* newMap = maps[index];
+	
+	for (int y = 0; y < map_height; y++)
+	{
+		bool stepped = y & 0x1;
+		for (int x = (outdoor && stepped) ? 1 : 0; x < map_width; x += outdoor ? 2 : 1)
+		{
+			char value = hmap[y][x];
+			int cell_x = (int)(outdoor ? x / 2 : x);
+			int cell_y = (int)y;
+			if (value == '.')
+			{
+				newMap->map->setProperties(cell_x, cell_y, true, true);	// ground
+			}
+			if (value == 'T')
+			{
+				newMap->map->setProperties(cell_x, cell_y, true, false);		// tree
+				newMap->setContent(cell_x, cell_y, CONTENT_TREE);
+			}
+			if (value == '#')
+			{
+				newMap->map->setProperties(cell_x, cell_y, false, false); // wall
+				newMap->setContent(cell_x, cell_y, outdoor ? CONTENT_ROCKS : CONTENT_WALL);
+			}
+		}
+	}
+	
+	return index;
+}
+
+void MapManager::shift(int mapID, int& new_x, int& new_y, int unit_x, int unit_y, int move_value)
+{
+	
+	if(maps[mapID]->outdoor)
+	{
+		bool odd = unit_y & 0x1;
+		if (!odd)
+		{
+			new_x = unit_x + move_map_even[move_value][0];
+			new_y = unit_y + move_map_even[move_value][1];
+		}
+		else
+		{
+			new_x = unit_x + move_map_odd[move_value][0];
+			new_y = unit_y + move_map_odd[move_value][1];
+		}
+	}
+	else
+	{
+		new_x = unit_x + move_map_ortho[move_value][0];
+		new_y = unit_y + move_map_ortho[move_value][1];
+	}
+}
+
+float MapManager::getWalkCost(int xFrom, int yFrom, int xTo, int yTo, void* userData) const
+{
+	int* mapID_ptr = (int*)userData;
+	int mapID = *mapID_ptr;
+	int x = xTo - xFrom;
+	int y = yTo - yFrom;
+
+	// unwalkable cells get closed off automatically
+	if(!maps[mapID]->map->isWalkable(xTo,yTo))
+	{
+		return -1.0f;
+	}
+
+	// TODO: modify by content movement modifier
+	float baseCost = 1.0f;
+	
+	if (maps[mapID]->outdoor)
+	{
+		// if the value is in the hex move map, we can move there, otherwise we can't
+		bool odd = !yFrom & 0x1;
+		bool found = false;
+		for (int i = 0; i < 6; i++)
+		{
+			if (odd)
+			{
+				if (move_map_odd[i][0] == x && move_map_odd[i][1] == y)
+				{
+					found = true;
+				}
+			}
+			else
+			{
+				if (move_map_even[i][0] == x && move_map_even[i][1] == y)
+				{
+					found = true;
+				}
+			}
+		}
+		return found ? baseCost : -1.0f;
+	}
+	else
+	{
+		// if neither value is 0, this is a diagonal
+		if (x != 0 && y != 0)
+		{
+			return sqrt(2) * baseCost;
+		}
+		else
+		{
+			return baseCost;
+		}
+	}
+	return -1.0f;
+}
+
+void MapManager::connectMaps(int map1, int map2, int x1, int y1, int x2, int y2)
+{
+	Map* m1 = maps[map1];
+	Map* m2 = maps[map2];
+
+	// work out what kind of transition this is
+	int type = 0;
+	if(m1->outdoor && m2->outdoor)
+	{
+		type = CONTENT_TRANSITION_ZONE;
+	}
+	else if(!m1->outdoor && !m2->outdoor)
+	{
+		type = CONTENT_TRANSITION_STAIRS;
+	}
+	else
+	{
+		type = CONTENT_TRANSITION_DOOR;
+	}
+
+	// connect map1 to map2
+	m1->map->setProperties(x1, y1, true, true);
+	m1->setContent(x1, y1, type);
+	m1->setTransition(x1, y1, map2);
+
+	m1->reverse_transition_mapindex.push_back(map2);
+	m1->reverse_transition_xpos.push_back(x1);
+	m1->reverse_transition_ypos.push_back(y1);
+
+	// connect map2 to map1
+	m2->map->setProperties(x2, y2, true, true);
+	m2->setContent(x2, y2, type);
+	m2->setTransition(x2, y2, map1);
+
+	m2->reverse_transition_mapindex.push_back(map1);
+	m2->reverse_transition_xpos.push_back(x2);
+	m2->reverse_transition_ypos.push_back(y2);
+}
+
+Map* MapManager::mapFromText(const char* hmap[], bool outdoor)
+{
+	int index = buildMapFromText(hmap, outdoor);
+	return maps[index];
+}
+
+void MapManager::renderMap(TCODConsole* sampleConsole, int index)
+{
+	Map* map = maps[index];
+	bool outdoor = map->outdoor;
+
+	int map_width = outdoor ? (SAMPLE_SCREEN_WIDTH / 2) : SAMPLE_SCREEN_WIDTH;
+	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
+
+	TCODColor baseColor = TCODColor::lighterGrey;
+
+	// draw the hex map
+	for (int y = 0; y < map_height; y++)
+	{
+		bool stepped = y & 0x1;
+		for (int x = 0; x < map_width; x++)
+		{
+			int render_x = outdoor ? x * 2 : x;
+			int render_y = outdoor ? y * 2 : y;
+			render_x += (outdoor && stepped) ? 1 : 0;
+
+			int content = map->getContent(x, y);
+			auto items = map->getItems(x, y);
+			
+			bool visible = map->map->isInFov(x, y);
+			
+			if (!visible)
+			{
+				//sampleConsole.setCharBackground(x, y, darkGround, TCOD_BKGND_SET);
+			}
+			else
+			{
+				if (!items->empty())
+				{
+					int itemID = items->top();
+					std::string s = gGame->mItemManager->getVisual(itemID);
+					int c = s[0];
+					sampleConsole->putChar(render_x, render_y, c, TCOD_BKGND_NONE);
+				}
+				else
+				{
+					if (content == CONTENT_ROCKS)
+					{
+						//sampleConsole.setCharBackground(render_x, y, lightWall, TCOD_BKGND_SET);
+						sampleConsole->putChar(render_x, render_y, 'X', TCOD_BKGND_NONE);
+					}
+					else if (content == CONTENT_TREE)
+					{
+						//sampleConsole.setCharBackground(render_x, y, lightTree, TCOD_BKGND_SET);
+						sampleConsole->putChar(render_x, render_y, TCOD_CHAR_ARROW_N, TCOD_BKGND_NONE);
+					}
+					else if (content == CONTENT_WALL)
+					{
+						sampleConsole->putChar(render_x, render_y, '#', TCOD_BKGND_NONE);
+					}
+					else if (content == CONTENT_TRANSITION_STAIRS)
+					{
+						sampleConsole->putChar(render_x, render_y, '>', TCOD_BKGND_NONE);
+					}
+					else if (content == CONTENT_TRANSITION_DOOR)
+					{
+						sampleConsole->putChar(render_x, render_y, 'I', TCOD_BKGND_NONE);
+					}
+					else if (content == CONTENT_TRANSITION_ZONE)
+					{
+						sampleConsole->putChar(render_x, render_y, '%', TCOD_BKGND_NONE);
+					}
+					else
+					{
+						//sampleConsole.setCharBackground(render_x, y, lightGround, TCOD_BKGND_SET);
+						sampleConsole->putChar(render_x, render_y, '.', TCOD_BKGND_NONE);
+					}
+				}
+			}
+		}
+	}
+
+	// now render the mobs
+	for(int mob: map->mobs)
+	{
+		TCODColor baseColor = TCODColor::lighterGrey;
+		Creature& c = gGame->mMobManager->GetMonster(mob);
+		std::string s = c.GetVisual();
+		int cs = s[0];
+		if (c.HasCondition("Unconscious")) baseColor = baseColor * TCODColor::grey;
+
+		renderAtPosition(sampleConsole, index, gGame->mMobManager->GetMobX(mob), gGame->mMobManager->GetMobY(mob), cs, baseColor);
+	}
+}
+
+
+void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground) {
+	bool outdoor = maps[mapIndex]->outdoor;
+	
+	bool stepped = y & 0x1;
+	int render_x = outdoor ? x * 2 : x;
+	int render_y = outdoor ? y * 2 : y;
+	render_x += (outdoor && stepped) ? 1 : 0;
+
+	sampleConsole->putCharEx(render_x, render_y, c, foreground, TCODColor::black);
+}
+
+bool MapManager::TurnHandler(int entityID, double time)
+{
+	return false;
+}
+
+// used to spawn new items on the map
+void MapManager::AddItem(int mapID, int x, int y, std::string item)
+{
+	int itemID = gGame->mItemManager->GenerateItemFromTemplate(item);
+	AddItem(mapID, x, y, itemID);
+}
+
+// used to add existing items to the map
+void MapManager::AddItem(int mapID, int x, int y, int itemID)
+{
+	maps[mapID]->addItem(x, y, itemID);
+}
+
+int MapManager::TakeTopItem(int mapID, int x, int y)
+{
+	auto is = maps[mapID]->getItems(x, y);
+	if (is->empty()) return -1;
+	int item = is->top();
+	is->pop();
+	return item;
+}
+
+std::string MapManager::ItemDesc(int mapID, int x, int y)
+{
+	std::string output = "";
+	auto is = maps[mapID]->getItems(x, y);
+	if(is->size() > 1)
+	{
+		output += "There is a pile of items here.";
+	}
+	else
+	{
+		int topItem = is->top();
+		std::string desc = gGame->mItemManager->getShortDescription(topItem);
+
+		output += "There is a " + desc + " here.";
+	}
+	return output;
+}
+
+// Calculate time to traverse a single cell on the given map at the given speed
+double MapManager::getMovementTime(int mapID, double speed)
+{
+	int type = maps[mapID]->mapType;
+
+	if(type == MAP_DUNGEON || type == MAP_WILDERNESS)
+	{
+		// 5 feet or yard per square. Based on ACKS rules, outdoor yds = indoor ft
+		return BASE_SCALE / (speed / 3);
+	}
+	else if (type == MAP_REGION)
+	{
+		// 6 miles per hex
+		double mapSpeed = speed / 5;
+		double dayDistance = mapSpeed * 5280;
+		return (6 * dayDistance) / mapSpeed;
+	}
+}
+
+bool MapManager::isOutOfBounds(int mapID, int x, int y)
+{
+	bool in = false;
+
+	if (x < 0 || y < 0) in = true;
+	if (x > maps[mapID]->width - 1 || y > maps[mapID]->height - 1) in = true;
+
+	return in;
+}
+
+void MapManager::DebugLog(std::string message)
+{
+	gLog->Log("MapManager", message);
+}
