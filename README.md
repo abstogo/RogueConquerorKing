@@ -1,5 +1,5 @@
 # RogueConquerorKing
-Roguelike based on the Adventurer Conqueror King System
+Roguelike based on the Adventurer Conqueror King System using LibTCOD.
 
 Only the MSVS build system (found in buildsys/msvs/) is working. I'll get around to fixing the others one day! 
 The game should build from RogueConquerorKing_LibTCOD.sln with no issues (tested with Visual Studio 2019).
