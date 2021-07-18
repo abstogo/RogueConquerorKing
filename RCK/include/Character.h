@@ -142,14 +142,15 @@ enum CapabilityFlags : unsigned long long
 	CAPABILITY_MAGIC_CRAFT_CROSSBREED	= 1ULL << 41,
 	CAPABILITY_MAGIC_CRAFT_UNDEAD		= 1ULL << 42,
 	CAPABILITY_TREAT_WOUNDS				= 1ULL << 43,
-	CAPABILITY_MAX						= 44
+	CAPABILITY_NATURAL_HEALING			= 1ULL << 44,
+	CAPABILITY_MAX						= 45
 };
 
 const std::string CapabilityNames[] = {
 	"Vision", "VisionInfra", "HearingNormal", "HearingUltra", "Smell", "Awareness", "Cognition", "HalfMove", "Move", "ForcedMarch", "Defence", "Magic", "Attack", "UseItem",
 	"Action", "Speech", "TurnUndead", "Climb", "OpenLock", "DetectTrap", "RemoveTrap", "HideInShadows", "MoveSilently", "PickPockets", "Backstab", "UseTwoHanded", "UseShield",
 	"DualWield", "Magic:Arcane", "Magic:Divine", "Magic:Research", "Magic:Ritual", "UseScroll:Arcane", "UseScroll:Divine", "MagicCraft:Scroll", "MagicCraft:Potion", "MagicCraft:Ring",
-	"MagicCraft:Staff", "MagicCraft:Weapon", "MagicCraft:Armour", "MagicCraft:Construct", "MagicCraft:Crossbreed", "MagicCraft:Undead", "TreatWounds"};
+	"MagicCraft:Staff", "MagicCraft:Weapon", "MagicCraft:Armour", "MagicCraft:Construct", "MagicCraft:Crossbreed", "MagicCraft:Undead", "TreatWounds", "NaturalHealing"};
 
 class CharacterManager
 {

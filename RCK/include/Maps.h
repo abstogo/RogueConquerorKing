@@ -21,8 +21,35 @@
 #define INDOOR_MAP_WIDTH SAMPLE_SCREEN_WIDTH
 #define INDOOR_MAP_HEIGHT SAMPLE_SCREEN_HEIGHT
 
+// content setup
+// needs to be replaced with datafile and interaction setup (for proficiencies, magic etc)
 
-enum ContentTypes
+// regional cell data is split into two elements - terrain type and content
+// terrain is used for movement rate and also for local map generation
+enum RegionTerrainTypes
+{
+	TERRAIN_PLAINS,
+	TERRAIN_MOUNTAIN,
+	TERRAIN_HILLS,
+	TERRAIN_FOREST,
+	TERRAIN_JUNGLE,
+	TERRAIN_SWAMP,
+	TERRAIN_DESERT,
+	// TERRAIN_SEA_COAST, // probably doing nothing with ocean travel for... quite some time
+	// TERRAN_SEA_DEEP
+};
+
+// content covers local structures
+enum RegionContentTypes
+{
+	REGION_SETTLEMENT,
+	REGION_CAMP,
+	REGION_LAIR,
+	REGION_DUNGEON,
+};
+
+// local content covers things like doors, furniture, walls, that sort of thing. (Basically everything except entities and items.)
+enum LocalContentTypes
 {
 	CONTENT_NONE = 0,
 	CONTENT_TREE,
