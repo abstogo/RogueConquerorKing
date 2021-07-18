@@ -118,7 +118,7 @@ MapManager::~MapManager()
 
 Map* MapManager::getMap(int index)
 {
-	return maps[index];
+	return mapStore[index];
 }
 
 bool MapManager::TargetHandler(int entityID, int returnCode)
@@ -131,14 +131,19 @@ bool MapManager::TimeHandler(int rounds, int turns, int hours, int days, int wee
 	return true;
 }
 
+// region map creation
+void MapManager::createRegionMap()
+{
+	regionMap = new RegionMap();
+}
 
 //builds a new map, adds it to the map store, returns the id (distinct for indoor and outdoor maps)
 int MapManager::createMap(bool outdoor)
 {
 	Map* m = new Map();
 	m->outdoor = outdoor;
-	int id = maps.size();
-	maps.push_back(m);
+	int id = mapStore.size();
+	mapStore.push_back(m);
 	return id;
 }
 
@@ -252,6 +257,23 @@ MapManager* MapManager::LoadMaps()
 	return newManager;
 }
 
+void MapManager::buildEmptyRegionMap(int width, int height, int base_terrain)
+{
+	createRegionMap();
+
+	regionMap->width = width;
+	regionMap->height = height;
+
+	regionMap->map = new TCODMap(width, height);
+
+	regionMap->localMap.resize(width * height);
+	for (int i = 0; i < width * height; i++)
+		regionMap->localMap[i] = -1;
+	regionMap->terrain.resize(width * height);
+
+	regionMap->map->clear(true, true);
+}
+
 int MapManager::buildEmptyMap(int width, int height, int type)
 {
 	bool outdoor = true;
@@ -260,7 +282,7 @@ int MapManager::buildEmptyMap(int width, int height, int type)
 	
 	int index = createMap(outdoor);
 
-	Map* newMap = maps[index];
+	Map* newMap = mapStore[index];
 
 	newMap->width = width;
 	newMap->height = height;
@@ -280,6 +302,63 @@ int MapManager::buildEmptyMap(int width, int height, int type)
 	return index;
 }
 
+
+
+void MapManager::BuildRegionMapFromText(const char* hmap_terrain[])
+{
+	int map_width = SAMPLE_SCREEN_WIDTH;
+	int map_height = (SAMPLE_SCREEN_HEIGHT / 2);
+
+	buildEmptyRegionMap(map_width, map_height, TERRAIN_PLAINS);
+
+	for (int y = 0; y < map_height; y++)
+	{
+		bool stepped = y & 0x1;
+		for (int x = (stepped) ? 1 : 0; x < map_width; x += 2)
+		{
+			int cell_x = (int)(x / 2);
+			int cell_y = (int)y;
+			
+			char terrain_value = hmap_terrain[y][x];
+			if (terrain_value == '.')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, true);	// plains
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_PLAINS);
+			}
+			if (terrain_value == '_')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, true);	// desert
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_DESERT);
+			}
+			if (terrain_value == '*')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, false);		// forest
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_FOREST);
+			}
+			if (terrain_value == '^')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, false);		// mountain
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_MOUNTAIN);
+			}
+			if (terrain_value == '~')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, false);		// hills
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_HILLS);
+			}
+			if (terrain_value == '&')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, false);		// jungle
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_JUNGLE);
+			}
+			if (terrain_value == '"')
+			{
+				regionMap->map->setProperties(cell_x, cell_y, true, false);		// swamp
+				regionMap->setTerrain(cell_x, cell_y, TERRAIN_SWAMP);
+			}
+		}
+	}
+}
+
 // builds an outdoor map from an array of strings (could be loaded from a file etc)
 int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
 {
@@ -287,7 +366,7 @@ int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
 	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
 
 	int index = buildEmptyMap(outdoor ? map_width / 2 : map_width, map_height, outdoor ? MAP_WILDERNESS : MAP_DUNGEON);
-	Map* newMap = maps[index];
+	Map* newMap = mapStore[index];
 	
 	for (int y = 0; y < map_height; y++)
 	{
@@ -317,10 +396,32 @@ int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
 	return index;
 }
 
+int MapManager::SpawnLocalMap(int x, int y)
+{
+	// 1 map generation function per terrain type
+	// this is to be replaced with a JSON file associating local content elements with procgen functions (eg spread, warren, clusters, splats)
+	int map_width = SAMPLE_SCREEN_WIDTH;
+	int map_height = (SAMPLE_SCREEN_HEIGHT / 2);
+	
+	int mapID = buildEmptyMap(map_width, map_height, MAP_WILDERNESS);
+
+	regionMap->setLocalMap(x, y, mapID);
+
+	return mapID;
+}
+
+int MapManager::GenerateMapFromPrefab(int x, int y, const char* hmap[])
+{	
+	int mapID = buildMapFromText(hmap, true);
+	regionMap->setLocalMap(x, y, mapID);
+
+	return mapID;
+}
+
 void MapManager::shift(int mapID, int& new_x, int& new_y, int unit_x, int unit_y, int move_value)
 {
 	
-	if(maps[mapID]->outdoor)
+	if(mapStore[mapID]->outdoor)
 	{
 		bool odd = unit_y & 0x1;
 		if (!odd)
@@ -349,7 +450,7 @@ float MapManager::getWalkCost(int xFrom, int yFrom, int xTo, int yTo, void* user
 	int y = yTo - yFrom;
 
 	// unwalkable cells get closed off automatically
-	if(!maps[mapID]->map->isWalkable(xTo,yTo))
+	if(!mapStore[mapID]->map->isWalkable(xTo,yTo))
 	{
 		return -1.0f;
 	}
@@ -357,7 +458,7 @@ float MapManager::getWalkCost(int xFrom, int yFrom, int xTo, int yTo, void* user
 	// TODO: modify by content movement modifier
 	float baseCost = 1.0f;
 	
-	if (maps[mapID]->outdoor)
+	if (mapStore[mapID]->outdoor)
 	{
 		// if the value is in the hex move map, we can move there, otherwise we can't
 		bool odd = !yFrom & 0x1;
@@ -398,8 +499,8 @@ float MapManager::getWalkCost(int xFrom, int yFrom, int xTo, int yTo, void* user
 
 void MapManager::connectMaps(int map1, int map2, int x1, int y1, int x2, int y2)
 {
-	Map* m1 = maps[map1];
-	Map* m2 = maps[map2];
+	Map* m1 = mapStore[map1];
+	Map* m2 = mapStore[map2];
 
 	// work out what kind of transition this is
 	int type = 0;
@@ -438,12 +539,12 @@ void MapManager::connectMaps(int map1, int map2, int x1, int y1, int x2, int y2)
 Map* MapManager::mapFromText(const char* hmap[], bool outdoor)
 {
 	int index = buildMapFromText(hmap, outdoor);
-	return maps[index];
+	return mapStore[index];
 }
 
 void MapManager::renderMap(TCODConsole* sampleConsole, int index)
 {
-	Map* map = maps[index];
+	Map* map = mapStore[index];
 	bool outdoor = map->outdoor;
 
 	int map_width = outdoor ? (SAMPLE_SCREEN_WIDTH / 2) : SAMPLE_SCREEN_WIDTH;
@@ -532,7 +633,7 @@ void MapManager::renderMap(TCODConsole* sampleConsole, int index)
 
 
 void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground) {
-	bool outdoor = maps[mapIndex]->outdoor;
+	bool outdoor = mapStore[mapIndex]->outdoor;
 	
 	bool stepped = y & 0x1;
 	int render_x = outdoor ? x * 2 : x;
@@ -557,12 +658,12 @@ void MapManager::AddItem(int mapID, int x, int y, std::string item)
 // used to add existing items to the map
 void MapManager::AddItem(int mapID, int x, int y, int itemID)
 {
-	maps[mapID]->addItem(x, y, itemID);
+	mapStore[mapID]->addItem(x, y, itemID);
 }
 
 int MapManager::TakeTopItem(int mapID, int x, int y)
 {
-	auto is = maps[mapID]->getItems(x, y);
+	auto is = mapStore[mapID]->getItems(x, y);
 	if (is->empty()) return -1;
 	int item = is->top();
 	is->pop();
@@ -572,7 +673,7 @@ int MapManager::TakeTopItem(int mapID, int x, int y)
 std::string MapManager::ItemDesc(int mapID, int x, int y)
 {
 	std::string output = "";
-	auto is = maps[mapID]->getItems(x, y);
+	auto is = mapStore[mapID]->getItems(x, y);
 	if(is->size() > 1)
 	{
 		output += "There is a pile of items here.";
@@ -590,7 +691,7 @@ std::string MapManager::ItemDesc(int mapID, int x, int y)
 // Calculate time to traverse a single cell on the given map at the given speed
 double MapManager::getMovementTime(int mapID, double speed)
 {
-	int type = maps[mapID]->mapType;
+	int type = mapStore[mapID]->mapType;
 
 	if(type == MAP_DUNGEON || type == MAP_WILDERNESS)
 	{
@@ -611,7 +712,7 @@ bool MapManager::isOutOfBounds(int mapID, int x, int y)
 	bool in = false;
 
 	if (x < 0 || y < 0) in = true;
-	if (x > maps[mapID]->width - 1 || y > maps[mapID]->height - 1) in = true;
+	if (x > mapStore[mapID]->width - 1 || y > mapStore[mapID]->height - 1) in = true;
 
 	return in;
 }
