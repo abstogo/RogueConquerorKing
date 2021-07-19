@@ -108,6 +108,8 @@ int Map::removeMob(int mobID)
 
 MapManager::MapManager()
 {
+	terrain_prefabs.resize(TERRAIN_MAX);
+	
 	terrain_prefabs[TERRAIN_PLAINS] = {
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . . . .",
@@ -204,6 +206,8 @@ MapManager::MapManager()
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . # . .",
 	};
+
+	mapStore.push_back(NULL);
 }
 
 MapManager::~MapManager()
@@ -214,6 +218,11 @@ MapManager::~MapManager()
 Map* MapManager::getMap(int index)
 {
 	return mapStore[index];
+}
+
+RegionMap* MapManager::getRegionMap()
+{
+	return regionMap;
 }
 
 bool MapManager::TargetHandler(int entityID, int returnCode)
@@ -237,7 +246,7 @@ int MapManager::createMap(bool outdoor)
 {
 	Map* m = new Map();
 	m->outdoor = outdoor;
-	int id = mapStore.size() + 1; // start at index 1, so 0 means no local map
+	int id = mapStore.size(); // start at index 1, so 0 means no local map
 	mapStore.push_back(m);
 	return id;
 }
@@ -365,6 +374,7 @@ void MapManager::buildEmptyRegionMap(int width, int height, int base_terrain)
 	for (int i = 0; i < width * height; i++)
 		regionMap->localMap[i] = -1;
 	regionMap->terrain.resize(width * height);
+	regionMap->sites.resize(width * height);
 
 	regionMap->map->clear(true, true);
 }
@@ -506,10 +516,11 @@ int MapManager::SpawnLocalMap(int x, int y)
 	return mapID;
 }
 
-int MapManager::GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap)
+int MapManager::GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap, int site)
 {	
 	int mapID = buildMapFromText(hmap, true);
 	regionMap->setLocalMap(x, y, mapID);
+	regionMap->setSite(x, y, site);
 
 	return mapID;
 }
@@ -527,7 +538,7 @@ int MapManager::GenerateMapAtLocation(int x, int y)
 int MapManager::GetMapAtLocation(int x, int y)
 {
 	int lmap = regionMap->getLocalMap(x, y);
-	if (lmap != 0)
+	if (lmap != -1)
 	{
 		return lmap;
 	}
@@ -541,8 +552,12 @@ int MapManager::GetMapAtLocation(int x, int y)
 
 void MapManager::shift(int mapID, int& new_x, int& new_y, int unit_x, int unit_y, int move_value)
 {
-	
-	if(mapStore[mapID]->outdoor)
+	bool outdoor = true;
+	if (mapID != -1)
+	{
+		outdoor = mapStore[mapID]->outdoor;
+	}
+	if(outdoor)
 	{
 		bool odd = unit_y & 0x1;
 		if (!odd)
@@ -663,6 +678,73 @@ Map* MapManager::mapFromText(std::vector<std::string> hmap, bool outdoor)
 	return mapStore[index];
 }
 
+void MapManager::renderRegionMap(TCODConsole* sampleConsole)
+{
+	
+	int map_width = OUTDOOR_MAP_WIDTH;
+	int map_height = OUTDOOR_MAP_HEIGHT;
+
+	TCODColor baseColor = TCODColor::lighterGrey;
+
+	// draw the hex map
+	for (int y = 0; y < map_height; y++)
+	{
+		bool stepped = y & 0x1;
+		for (int x = 0; x < map_width; x++)
+		{
+			int render_x = x * 2;
+			int render_y = y * 2;
+			render_x += (stepped) ? 1 : 0;
+
+			int terrain = regionMap->getTerrain(x, y);
+			
+			if (terrain == TERRAIN_PLAINS)
+			{
+				//sampleConsole.setCharBackground(render_x, y, lightWall, TCOD_BKGND_SET);
+				sampleConsole->putChar(render_x, render_y, '.', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_MOUNTAIN)
+			{
+				//sampleConsole.setCharBackground(render_x, y, lightTree, TCOD_BKGND_SET);
+				sampleConsole->putChar(render_x, render_y, '^', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_HILLS)
+			{
+				sampleConsole->putChar(render_x, render_y, '~', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_FOREST)
+			{
+				sampleConsole->putChar(render_x, render_y, '*', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_JUNGLE)
+			{
+				sampleConsole->putChar(render_x, render_y, '&', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_SWAMP)
+			{
+				sampleConsole->putChar(render_x, render_y, 's', TCOD_BKGND_NONE);
+			}
+			else if (terrain == TERRAIN_DESERT)
+			{
+				sampleConsole->putChar(render_x, render_y, '_', TCOD_BKGND_NONE);
+			}
+			else
+			{
+				//sampleConsole.setCharBackground(render_x, y, lightGround, TCOD_BKGND_SET);
+				sampleConsole->putChar(render_x, render_y, ' ', TCOD_BKGND_NONE);
+			}
+
+			int site = regionMap->getSite(x, y);
+
+			if (site == SITE_DUNGEON)
+			{
+				//sampleConsole.setCharBackground(render_x, y, lightWall, TCOD_BKGND_SET);
+				sampleConsole->putChar(render_x, render_y, TCOD_CHAR_DCROSS, TCOD_BKGND_NONE);
+			}
+		}
+	}
+}
+
 void MapManager::renderMap(TCODConsole* sampleConsole, int index)
 {
 	Map* map = mapStore[index];
@@ -753,8 +835,13 @@ void MapManager::renderMap(TCODConsole* sampleConsole, int index)
 }
 
 
-void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground) {
-	bool outdoor = mapStore[mapIndex]->outdoor;
+void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground)
+{
+	bool outdoor = true;
+	if (mapIndex != -1)
+	{
+		mapStore[mapIndex]->outdoor;
+	}
 	
 	bool stepped = y & 0x1;
 	int render_x = outdoor ? x * 2 : x;
@@ -812,7 +899,11 @@ std::string MapManager::ItemDesc(int mapID, int x, int y)
 // Calculate time to traverse a single cell on the given map at the given speed
 double MapManager::getMovementTime(int mapID, double speed)
 {
-	int type = mapStore[mapID]->mapType;
+	int type = MAP_REGION;
+	if (mapID != -1)
+	{
+		type = mapStore[mapID]->mapType;
+	}
 
 	if(type == MAP_DUNGEON || type == MAP_WILDERNESS)
 	{
@@ -832,8 +923,18 @@ bool MapManager::isOutOfBounds(int mapID, int x, int y)
 {
 	bool in = false;
 
+	int map_height = OUTDOOR_MAP_HEIGHT;
+	int map_width = OUTDOOR_MAP_WIDTH;
+
+	if(mapID != -1)
+	{
+		map_width = mapStore[mapID]->width;
+		map_height = mapStore[mapID]->height;
+	}
+	
+
 	if (x < 0 || y < 0) in = true;
-	if (x > mapStore[mapID]->width - 1 || y > mapStore[mapID]->height - 1) in = true;
+	if (x > map_width - 1 || y > map_height - 1) in = true;
 
 	return in;
 }

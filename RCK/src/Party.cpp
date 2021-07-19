@@ -53,6 +53,8 @@ int PartyManager::shellGenerate()
 	partyInventory.push_back(inv);
 	totalCarryCapacity.push_back(0);
 	totalSuppliesFood.push_back(0);
+	partyXPos.push_back(-1);
+	partyYPos.push_back(-1);
 
 	return output;
 }

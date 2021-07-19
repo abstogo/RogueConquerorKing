@@ -28,7 +28,7 @@
 // terrain is used for movement rate and also for local map generation
 enum RegionTerrainTypes
 {
-	TERRAIN_PLAINS,
+	TERRAIN_PLAINS = 0,
 	TERRAIN_MOUNTAIN,
 	TERRAIN_HILLS,
 	TERRAIN_FOREST,
@@ -37,16 +37,19 @@ enum RegionTerrainTypes
 	TERRAIN_DESERT,
 	// TERRAIN_SEA_COAST, // probably doing nothing with ocean travel for... quite some time
 	// TERRAN_SEA_DEEP
+	TERRAIN_MAX
 };
 
 // content covers local structures
 // note this does not include flows such as rivers and roads
-enum RegionContentTypes
+enum RegionSiteTypes
 {
+	SITE_NONE,
+	SITE_DUNGEON,
 	//REGION_SETTLEMENT,
 	//REGION_CAMP,
 	//REGION_LAIR,
-	REGION_DUNGEON,
+	
 };
 
 // local content covers things like doors, furniture, walls, that sort of thing. (Basically everything except entities and items.)
@@ -136,6 +139,7 @@ struct RegionMap
 
 	std::vector<int> localMap;
 	std::vector<int> terrain;
+	std::vector<int> sites;
 	std::vector<int> parties;
 
 	int getLocalMap(int x, int y)
@@ -156,6 +160,16 @@ struct RegionMap
 	void setTerrain(int x, int y, int c)
 	{
 		terrain[y * width + x] = c;
+	}
+
+	int getSite(int x, int y)
+	{
+		return(sites[y * width + x]);
+	}
+
+	void setSite(int x, int y, int c)
+	{
+		sites[y * width + x] = c;
 	}
 };
 
@@ -240,6 +254,7 @@ public:
 	~MapManager();
 
 	Map* getMap(int index);
+	RegionMap* getRegionMap();
 
 	//builds a new map, adds it to the map store, returns the id (distinct for indoor and outdoor maps)
 	int createMap(bool outdoor);
@@ -258,7 +273,7 @@ public:
 
 	// spawn local map from region map
 	int SpawnLocalMap(int x, int y);
-	int GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap);
+	int GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap, int content);
 	int GenerateMapAtLocation(int x, int y);
 
 	int GetMapAtLocation(int x, int y);
@@ -266,6 +281,7 @@ public:
 	// this manager handles the main rendering, since it controls the map status & context (hex/square, lighting etc)
 	// if the index is -1, show the region map, if >=0 then show a local map
 	void renderMap(TCODConsole* sampleConsole, int index);
+	void renderRegionMap(TCODConsole* sampleConsole);
 
 	// mobile element (player, monster) are rendered through here too
     void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);
