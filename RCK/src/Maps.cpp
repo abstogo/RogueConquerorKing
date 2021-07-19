@@ -108,7 +108,102 @@ int Map::removeMob(int mobID)
 
 MapManager::MapManager()
 {
+	terrain_prefabs[TERRAIN_PLAINS] = {
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . # . . . T . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . T . . . . ",
+		" . . . . . . . # . . . . . . . . T . T T . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . T . . . . . . . . . . # . . . . T . . ",
+		" . . . . . . . . . . . . . T T . . . . . . . .",
+	};
 
+	terrain_prefabs[TERRAIN_MOUNTAIN] = {
+		". . . . . . . . . . # # # . . . . . . . . . . ",
+		" . . . # . . . . . . . . # # . . . . . . . . .",
+		". . # # . . . . . # . . . . . # . . . . . . . ",
+		" . # . . . . . . # # . . . . # . . . . . # # .",
+		". . # . . . . . # # . . . . . # . . . . # # . ",
+		" . . # . . . . # # . . . . . # . . . . # # . .",
+		". . . # . . . # # . . . . . . # . . . . # . . ",
+		" . . # . . . # . . . . . . . . . . . . . . . .",
+		". . # . . # # # . . . . . . . # . . . . . . . ",
+		" . . # . . # # # . . . . . # # . . . . . . . .",
+	};
+
+	terrain_prefabs[TERRAIN_HILLS] = {
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . # # # . . . . . . . . . . . . . . . ",
+		" . . . # # T # # # . . . . . . . . . . . . . .",
+		". . . # # T T T T # # . . . . . . . . . . . . ",
+		" . . . . . . . . . . # . . . . . . . . . . . .",
+		". . . . . . . . . . # # . . . . . . . . . . . ",
+		" . . . . . . . . . . # . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+	};
+
+	terrain_prefabs[TERRAIN_FOREST] = {
+		"T T T . T T T T T T . T T . T T T T . T T . T ",
+		" . . . . T . T T T T T . . T T T T T . T T . T",
+		"T T . # # . T . T T T . . T T T T . T T T . T ",
+		" . T T T . T T T T . . T T # # T T . . . T . T",
+		"T T . T . . T . . . . T T T # T T . . . . T T ",
+		" T T T T T T T T . . . . T T T T . . . . T T T",
+		"T T T T T . T T . . . . . T T T T . . . . T . ",
+		" T T T T T T T . . . . . T . . T . . . . . T T",
+		". T T T . T T . . . . . T . . . T . . . . . T ",
+		" . T . T T T T T T . . T . . . . T . . T . . T",
+	};
+
+	/** terrain_prefabs[TERRAIN_JUNGLE] = {
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . # . . . T . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . T . . . . ",
+		" . . . . . . . # . . . . . . . . T . T T . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . T . . . . . . . . . . # . . . . T . . ",
+		" . . . . . . . . . . . . . T T . . . . . . . .",
+	};
+	*/
+
+	terrain_prefabs[TERRAIN_JUNGLE] = terrain_prefabs[TERRAIN_FOREST];
+
+	/**terrain_prefabs[TERRAIN_SWAMP] = {
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . # . . . T . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . T . . . . ",
+		" . . . . . . . # . . . . . . . . T . T T . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . T . . . . . . . . . . # . . . . T . . ",
+		" . . . . . . . . . . . . . T T . . . . . . . .",
+	};
+	*/
+
+	terrain_prefabs[TERRAIN_SWAMP] = terrain_prefabs[TERRAIN_PLAINS];
+
+	terrain_prefabs[TERRAIN_DESERT] = {
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . # . . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . # . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" . . . . . . . . . . . . . . . . . . . . # . .",
+	};
 }
 
 MapManager::~MapManager()
@@ -142,7 +237,7 @@ int MapManager::createMap(bool outdoor)
 {
 	Map* m = new Map();
 	m->outdoor = outdoor;
-	int id = mapStore.size();
+	int id = mapStore.size() + 1; // start at index 1, so 0 means no local map
 	mapStore.push_back(m);
 	return id;
 }
@@ -304,7 +399,7 @@ int MapManager::buildEmptyMap(int width, int height, int type)
 
 
 
-void MapManager::BuildRegionMapFromText(const char* hmap_terrain[])
+void MapManager::BuildRegionMapFromText(std::vector<std::string> hmap_terrain)
 {
 	int map_width = SAMPLE_SCREEN_WIDTH;
 	int map_height = (SAMPLE_SCREEN_HEIGHT / 2);
@@ -350,7 +445,7 @@ void MapManager::BuildRegionMapFromText(const char* hmap_terrain[])
 				regionMap->map->setProperties(cell_x, cell_y, true, false);		// jungle
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_JUNGLE);
 			}
-			if (terrain_value == '"')
+			if (terrain_value == 's')
 			{
 				regionMap->map->setProperties(cell_x, cell_y, true, false);		// swamp
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_SWAMP);
@@ -360,7 +455,7 @@ void MapManager::BuildRegionMapFromText(const char* hmap_terrain[])
 }
 
 // builds an outdoor map from an array of strings (could be loaded from a file etc)
-int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
+int MapManager::buildMapFromText(std::vector<std::string> hmap,bool outdoor)
 {
 	int map_width = SAMPLE_SCREEN_WIDTH;
 	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
@@ -398,24 +493,50 @@ int MapManager::buildMapFromText(const char* hmap[],bool outdoor)
 
 int MapManager::SpawnLocalMap(int x, int y)
 {
-	// 1 map generation function per terrain type
-	// this is to be replaced with a JSON file associating local content elements with procgen functions (eg spread, warren, clusters, splats)
 	int map_width = SAMPLE_SCREEN_WIDTH;
 	int map_height = (SAMPLE_SCREEN_HEIGHT / 2);
 	
 	int mapID = buildEmptyMap(map_width, map_height, MAP_WILDERNESS);
 
+	// 1 map generation function per terrain type
+	// this is to be replaced with a JSON file associating local content elements with procgen functions (eg spread, warren, clusters, splats)
+	
 	regionMap->setLocalMap(x, y, mapID);
 
 	return mapID;
 }
 
-int MapManager::GenerateMapFromPrefab(int x, int y, const char* hmap[])
+int MapManager::GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap)
 {	
 	int mapID = buildMapFromText(hmap, true);
 	regionMap->setLocalMap(x, y, mapID);
 
 	return mapID;
+}
+
+int MapManager::GenerateMapAtLocation(int x, int y)
+{
+	int terrain = regionMap->getTerrain(x, y);
+
+	int mapID = buildMapFromText(terrain_prefabs[terrain], true);
+	regionMap->setLocalMap(x, y, mapID);
+
+	return mapID;
+}
+
+int MapManager::GetMapAtLocation(int x, int y)
+{
+	int lmap = regionMap->getLocalMap(x, y);
+	if (lmap != 0)
+	{
+		return lmap;
+	}
+
+	// TODO: random generation of wilderness features will go here!
+
+	lmap = GenerateMapAtLocation(x, y);
+
+	return lmap;
 }
 
 void MapManager::shift(int mapID, int& new_x, int& new_y, int unit_x, int unit_y, int move_value)
@@ -536,7 +657,7 @@ void MapManager::connectMaps(int map1, int map2, int x1, int y1, int x2, int y2)
 	m2->reverse_transition_ypos.push_back(y2);
 }
 
-Map* MapManager::mapFromText(const char* hmap[], bool outdoor)
+Map* MapManager::mapFromText(std::vector<std::string> hmap, bool outdoor)
 {
 	int index = buildMapFromText(hmap, outdoor);
 	return mapStore[index];

@@ -232,6 +232,8 @@ class MapManager : public ITCODPathCallback
 {
 	RegionMap* regionMap;
 	std::vector<Map*> mapStore;
+
+	std::vector<std::vector<std::string>> terrain_prefabs; 
 	
 public:
 	MapManager();
@@ -246,17 +248,20 @@ public:
 	int buildEmptyMap(int width, int height, int type);
 
 	// builds a map from an array of strings (could be loaded from a file etc)
-	int buildMapFromText(const char* hmap[], bool outdoor);
-	Map* mapFromText(const char* hmap[], bool outdoor);
+	int buildMapFromText(std::vector<std::string> hmap, bool outdoor);
+	Map* mapFromText(std::vector<std::string> hmap, bool outdoor);
 
 	// region map creation
 	void createRegionMap();
 	void buildEmptyRegionMap(int width, int height, int base_terrain);
-	void BuildRegionMapFromText(const char* hmap_terrain[]);
+	void BuildRegionMapFromText(std::vector<std::string> hmap_terrain);
 
 	// spawn local map from region map
 	int SpawnLocalMap(int x, int y);
-	int GenerateMapFromPrefab(int x, int y, const char* hmap[]);
+	int GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap);
+	int GenerateMapAtLocation(int x, int y);
+
+	int GetMapAtLocation(int x, int y);
 	
 	// this manager handles the main rendering, since it controls the map status & context (hex/square, lighting etc)
 	// if the index is -1, show the region map, if >=0 then show a local map

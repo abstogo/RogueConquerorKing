@@ -55,7 +55,7 @@ void Game::CreateTestGame()
 	currentPartyID = mPartyManager->GenerateAITestParty();
 	currentCharacterID = mPartyManager->getNextPlayerCharacter(currentPartyID);
 
-	static const char* indoorMap[] = {
+	std::vector<std::string> indoorMap = {
 		"##############################################",
 		"#.................#..........................#",
 		"#.................#..........................#",
@@ -79,7 +79,21 @@ void Game::CreateTestGame()
 	};
 	int indoorMapID = mMapManager->buildMapFromText(indoorMap, false);
 
-	static const char* outdoorMap[] = {
+	std::vector<std::string> regionMap = {
+		". . . . . . . . . ~ ^ ^ ~ . . . . . . . . . . ",
+		" . . . . . . . . . ~ ^ ~ . . . . . . . . . . .",
+		". . * * * . . . . ~ ~ ^ ~ . . . . . . * . . . ",
+		" . . * * * * . . . ~ ^ ~ . . . . . . . . . . .",
+		". . * * * . . . . ~ ~ ~ . . . . . . . . . . . ",
+		" . . . * . . . . . . . . . . . . . . . * . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" s s s . . . . . . . . . . . . . . . . . . . .",
+		"s s s . * . . . . . . . . . . . . . . . * . . ",
+		" s s s . . . . . . . . . . * * . . . . . . . .",
+	};
+	mMapManager->BuildRegionMapFromText(regionMap);
+	
+	std::vector<std::string> outdoorMap = {
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . . . .",
 		". . . . . . . . . . . . . . . . . . . T . . . ",
@@ -91,7 +105,7 @@ void Game::CreateTestGame()
 		". . . . T . . . . . . . . . . . . . . . T . . ",
 		" . . . . . . . . . . . . . T T . . . . . . . .",
 	};
-	int outdoorMapID = mMapManager->buildMapFromText(outdoorMap, true);
+	int outdoorMapID = mMapManager->GenerateMapFromPrefab(8,6,outdoorMap);
 
 	mMapManager->connectMaps(outdoorMapID, indoorMapID, 3, 3, 8, 15);
 
@@ -408,6 +422,31 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 
 						recomputeFov = true;
 					}
+				}
+				else if (currentMapID == -1)
+				{
+					// we're on the region map, so we head 'down' into the local wilderness map
+					// this automatically generates a local wilderness map if one does not exist
+					int mapID = mMapManager->GetMapAtLocation(player_x, player_y);
+					currentMapID = mapID;
+					currentMap = mMapManager->getMap(mapID);
+
+					recomputeFov = true;
+				}
+
+				return true;
+			}
+
+			if (key->c == ',' && key->shift)
+			{
+				if (currentMapID != -1 && currentMap->outdoor)
+				{
+					// we're on the local wilderness map, so head out to the region map
+
+					// TODO: Check for active enemies, don't allow zooming out if there are any (thank you Skyrim)
+
+					currentMapID = -1;
+					currentMap = NULL;
 				}
 
 				return true;
