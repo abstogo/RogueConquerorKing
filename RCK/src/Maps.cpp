@@ -437,27 +437,27 @@ void MapManager::BuildRegionMapFromText(std::vector<std::string> hmap_terrain)
 			}
 			if (terrain_value == '*')
 			{
-				regionMap->map->setProperties(cell_x, cell_y, true, false);		// forest
+				regionMap->map->setProperties(cell_x, cell_y, false, true);		// forest
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_FOREST);
 			}
 			if (terrain_value == '^')
 			{
-				regionMap->map->setProperties(cell_x, cell_y, true, false);		// mountain
+				regionMap->map->setProperties(cell_x, cell_y, false, false);		// mountain
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_MOUNTAIN);
 			}
 			if (terrain_value == '~')
 			{
-				regionMap->map->setProperties(cell_x, cell_y, true, false);		// hills
+				regionMap->map->setProperties(cell_x, cell_y, true, true);		// hills
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_HILLS);
 			}
 			if (terrain_value == '&')
 			{
-				regionMap->map->setProperties(cell_x, cell_y, true, false);		// jungle
+				regionMap->map->setProperties(cell_x, cell_y, true, true);		// jungle
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_JUNGLE);
 			}
 			if (terrain_value == 's')
 			{
-				regionMap->map->setProperties(cell_x, cell_y, true, false);		// swamp
+				regionMap->map->setProperties(cell_x, cell_y, true, true);		// swamp
 				regionMap->setTerrain(cell_x, cell_y, TERRAIN_SWAMP);
 			}
 		}
@@ -582,55 +582,61 @@ float MapManager::getWalkCost(int xFrom, int yFrom, int xTo, int yTo, void* user
 {
 	int* mapID_ptr = (int*)userData;
 	int mapID = *mapID_ptr;
-	int x = xTo - xFrom;
-	int y = yTo - yFrom;
-
-	// unwalkable cells get closed off automatically
-	if(!mapStore[mapID]->map->isWalkable(xTo,yTo))
+	if (mapID != -1)
 	{
-		return -1.0f;
-	}
+		int x = xTo - xFrom;
+		int y = yTo - yFrom;
 
-	// TODO: modify by content movement modifier
-	float baseCost = 1.0f;
-	
-	if (mapStore[mapID]->outdoor)
-	{
-		// if the value is in the hex move map, we can move there, otherwise we can't
-		bool odd = !yFrom & 0x1;
-		bool found = false;
-		for (int i = 0; i < 6; i++)
+		// unwalkable cells get closed off automatically
+		if (!mapStore[mapID]->map->isWalkable(xTo, yTo))
 		{
-			if (odd)
-			{
-				if (move_map_odd[i][0] == x && move_map_odd[i][1] == y)
-				{
-					found = true;
-				}
-			}
-			else
-			{
-				if (move_map_even[i][0] == x && move_map_even[i][1] == y)
-				{
-					found = true;
-				}
-			}
+			return -1.0f;
 		}
-		return found ? baseCost : -1.0f;
-	}
-	else
-	{
-		// if neither value is 0, this is a diagonal
-		if (x != 0 && y != 0)
+
+		// TODO: modify by content movement modifier
+		float baseCost = 1.0f;
+
+		if (mapStore[mapID]->outdoor)
 		{
-			return sqrt(2) * baseCost;
+			// if the value is in the hex move map, we can move there, otherwise we can't
+			bool odd = !yFrom & 0x1;
+			bool found = false;
+			for (int i = 0; i < 6; i++)
+			{
+				if (odd)
+				{
+					if (move_map_odd[i][0] == x && move_map_odd[i][1] == y)
+					{
+						found = true;
+					}
+				}
+				else
+				{
+					if (move_map_even[i][0] == x && move_map_even[i][1] == y)
+					{
+						found = true;
+					}
+				}
+			}
+			return found ? baseCost : -1.0f;
 		}
 		else
 		{
-			return baseCost;
+			// if neither value is 0, this is a diagonal
+			if (x != 0 && y != 0)
+			{
+				return sqrt(2) * baseCost;
+			}
+			else
+			{
+				return baseCost;
+			}
 		}
 	}
-	return -1.0f;
+	else
+	{
+		return 1.0f;
+	}
 }
 
 void MapManager::connectMaps(int map1, int map2, int x1, int y1, int x2, int y2)
