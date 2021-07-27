@@ -245,8 +245,18 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 {
 	// returns true if anything has changed, false if it has not
 
-	int player_x = mCharacterManager->GetPlayerX(currentCharacterID);
-	int player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	int player_x, player_y;
+	
+	if (currentMapID != -1)
+	{
+		player_x = mCharacterManager->GetPlayerX(currentCharacterID);
+		player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	}
+	else
+	{
+		player_x = mPartyManager->GetPartyX(currentPartyID);
+		player_y = mPartyManager->GetPartyY(currentPartyID);
+	}
 	
 	if(key->vk == TCODK_NONE)
 	{
@@ -404,7 +414,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				return false;
 			}
 				
-			// '>' is my transition button. (I'm not distinguishing between the different kinds of transition)
+			// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
 			if (key->c == '.' && key->shift)
 			{
 				if (currentMapID != -1)
