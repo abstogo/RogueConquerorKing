@@ -39,7 +39,7 @@ class PartyManager
 	std::vector<int> totalCarryCapacity; // in stone. Total of all porters and animals (which includes carts etc). We assume the non-porter Henches and the PCs do not carry items between dungeons.
 
 	
-	std::vector<int> totalSuppliesFood; // in manweeks. 
+	std::vector<int> totalSuppliesFood; // in mandays. 
 	// std::vector<int> totalSuppliesWater; // add this later
 
 	int nextPartyID;
