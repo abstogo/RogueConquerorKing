@@ -45,7 +45,10 @@ class PartyManager
 	int nextPartyID;
 
 	int shellGenerate(); // just creates all the internal structures for the next party, with nothing added in
-	
+
+	std::vector<int> partyXPos;
+	std::vector<int> partyYPos;
+
 public:
 	PartyManager();
 	~PartyManager();
@@ -85,6 +88,11 @@ public:
 
 	int getNextPlayerCharacter(int partyID, int currentPC = -1); // if currentPC is -1, get the first one. Does not return incapable PCs; returns -1 if no incapable PCs left (which generally means game over)
 
+	int GetPartyX(int partyID) { return partyXPos[partyID]; }
+	int GetPartyY(int partyID) { return partyYPos[partyID]; }
+	void SetPartyX(int partyID, int xpos) { partyXPos[partyID] = xpos; }
+	void SetPartyY(int partyID, int ypos) { partyYPos[partyID] = ypos; }
+	
 	void DumpParty(int partyID);
 
 	void RemoveCharacter(int partyID, int entityID);

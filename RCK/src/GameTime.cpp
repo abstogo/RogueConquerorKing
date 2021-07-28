@@ -121,6 +121,14 @@ void TimeManager::RegisterNewEntity(int entityID, int manager)
 	EmplaceEntity(entityID, manager, newTime);
 }
 
+void TimeManager::DeregisterEntities()
+{
+	// generally used when we change maps. This does not affect long term timing (since that calls the managers directly)
+	entities.clear();
+	managers.clear();
+	times.clear();
+}
+
 void TimeManager::SetEntityTime(int entityID, int manager, long double time)
 {
 	std::list<int>::iterator ent_iter = entities.begin();

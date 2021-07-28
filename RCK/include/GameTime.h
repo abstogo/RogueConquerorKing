@@ -65,7 +65,8 @@ public:
 	bool AdvanceTimeBy(long double time);
 
 	void RegisterNewEntity(int entityID, int manager);
-
+	void DeregisterEntities();
+	
 	void SetEntityTime(int entityID, int manager, long double time);
 
 	void DebugLog(std::string message);

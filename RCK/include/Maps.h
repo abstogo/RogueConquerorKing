@@ -28,7 +28,7 @@
 // terrain is used for movement rate and also for local map generation
 enum RegionTerrainTypes
 {
-	TERRAIN_PLAINS,
+	TERRAIN_PLAINS = 0,
 	TERRAIN_MOUNTAIN,
 	TERRAIN_HILLS,
 	TERRAIN_FOREST,
@@ -37,15 +37,19 @@ enum RegionTerrainTypes
 	TERRAIN_DESERT,
 	// TERRAIN_SEA_COAST, // probably doing nothing with ocean travel for... quite some time
 	// TERRAN_SEA_DEEP
+	TERRAIN_MAX
 };
 
 // content covers local structures
-enum RegionContentTypes
+// note this does not include flows such as rivers and roads
+enum RegionSiteTypes
 {
-	REGION_SETTLEMENT,
-	REGION_CAMP,
-	REGION_LAIR,
-	REGION_DUNGEON,
+	SITE_NONE,
+	SITE_DUNGEON,
+	//REGION_SETTLEMENT,
+	//REGION_CAMP,
+	//REGION_LAIR,
+	
 };
 
 // local content covers things like doors, furniture, walls, that sort of thing. (Basically everything except entities and items.)
@@ -126,6 +130,49 @@ enum Ortho_Movement
 	ORTHO_UPRIGHT
 };
 
+struct RegionMap
+{
+	TCODMap* map = NULL;
+
+	int width;
+	int height;
+
+	std::vector<int> localMap;
+	std::vector<int> terrain;
+	std::vector<int> sites;
+	std::vector<int> parties;
+
+	int getLocalMap(int x, int y)
+	{
+		return(localMap[y * width + x]);
+	}
+
+	void setLocalMap(int x, int y, int c)
+	{
+		localMap[y * width + x] = c;
+	}
+
+	int getTerrain(int x, int y)
+	{
+		return(terrain[y * width + x]);
+	}
+
+	void setTerrain(int x, int y, int c)
+	{
+		terrain[y * width + x] = c;
+	}
+
+	int getSite(int x, int y)
+	{
+		return(sites[y * width + x]);
+	}
+
+	void setSite(int x, int y, int c)
+	{
+		sites[y * width + x] = c;
+	}
+};
+
 // ARRAY OF STRUCTS OF ARRAYS MOFO
 // (I'm breaking with the plan a little)
 struct Map
@@ -197,13 +244,17 @@ struct Map
 
 class MapManager : public ITCODPathCallback
 {
-	std::vector<Map*> maps;
+	RegionMap* regionMap;
+	std::vector<Map*> mapStore;
+
+	std::vector<std::vector<std::string>> terrain_prefabs; 
 	
 public:
 	MapManager();
 	~MapManager();
 
 	Map* getMap(int index);
+	RegionMap* getRegionMap();
 
 	//builds a new map, adds it to the map store, returns the id (distinct for indoor and outdoor maps)
 	int createMap(bool outdoor);
@@ -211,17 +262,31 @@ public:
 	// builds an empty map of the specified type (useful for open playfields and spawners)
 	int buildEmptyMap(int width, int height, int type);
 
-	// builds an outdoor map from an array of strings (could be loaded from a file etc)
-	int buildMapFromText(const char* hmap[], bool outdoor);
-	Map* mapFromText(const char* hmap[], bool outdoor);
+	// builds a map from an array of strings (could be loaded from a file etc)
+	int buildMapFromText(std::vector<std::string> hmap, bool outdoor);
+	Map* mapFromText(std::vector<std::string> hmap, bool outdoor);
 
+	// region map creation
+	void createRegionMap();
+	void buildEmptyRegionMap(int width, int height, int base_terrain);
+	void BuildRegionMapFromText(std::vector<std::string> hmap_terrain);
+
+	// spawn local map from region map
+	int SpawnLocalMap(int x, int y);
+	int GenerateMapFromPrefab(int x, int y, std::vector<std::string> hmap, int content);
+	int GenerateMapAtLocation(int x, int y);
+
+	int GetMapAtLocation(int x, int y);
+	
 	// this manager handles the main rendering, since it controls the map status & context (hex/square, lighting etc)
+	// if the index is -1, show the region map, if >=0 then show a local map
 	void renderMap(TCODConsole* sampleConsole, int index);
+	void renderRegionMap(TCODConsole* sampleConsole);
 
 	// mobile element (player, monster) are rendered through here too
     void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);
 
-	// connects one map to another at the specified point
+	// connects one local map to another at the specified point
 	void connectMaps(int map1, int map2, int x1, int y1, int x2, int y2);
 
 	// factory

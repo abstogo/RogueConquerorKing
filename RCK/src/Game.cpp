@@ -55,7 +55,7 @@ void Game::CreateTestGame()
 	currentPartyID = mPartyManager->GenerateAITestParty();
 	currentCharacterID = mPartyManager->getNextPlayerCharacter(currentPartyID);
 
-	static const char* indoorMap[] = {
+	std::vector<std::string> indoorMap = {
 		"##############################################",
 		"#.................#..........................#",
 		"#.................#..........................#",
@@ -79,7 +79,21 @@ void Game::CreateTestGame()
 	};
 	int indoorMapID = mMapManager->buildMapFromText(indoorMap, false);
 
-	static const char* outdoorMap[] = {
+	std::vector<std::string> regionMap = {
+		". . . . . . . . . ~ ^ ^ ~ . . . . . . . . . . ",
+		" . . . . . . . . . ~ ^ ~ . . . . . . . . . . .",
+		". . * * * . . . . ~ ~ ^ ~ . . . . . . * . . . ",
+		" . . * * * * . . . ~ ^ ~ . . . . . . . . . . .",
+		". . * * * . . . . ~ ~ ~ . . . . . . . . . . . ",
+		" . . . * . . . . . . . . . . . . . . . * . . .",
+		". . . . . . . . . . . . . . . . . . . . . . . ",
+		" s s s . . . . . . . . . . . . . . . . . . . .",
+		"s s s . * . . . . . . . . . . . . . . . * . . ",
+		" s s s . . . . . . . . . . * * . . . . . . . .",
+	};
+	mMapManager->BuildRegionMapFromText(regionMap);
+	
+	std::vector<std::string> outdoorMap = {
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . . . .",
 		". . . . . . . . . . . . . . . . . . . T . . . ",
@@ -91,7 +105,10 @@ void Game::CreateTestGame()
 		". . . . T . . . . . . . . . . . . . . . T . . ",
 		" . . . . . . . . . . . . . T T . . . . . . . .",
 	};
-	int outdoorMapID = mMapManager->buildMapFromText(outdoorMap, true);
+	int outdoorMapID = mMapManager->GenerateMapFromPrefab(8,6,outdoorMap,SITE_DUNGEON);
+
+	mPartyManager->SetPartyX(currentPartyID,8);
+	mPartyManager->SetPartyY(currentPartyID, 6);
 
 	mMapManager->connectMaps(outdoorMapID, indoorMapID, 3, 3, 8, 15);
 
@@ -228,8 +245,18 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 {
 	// returns true if anything has changed, false if it has not
 
-	int player_x = mCharacterManager->GetPlayerX(currentCharacterID);
-	int player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	int player_x, player_y;
+	
+	if (currentMapID != -1)
+	{
+		player_x = mCharacterManager->GetPlayerX(currentCharacterID);
+		player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	}
+	else
+	{
+		player_x = mPartyManager->GetPartyX(currentPartyID);
+		player_y = mPartyManager->GetPartyY(currentPartyID);
+	}
 	
 	if(key->vk == TCODK_NONE)
 	{
@@ -315,40 +342,67 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				mTimeManager->AdvanceTimeBy(time);
 			}
 
-			// "," is the "pick up" button
-			if (key->c == ',' && !key->shift)
-			{
-				int p = mMapManager->TakeTopItem(currentMapID, player_x, player_y);
-				if (p != -1)
-				{
-					mCharacterManager->AddInventoryItem(currentCharacterID, p);
-					AddActionLogText(mCharacterManager->getCharacterName(currentCharacterID) + " picks up a " + mItemManager->getShortDescription(p) + ".");
-				}
-			}
 
-			// 't'/'T' triggers a missile attack with the current wielded missile or thrown weapon.
-			if (key->c == 't')
+			if (currentMapID != -1)
 			{
-				int wieldedID = mCharacterManager->GetItemInEquipSlot(currentCharacterID, HAND_MAIN);
-				if (wieldedID != -1)
+				// "," is the "pick up" button
+				if (key->c == ',' && !key->shift)
 				{
-					bool missile = mItemManager->hasTag(wieldedID, "Missile");
-
-					// just ignore this press if we're not using a missile weapon of some kind
-					if (missile)
+					int p = mMapManager->TakeTopItem(currentMapID, player_x, player_y);
+					if (p != -1)
 					{
-						// set cleave count for current character (remember this is reset if we change, balanced by change delay)
-						remainingCleaves = mCharacterManager->GetCleaveCount(currentCharacterID);
-						
-						// now select a target
-						int range = mItemManager->getMaxRange(wieldedID) / 5;
-						int x = mCharacterManager->GetPlayerX(currentCharacterID);
-						int y = mCharacterManager->GetPlayerY(currentCharacterID);
-						//std::vector<int> monstersInRange = mMobManager->GetAllMonstersInRange(currentMapID, x, y, range, true, true);
-						std::vector<int> monsters = mMobManager->GetAllEnemyMonstersOnMap(currentMapID,currentPartyID,true);
-						std::vector<int> monstersInView = mMapManager->filterByFOV(MANAGER_CHARACTER, currentCharacterID, MANAGER_MOB, monsters, range);
-						if(monstersInView.size() > 0)
-							TriggerTargeting(TARGET_CREATURE, -1, 1, range, 1, false, true, monstersInView);
+						mCharacterManager->AddInventoryItem(currentCharacterID, p);
+						AddActionLogText(mCharacterManager->getCharacterName(currentCharacterID) + " picks up a " + mItemManager->getShortDescription(p) + ".");
+					}
+				}
+
+				// 't'/'T' triggers a missile attack with the current wielded missile or thrown weapon.
+				if (key->c == 't')
+				{
+					int wieldedID = mCharacterManager->GetItemInEquipSlot(currentCharacterID, HAND_MAIN);
+					if (wieldedID != -1)
+					{
+						bool missile = mItemManager->hasTag(wieldedID, "Missile");
+
+						// just ignore this press if we're not using a missile weapon of some kind
+						if (missile)
+						{
+							// set cleave count for current character (remember this is reset if we change, balanced by change delay)
+							remainingCleaves = mCharacterManager->GetCleaveCount(currentCharacterID);
+
+							// now select a target
+							int range = mItemManager->getMaxRange(wieldedID) / 5;
+							int x = mCharacterManager->GetPlayerX(currentCharacterID);
+							int y = mCharacterManager->GetPlayerY(currentCharacterID);
+							//std::vector<int> monstersInRange = mMobManager->GetAllMonstersInRange(currentMapID, x, y, range, true, true);
+							std::vector<int> monsters = mMobManager->GetAllEnemyMonstersOnMap(currentMapID, currentPartyID, true);
+							std::vector<int> monstersInView = mMapManager->filterByFOV(MANAGER_CHARACTER, currentCharacterID, MANAGER_MOB, monsters, range);
+							if (monstersInView.size() > 0)
+								TriggerTargeting(TARGET_CREATURE, -1, 1, range, 1, false, true, monstersInView);
+						}
+					}
+				}
+				
+				// Tab switches active character
+				if (key->vk == TCODK_TAB)
+				{
+					int shiftCharacterID = mPartyManager->getNextPlayerCharacter(currentPartyID, currentCharacterID);
+					if (shiftCharacterID != -1)
+					{
+						mCharacterManager->SetBehaviour(currentCharacterID, CHAR_BEHAVIOUR_UNSET);
+						mTimeManager->SetEntityTime(currentCharacterID, MANAGER_CHARACTER, 0.01);
+						mCharacterManager->SetBehaviour(shiftCharacterID, CHAR_BEHAVIOUR_UNSET);
+
+						DebugLog("Switching to character " + std::to_string(shiftCharacterID));
+						currentCharacterID = shiftCharacterID;
+						player_x = mCharacterManager->GetPlayerX(currentCharacterID);
+						player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+
+						recomputeFov = true;
+					}
+					else
+					{
+						DebugLog("Tab pressed but no valid character available.");
 					}
 				}
 			}
@@ -359,61 +413,69 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				TriggerTargeting(TARGET_CELL, -1, 0);
 				return false;
 			}
-
-			// Tab switches active character
-			if (key->vk == TCODK_TAB)
-			{
-				int shiftCharacterID = mPartyManager->getNextPlayerCharacter(currentPartyID, currentCharacterID);
-				if(shiftCharacterID != -1)
-				{
-					mCharacterManager->SetBehaviour(currentCharacterID, CHAR_BEHAVIOUR_UNSET);
-					mTimeManager->SetEntityTime(currentCharacterID, MANAGER_CHARACTER, 0.01);
-					mCharacterManager->SetBehaviour(shiftCharacterID, CHAR_BEHAVIOUR_UNSET);
-					
-                    DebugLog("Switching to character " + std::to_string(shiftCharacterID));
-					currentCharacterID = shiftCharacterID;
-					player_x = mCharacterManager->GetPlayerX(currentCharacterID);
-					player_y = mCharacterManager->GetPlayerY(currentCharacterID);
-
-					recomputeFov = true;
-				}
-                else
-                {
-                        DebugLog("Tab pressed but no valid character available.");
-                }
-			}
 				
-			// '>' is my transition button. (I'm not distinguishing between the different kinds of transition)
+			// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
 			if (key->c == '.' && key->shift)
 			{
-				// check for transition between zones
-				if (currentMap->getContent(player_x, player_y) >= CONTENT_TRANSITION_STAIRS)
+				if (currentMapID != -1)
 				{
-					// there is a transition here. Look it up
-					int targetMapIndex = currentMap->getTransition(player_x, player_y);
-					Map* targetMap = mMapManager->getMap(targetMapIndex);
-
-					std::vector<int>::iterator iter = std::find(targetMap->reverse_transition_mapindex.begin(), targetMap->reverse_transition_mapindex.end(), currentMapID);
-
-					// sanity check - is it in the vector?
-					if (iter != targetMap->reverse_transition_mapindex.end())
+					// check for transition between zones
+					if (currentMap->getContent(player_x, player_y) >= CONTENT_TRANSITION_STAIRS)
 					{
-						// get the count
-						int i = iter - targetMap->reverse_transition_mapindex.begin();
-						player_x = targetMap->reverse_transition_xpos[i];
-						player_y = targetMap->reverse_transition_ypos[i];
+						// there is a transition here. Look it up
+						int targetMapIndex = currentMap->getTransition(player_x, player_y);
+						Map* targetMap = mMapManager->getMap(targetMapIndex);
 
-						currentMapID = targetMapIndex;
-						currentMap = targetMap;
+						std::vector<int>::iterator iter = std::find(targetMap->reverse_transition_mapindex.begin(), targetMap->reverse_transition_mapindex.end(), currentMapID);
 
-						recomputeFov = true;
+						// sanity check - is it in the vector?
+						if (iter != targetMap->reverse_transition_mapindex.end())
+						{
+							// get the count
+							int i = iter - targetMap->reverse_transition_mapindex.begin();
+							player_x = targetMap->reverse_transition_xpos[i];
+							player_y = targetMap->reverse_transition_ypos[i];
+
+							currentMapID = targetMapIndex;
+							currentMap = targetMap;
+
+							recomputeFov = true;
+						}
 					}
+				}
+				else 
+				{
+					// we're on the region map, so we head 'down' into the local wilderness map
+					// this automatically generates a local wilderness map if one does not exist
+					int mapID = mMapManager->GetMapAtLocation(player_x, player_y);
+					currentMapID = mapID;
+					currentMap = mMapManager->getMap(mapID);
+
+					SpawnLevel(mapID, OUTDOOR_MAP_WIDTH / 2, OUTDOOR_MAP_HEIGHT / 2);
+
+					recomputeFov = true;
 				}
 
 				return true;
 			}
 
-			if (currentMap->outdoor)
+			if (key->c == ',' && key->shift)
+			{
+				if (currentMapID != -1 && currentMap->outdoor)
+				{
+					// we're on the local wilderness map, so head out to the region map
+
+					// TODO: Check for active enemies, don't allow zooming out if there are any (thank you Skyrim)
+
+					currentMapID = -1;
+					currentMap = NULL;
+					mTimeManager->DeregisterEntities();
+				}
+
+				return true;
+			}
+
+			if (currentMapID == -1)
 			{
 				if (HandleHexKeyboard(key))
 				{
@@ -422,9 +484,19 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 			}
 			else
 			{
-				if (HandleOrthoKeyboard(key))
+				if (currentMap->outdoor)
 				{
-					return true;
+					if (HandleHexKeyboard(key))
+					{
+						return true;
+					}
+				}
+				else
+				{
+					if (HandleOrthoKeyboard(key))
+					{
+						return true;
+					}
 				}
 			}
 		}
@@ -635,151 +707,169 @@ void Game::MoveCharacter(int new_x, int new_y)
 {	
 	if (!gGame->mMapManager->isOutOfBounds(currentMapID, new_x, new_y))
 	{
-		if (currentMap->map->isWalkable(new_x, new_y))
+		if (currentMapID != -1)
 		{
-			int character = currentMap->getCharacterAt(new_x, new_y);
-			if (currentMap->getCharacterAt(new_x, new_y))
+			if (currentMap->map->isWalkable(new_x, new_y))
 			{
-				// there's a character there. Check if we want to attack them
-				//if (c.IsHostile())
-				//{
-					// close-quarters attack!
-				//}
-				//else
-				//{
-					// we don't want to attack, so we just don't move
-				//}
-				//
-
-				// if we're not attacking, check if the character is blocking the way
-				if(mCharacterManager->getCharacterHasCondition(character, "Unconscious"))
+				int character = currentMap->getCharacterAt(new_x, new_y);
+				if (currentMap->getCharacterAt(new_x, new_y))
 				{
-					// unconscious character. Check if they have an unresolved injury
-					if (mCharacterManager->getCharacterHasCondition(character, "Injured"))
+					// there's a character there. Check if we want to attack them
+					//if (c.IsHostile())
+					//{
+						// close-quarters attack!
+					//}
+					//else
+					//{
+						// we don't want to attack, so we just don't move
+					//}
+					//
+
+					// if we're not attacking, check if the character is blocking the way
+					if (mCharacterManager->getCharacterHasCondition(character, "Unconscious"))
 					{
-						if (mCharacterManager->getCharacterCapabilityFlag(currentCharacterID, "TreatWounds"))
+						// unconscious character. Check if they have an unresolved injury
+						if (mCharacterManager->getCharacterHasCondition(character, "Injured"))
 						{
-							std::string charName = mCharacterManager->getCharacterName(character);
-							DebugLog("Performing mortal wounds check on " + charName + ".");
-							std::string text2 = mCharacterManager->getCharacterName(currentCharacterID) + " checks " + charName + "'s wounds.";
-							AddActionLogText(text2);
-							// unresolved injury. Calculate modifiers for roll
-							// TODO: Account for time since injury. Probably replace "Injured" condition.
-							// Or track time since condition? Useful for temporary conditions!
-							int bonus = mCharacterManager->getCharacterAbilityBonus(character, "Constitution");
-							int hp = mCharacterManager->getCharacterCurrentHitPoints(character);
-							if (hp == 0)
+							if (mCharacterManager->getCharacterCapabilityFlag(currentCharacterID, "TreatWounds"))
 							{
-								bonus += 5;
-							}
-							else
-							{
-								int hp_floor = -mCharacterManager->getCharacterTotalHitPoints(character);
-								if ((hp <= (hp_floor / 4)) && (hp > hp_floor / 2))
+								std::string charName = mCharacterManager->getCharacterName(character);
+								DebugLog("Performing mortal wounds check on " + charName + ".");
+								std::string text2 = mCharacterManager->getCharacterName(currentCharacterID) + " checks " + charName + "'s wounds.";
+								AddActionLogText(text2);
+								// unresolved injury. Calculate modifiers for roll
+								// TODO: Account for time since injury. Probably replace "Injured" condition.
+								// Or track time since condition? Useful for temporary conditions!
+								int bonus = mCharacterManager->getCharacterAbilityBonus(character, "Constitution");
+								int hp = mCharacterManager->getCharacterCurrentHitPoints(character);
+								if (hp == 0)
 								{
-									bonus -= 2;
+									bonus += 5;
 								}
-								else if (hp <= (hp_floor / 2))
+								else
 								{
-									bonus -= 5;
+									int hp_floor = -mCharacterManager->getCharacterTotalHitPoints(character);
+									if ((hp <= (hp_floor / 4)) && (hp > hp_floor / 2))
+									{
+										bonus -= 2;
+									}
+									else if (hp <= (hp_floor / 2))
+									{
+										bonus -= 5;
+									}
 								}
-							}
-							bonus += mCharacterManager->getTagValue(currentCharacterID, "Healing:MortalWound:Bonus");
+								bonus += mCharacterManager->getTagValue(currentCharacterID, "Healing:MortalWound:Bonus");
 
-							DebugLog("Severity roll at " + std::to_string(bonus));
-							// test mortal wounds
-							int d20_roll = randomiser->diceRoll("1d20") + bonus;
-							int d6_roll = randomiser->diceRoll("1d6");
+								DebugLog("Severity roll at " + std::to_string(bonus));
+								// test mortal wounds
+								int d20_roll = randomiser->diceRoll("1d20") + bonus;
+								int d6_roll = randomiser->diceRoll("1d6");
 
-							DebugLog("D20/D6:" + std::to_string(d20_roll) + "/" + std::to_string(d6_roll));
+								DebugLog("D20/D6:" + std::to_string(d20_roll) + "/" + std::to_string(d6_roll));
 
-							MortalRollResult* result = mMortalManager->RollMortalWound(d20_roll, d6_roll);
+								MortalRollResult* result = mMortalManager->RollMortalWound(d20_roll, d6_roll);
 
-							std::string text = result->effect->PlayerText();
+								std::string text = result->effect->PlayerText();
 
-							text.replace(text.find("%1%"), sizeof("%1%") - 1, charName);
+								text.replace(text.find("%1%"), sizeof("%1%") - 1, charName);
 
-							DebugLog("Results:" + text);
+								DebugLog("Results:" + text);
 
-							AddActionLogText(text);
-							
-							mCharacterManager->AddMortalEffect(character, result->effect);
-							// injury is resolved now (one way or the other). If we get attacked again, we set this again.
-							mCharacterManager->RemoveCondition(character, "Injured");
+								AddActionLogText(text);
 
-							// there are 3 possible wound states: Recover, Wounded (ie Dying) or Dead.
-							if(result->status == "Recover")
-							{
-								// character gets back up; remove Injured and Unconscious
-								mCharacterManager->RemoveCondition(character, "Unconscious");
-							}
+								mCharacterManager->AddMortalEffect(character, result->effect);
+								// injury is resolved now (one way or the other). If we get attacked again, we set this again.
+								mCharacterManager->RemoveCondition(character, "Injured");
 
-							if(result->status == "Wounded")
-							{
-								std::string p = "They are wounded and will die within 1 " + result->recovery + " without healing.";
-								AddActionLogText(p);
-								
-								long double time = 0.0L;
-								if (result->recovery == "Round") time = TimeManager::GetTimePeriodInSeconds(TIME_ROUND);
-								if (result->recovery == "Turn") time = TimeManager::GetTimePeriodInSeconds(TIME_TURN);
-								if (result->recovery == "Day") time = TimeManager::GetTimePeriodInSeconds(TIME_DAY);
-								
-								mCharacterManager->SetCondition(character, "Dying", time);
-							}
-							
-							if(result->status == "Dead")
-							{
-								CharacterDeath(character);
-							}
-							else
-							{
-								// if the character isn't dead, check for bed rest requirements
-								if(result->bedRest > 0)
+								// there are 3 possible wound states: Recover, Wounded (ie Dying) or Dead.
+								if (result->status == "Recover")
 								{
-									mCharacterManager->SetCondition(character, "Recovering", TimeManager::GetTimePeriodInSeconds(TIME_DAY) * result->bedRest);
+									// character gets back up; remove Injured and Unconscious
+									mCharacterManager->RemoveCondition(character, "Unconscious");
+								}
+
+								if (result->status == "Wounded")
+								{
+									std::string p = "They are wounded and will die within 1 " + result->recovery + " without healing.";
+									AddActionLogText(p);
+
+									long double time = 0.0L;
+									if (result->recovery == "Round") time = TimeManager::GetTimePeriodInSeconds(TIME_ROUND);
+									if (result->recovery == "Turn") time = TimeManager::GetTimePeriodInSeconds(TIME_TURN);
+									if (result->recovery == "Day") time = TimeManager::GetTimePeriodInSeconds(TIME_DAY);
+
+									mCharacterManager->SetCondition(character, "Dying", time);
+								}
+
+								if (result->status == "Dead")
+								{
+									CharacterDeath(character);
+								}
+								else
+								{
+									// if the character isn't dead, check for bed rest requirements
+									if (result->bedRest > 0)
+									{
+										mCharacterManager->SetCondition(character, "Recovering", TimeManager::GetTimePeriodInSeconds(TIME_DAY) * result->bedRest);
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			else if (currentMap->getMobAt(new_x, new_y))
-			{
-				// there's a monster there
-				int c_id = currentMap->getMobAt(new_x, new_y);
-				Creature& c = gGame->mMobManager->GetMonster(c_id);
-
-				if (c.IsBlocking())
+				else if (currentMap->getMobAt(new_x, new_y))
 				{
-					// set cleave count for current character (remember this is reset if we change, balanced by change delay)
-					remainingCleaves = mCharacterManager->GetCleaveCount(currentCharacterID);
+					// there's a monster there
+					int c_id = currentMap->getMobAt(new_x, new_y);
+					Creature& c = gGame->mMobManager->GetMonster(c_id);
 
-					if (c.IsHostile())
+					if (c.IsBlocking())
 					{
-						// the monster is hostile, automatically attack
-						if (ResolveAttacks(MANAGER_CHARACTER, gGame->currentCharacterID, MANAGER_MOB, c_id, false))
-							mode = GM_MAIN;
-					}
-					else
-					{
-						// TODO: Options controls for non-hostiles (allow/confirm/deny, currently only confirm)
-						if (!mPartyManager->IsInParty(currentPartyID,MANAGER_MOB, c_id))
+						// set cleave count for current character (remember this is reset if we change, balanced by change delay)
+						remainingCleaves = mCharacterManager->GetCleaveCount(currentCharacterID);
+
+						if (c.IsHostile())
 						{
-							if (hostilifying)
+							// the monster is hostile, automatically attack
+							if (ResolveAttacks(MANAGER_CHARACTER, gGame->currentCharacterID, MANAGER_MOB, c_id, false))
+								mode = GM_MAIN;
+						}
+						else
+						{
+							// TODO: Options controls for non-hostiles (allow/confirm/deny, currently only confirm)
+							if (!mPartyManager->IsInParty(currentPartyID, MANAGER_MOB, c_id))
 							{
-								AddActionLogText(c.GetName() + " is now hostile.");
-								c.SetHostile(true);
-								if (ResolveAttacks(MANAGER_CHARACTER, gGame->currentCharacterID, MANAGER_MOB, c_id, false))
-									mode = GM_MAIN;
-								hostilifying = false;
-							}
-							else
-							{
-								AddActionLogText("Are you sure? " + c.GetName() + " is not hostile. Attack again to confirm.");
-								hostilifying = true;
+								if (hostilifying)
+								{
+									AddActionLogText(c.GetName() + " is now hostile.");
+									c.SetHostile(true);
+									if (ResolveAttacks(MANAGER_CHARACTER, gGame->currentCharacterID, MANAGER_MOB, c_id, false))
+										mode = GM_MAIN;
+									hostilifying = false;
+								}
+								else
+								{
+									AddActionLogText("Are you sure? " + c.GetName() + " is not hostile. Attack again to confirm.");
+									hostilifying = true;
+								}
 							}
 						}
 					}
+					else
+					{
+						// not attacking anything, so calm down
+						hostilifying = false;
+
+						// there isn't another creature there, so move
+						mCharacterManager->SetPlayerX(currentCharacterID, new_x);
+						mCharacterManager->SetPlayerY(currentCharacterID, new_y);
+						recomputeFov = true;
+
+						UpdateLookText(new_x, new_y);
+						double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
+						mTimeManager->AdvanceTimeBy(time);
+					}
+
 				}
 				else
 				{
@@ -795,19 +885,16 @@ void Game::MoveCharacter(int new_x, int new_y)
 					double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
 					mTimeManager->AdvanceTimeBy(time);
 				}
-
 			}
-			else
+		}
+		else
+		{
+			if (mMapManager->getRegionMap()->map->isWalkable(new_x, new_y))
 			{
-				// not attacking anything, so calm down
-				hostilifying = false;
+				mPartyManager->SetPartyX(currentPartyID, new_x);
+				mPartyManager->SetPartyY(currentPartyID, new_y);
 				
-				// there isn't another creature there, so move
-				mCharacterManager->SetPlayerX(currentCharacterID, new_x);
-				mCharacterManager->SetPlayerY(currentCharacterID, new_y);
-				recomputeFov = true;
-
-				UpdateLookText(new_x, new_y);
+				//UpdateLookText(new_x, new_y);
 				double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
 				mTimeManager->AdvanceTimeBy(time);
 			}
@@ -818,10 +905,17 @@ void Game::MoveCharacter(int new_x, int new_y)
 bool Game::HexKeyboardMove(int move_value)
 {
 	// split off from HandleHexKeyboard as we need to handle multiple contexts
-	
-	int player_x = mCharacterManager->GetPlayerX(currentCharacterID);
-	int player_y = mCharacterManager->GetPlayerY(currentCharacterID);
-
+	int player_x, player_y;
+	if(currentMapID != -1)
+	{
+		player_x = mCharacterManager->GetPlayerX(currentCharacterID);
+		player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	}
+	else
+	{
+		player_x = mPartyManager->GetPartyX(currentPartyID);
+		player_y = mPartyManager->GetPartyY(currentPartyID);
+	}
 	int new_x, new_y;
 	
 	mMapManager->shift(currentMapID, new_x, new_y, player_x, player_y, move_value);
@@ -1435,10 +1529,17 @@ void Game::MainLoop()
 
 void Game::RenderMap()
 {
-
-	int player_x = mCharacterManager->GetPlayerX(currentCharacterID);
-	int player_y = mCharacterManager->GetPlayerY(currentCharacterID);
-
+	int player_x, player_y;
+	if(currentMapID == -1)
+	{
+		player_x = mPartyManager->GetPartyX(currentPartyID);
+		player_y = mPartyManager->GetPartyY(currentPartyID);
+	}
+	else
+	{
+		player_x = mCharacterManager->GetPlayerX(currentCharacterID);
+		player_y = mCharacterManager->GetPlayerY(currentCharacterID);
+	}
 	sampleConsole->clear();
 
 	sampleConsole->setDefaultForeground(TCODColor::lighterGrey);
@@ -1455,38 +1556,46 @@ void Game::RenderMap()
 	// Because the wilderness is intended to be more "open-feeling" than the dungeon. If we keep the torch effect in the dungeons, 
 	// that adds to the sense of claustrophobia. But outdoors should feel airy and open, even in the dark. 
 
-	mMapManager->renderMap(sampleConsole, currentMapID);
-	std::vector<int> chars = mPartyManager->getPlayerCharacters(currentPartyID);
-	for (int ch : chars)
+	if (currentMapID == -1)
 	{
-		if (mCharacterManager->GetPlayerX(ch) != -1)
+		mMapManager->renderRegionMap(sampleConsole);
+		mMapManager->renderAtPosition(sampleConsole, -1, player_x, player_y, '@', TCODColor::white);
+	}
+	else
+	{
+		mMapManager->renderMap(sampleConsole, currentMapID);
+
+		std::vector<int> chars = mPartyManager->getPlayerCharacters(currentPartyID);
+		for (int ch : chars)
+		{
+			if (mCharacterManager->GetPlayerX(ch) != -1)
+			{
+				TCODColor baseColor = TCODColor::lighterGrey;
+				if (mCharacterManager->getCharacterHasCondition(ch, "Unconscious")) baseColor = baseColor * TCODColor::grey;
+
+				if (ch == currentCharacterID)
+				{
+					mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', TCODColor::white);
+				}
+				else
+				{
+					mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
+				}
+			}
+		}
+
+		std::vector<int> henches = mPartyManager->getHenchmen(currentPartyID);
+		for (int ch : henches)
 		{
 			TCODColor baseColor = TCODColor::lighterGrey;
-			if (mCharacterManager->getCharacterHasCondition(ch,"Unconscious")) baseColor = baseColor * TCODColor::grey;
-			
-            if (ch == currentCharacterID)
-            {
-				mMapManager->renderAtPosition(sampleConsole,currentMapID,mCharacterManager->GetPlayerX(ch),mCharacterManager->GetPlayerY(ch),'@',TCODColor::white);
-            }
-			else
-            {
+			if (mCharacterManager->getCharacterHasCondition(ch, "Unconscious")) baseColor = baseColor * TCODColor::grey;
+
+			if (mCharacterManager->GetPlayerX(ch) != -1)
+			{
 				mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
-            }
+			}
 		}
 	}
-
-	std::vector<int> henches = mPartyManager->getHenchmen(currentPartyID);
-	for (int ch : henches)
-	{
-		TCODColor baseColor = TCODColor::lighterGrey;
-		if (mCharacterManager->getCharacterHasCondition(ch, "Unconscious")) baseColor = baseColor * TCODColor::grey;
-		
-		if (mCharacterManager->GetPlayerX(ch) != -1)
-		{
-			mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
-		}
-	}
-
 }
 
 std::vector<int> Game::GetTargetedEntities()
