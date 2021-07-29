@@ -21,6 +21,7 @@ void Game::StartGame()
 	mConditionManager = ConditionManager::LoadConditions();
 	mMortalManager = MortalWoundManager::LoadMortalWoundData();
 	mPartyManager = PartyManager::LoadPartyData();
+	mBaseManager = BaseManager::LoadBaseData();
 
 	DebugLog("Game Managers Created");
 

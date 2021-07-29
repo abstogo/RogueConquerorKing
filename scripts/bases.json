@@ -1,0 +1,42 @@
+{
+  "BaseTypes": [
+    {
+      "Name": "Camp",
+      "Buildable": "True",
+      "Core": [
+        "Holding",
+        "Storage",
+        "Rest",
+        "Upkeep:Supplies"
+      ],
+      "Optional": [
+        "Forage",
+        "Hunt"
+      ],
+      "Purchasable": [
+
+      ]
+    },
+    {
+      "Name": "SettlementBase",
+      "Buildable": "False",
+      "Core": [
+        "Holding",
+        "Storage",
+        "Rest",
+        "BedRest",
+        "Return"
+      ],
+      "Optional": [
+        "Upkeep:Supplies",
+        "Upkeep:LivingCosts"
+      ],
+      "Purchasable": [
+        {
+          "Name": "Workshop:Craft:Any",
+          "Cost": 35000
+        }
+      ]
+    }
+  ]
+}

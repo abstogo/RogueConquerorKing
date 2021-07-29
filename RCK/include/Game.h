@@ -7,6 +7,7 @@
 #include "Conditions.h"
 #include "ItemTemplate.h"
 #include "Party.h"
+#include "Bases.h"
 
 /*
  * The Game class exists to contain the various managers etc for the game and coordinate the game's functions
@@ -22,6 +23,7 @@ class MobManager;
 class ConditionManager;
 class MortalWoundManager;
 class PartyManager;
+class BaseManager;
 
 enum ManagerType
 {
@@ -33,6 +35,7 @@ enum ManagerType
 	MANAGER_CONDITION,
 	MANAGER_MORTAL,
 	MANAGER_PARTY,
+	MANAGER_BASE,
 	MANAGER_MAX
 };
 
@@ -200,6 +203,7 @@ public:
 	ConditionManager* mConditionManager;
 	MortalWoundManager* mMortalManager;
 	PartyManager* mPartyManager;
+	BaseManager* mBaseManager;
 	
 	TCODConsole* sampleConsole;
 
