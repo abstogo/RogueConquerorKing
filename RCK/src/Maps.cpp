@@ -375,6 +375,9 @@ void MapManager::buildEmptyRegionMap(int width, int height, int base_terrain)
 		regionMap->localMap[i] = -1;
 	regionMap->terrain.resize(width * height);
 	regionMap->sites.resize(width * height);
+	regionMap->bases.resize(width * height);
+	for (int i = 0; i < width * height; i++)
+		regionMap->bases[i] = -1;
 
 	regionMap->map->clear(true, true);
 }
@@ -740,11 +743,19 @@ void MapManager::renderRegionMap(TCODConsole* sampleConsole)
 				sampleConsole->putChar(render_x, render_y, ' ', TCOD_BKGND_NONE);
 			}
 
+			int base = regionMap->getBase(x, y);
+
+			if(base != -1)
+			{
+				// we should only show bases if they are not also a Site (we will overwrite it)
+				// IDEA: flip between indicators if eg a Camp is in the same hex as a Dungeon
+				sampleConsole->putChar(render_x, render_y, TCOD_CHAR_RADIO_SET, TCOD_BKGND_NONE);
+			}
+
 			int site = regionMap->getSite(x, y);
 
 			if (site == SITE_DUNGEON)
 			{
-				//sampleConsole.setCharBackground(render_x, y, lightWall, TCOD_BKGND_SET);
 				sampleConsole->putChar(render_x, render_y, TCOD_CHAR_DCROSS, TCOD_BKGND_NONE);
 			}
 		}

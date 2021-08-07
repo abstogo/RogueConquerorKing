@@ -140,7 +140,7 @@ struct RegionMap
 	std::vector<int> localMap;
 	std::vector<int> terrain;
 	std::vector<int> sites;
-	std::vector<int> parties;
+	std::vector<int> bases;
 
 	int getLocalMap(int x, int y)
 	{
@@ -170,6 +170,16 @@ struct RegionMap
 	void setSite(int x, int y, int c)
 	{
 		sites[y * width + x] = c;
+	}
+
+	int getBase(int x, int y)
+	{
+		return(bases[y * width + x]);
+	}
+
+	void setBase(int x, int y, int c)
+	{
+		bases[y * width + x] = c;
 	}
 };
 

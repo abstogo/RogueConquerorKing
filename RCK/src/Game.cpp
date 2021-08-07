@@ -320,6 +320,22 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 		*/
 	}
 
+	// "d"/"D" is the "domain" button and opens the Domain window to control camps/settlements/domains.
+	// Note this only intended on the Region map currently (and automatically triggers if you enter a settlement)
+	// The plan is to have camps/settlements etc explorable eventually, so the Domain mode will trigger the interface while inside them
+	if (key->c == 'd')
+	{
+		/*
+		if (mode != GM_DOMAIN)
+		{
+			mode = GM_DOMAIN;
+		}
+		else
+		{
+			mode = GM_DOMAIN;
+		}
+		*/
+	}
 	
 	
 	// ACTION SYSTEM
@@ -330,22 +346,53 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 	{
 		case GM_MAIN:
 		{
-			// party dump (can also use in select mode to pick dumps)
-			if (key->c == '`')
-			{
-				mPartyManager->DumpParty(currentPartyID);
-			}
-				
-			// "." is the traditional "do nothing" button. In our case, it advances time a bit and returns true.
-			if (key->c == '.' && !key->shift)
-			{
-				double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
-				mTimeManager->AdvanceTimeBy(time);
-			}
 
-
-			if (currentMapID != -1)
+			if (currentMapID == -1)
 			{
+				// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
+				if (key->c == '.' && key->shift)
+				{
+					
+					// we're on the region map, so we head 'down' into the local wilderness map
+					// this automatically generates a local wilderness map if one does not exist
+					int mapID = mMapManager->GetMapAtLocation(player_x, player_y);
+					currentMapID = mapID;
+					currentMap = mMapManager->getMap(mapID);
+
+					SpawnLevel(mapID, OUTDOOR_MAP_WIDTH / 2, OUTDOOR_MAP_HEIGHT / 2);
+
+					recomputeFov = true;
+
+					return true;
+				}
+
+				// "." is the traditional "do nothing" button. In our case, it advances time by 1 hour and returns true.
+				if (key->c == '.' && !key->shift)
+				{
+					double time = 3600.0;
+					mTimeManager->AdvanceTimeBy(time);
+				}
+
+				if (HandleHexKeyboard(key))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				// party dump (can also use in select mode to pick dumps)
+				if (key->c == '`')
+				{
+					mPartyManager->DumpParty(currentPartyID);
+				}
+
+				// "." is the traditional "do nothing" button. In our case, it advances time a bit and returns true.
+				if (key->c == '.' && !key->shift)
+				{
+					double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
+					mTimeManager->AdvanceTimeBy(time);
+				}
+
 				// "," is the "pick up" button
 				if (key->c == ',' && !key->shift)
 				{
@@ -383,7 +430,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 						}
 					}
 				}
-				
+
 				// Tab switches active character
 				if (key->vk == TCODK_TAB)
 				{
@@ -406,19 +453,16 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 						DebugLog("Tab pressed but no valid character available.");
 					}
 				}
-			}
 
-			// 'l'/'L' triggers Look Mode
-			if (key->c == 'l')
-			{
-				TriggerTargeting(TARGET_CELL, -1, 0);
-				return false;
-			}
-				
-			// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
-			if (key->c == '.' && key->shift)
-			{
-				if (currentMapID != -1)
+				// 'l'/'L' triggers Look Mode
+				if (key->c == 'l')
+				{
+					TriggerTargeting(TARGET_CELL, -1, 0);
+					return false;
+				}
+
+				// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
+				if (key->c == '.' && key->shift)
 				{
 					// check for transition between zones
 					if (currentMap->getContent(player_x, player_y) >= CONTENT_TRANSITION_STAIRS)
@@ -443,48 +487,26 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 							recomputeFov = true;
 						}
 					}
-				}
-				else 
-				{
-					// we're on the region map, so we head 'down' into the local wilderness map
-					// this automatically generates a local wilderness map if one does not exist
-					int mapID = mMapManager->GetMapAtLocation(player_x, player_y);
-					currentMapID = mapID;
-					currentMap = mMapManager->getMap(mapID);
 
-					SpawnLevel(mapID, OUTDOOR_MAP_WIDTH / 2, OUTDOOR_MAP_HEIGHT / 2);
-
-					recomputeFov = true;
-				}
-
-				return true;
-			}
-
-			if (key->c == ',' && key->shift)
-			{
-				if (currentMapID != -1 && currentMap->outdoor)
-				{
-					// we're on the local wilderness map, so head out to the region map
-
-					// TODO: Check for active enemies, don't allow zooming out if there are any (thank you Skyrim)
-
-					currentMapID = -1;
-					currentMap = NULL;
-					mTimeManager->DeregisterEntities();
-				}
-
-				return true;
-			}
-
-			if (currentMapID == -1)
-			{
-				if (HandleHexKeyboard(key))
-				{
 					return true;
 				}
-			}
-			else
-			{
+
+				if (key->c == ',' && key->shift)
+				{
+					if (currentMap->outdoor)
+					{
+						// we're on the local wilderness map, so head out to the region map
+
+						// TODO: Check for active enemies, don't allow zooming out if there are any (thank you Skyrim)
+
+						currentMapID = -1;
+						currentMap = NULL;
+						mTimeManager->DeregisterEntities();
+					}
+
+					return true;
+				}
+
 				if (currentMap->outdoor)
 				{
 					if (HandleHexKeyboard(key))

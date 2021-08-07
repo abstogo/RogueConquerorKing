@@ -43,17 +43,13 @@ enum GAME_MODE
 {
 	GM_MAIN = 0,		// normal play mode
 	GM_MENU,
-//	GM_WORLD,			// top-level campaign map mode, party shrinks to 1 entity here
 	GM_TARGET,			// target mode, selects from specific set of target Points and triggers something when Enter is pressed (see TARGET_MODE)
-//	GM_EXAMINE,			// examine mode, shows objects in a cell in more detail
-//	GM_LOOK,			// look mode, shows objects in sight
 	GM_INVENTORY,		// inventory mode, renders inventory window and allows wielding, dropping etc
 	GM_CHARACTER,		// character sheet mode, displays character statistics and allows levelling up
 //	GM_ABILITY,			// character ability mode (class abilities & proficiencies)
 //	GM_SPELL,			// spells mode
-//	GM_PARTY,			// party management mode
 //  GM_ARMY,			// army management mode
-//  GM_DOMAIN,			// domain management mode
+	GM_DOMAIN,			// domain management mode, includes camping, settlements
 //	GM_TEXTENTRY,		// text entry mode, accepts text input
 //	GM_LOG,				// view existing game log
 //	GM_CHECK,			// "Are you sure?" mode
