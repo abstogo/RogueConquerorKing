@@ -24,49 +24,78 @@ public:
 };
 JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(PurchasableSlot, Name, Cost)
 
+class BaseTag
+{
+	std::string Tag_;
+	std::string Type_;
+	std::string MenuText_;
+	std::vector<std::string> Requires_;
+
+public:
+	BaseTag(const std::string& Tag, const std::string& Type, const std::string& MenuText, const std::vector<std::string>& Requires) :
+	Tag_(Tag), Type_(Type), MenuText_(MenuText), Requires_(Requires)
+	{
+		
+	}
+
+	const std::string& Tag() const { return Tag_; }
+	const std::string& Type() const { return Type_; }
+	const std::string& MenuText() const { return MenuText_; }
+	const std::vector<std::string>& Requires() const { return Requires_; }
+};
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseTag, Tag, Type, MenuText, Requires)
+
 class BaseType
 {
 	std::string Name_;
 	std::string Buildable_;
+	std::vector<std::string> Upkeep_;
 	std::vector<std::string> Core_;
-	std::vector<std::string> Optional_;
+	std::vector<std::string> Options_;
 	std::vector<PurchasableSlot> Purchasable_;
 
 	
 public:
-	BaseType(const std::string& Name, const std::string& Buildable, const std::vector<std::string>& Core, const std::vector<std::string>& Optional,
+	BaseType(const std::string& Name, const std::string& Buildable, const std::vector<std::string>& Upkeep, const std::vector<std::string>& Core, const std::vector<std::string>& Options,
 		std::vector<PurchasableSlot>& Purchasable) :
-		Name_(Name), Buildable_(Buildable), Core_(Core), Optional_(Optional), Purchasable_(Purchasable)
+		Name_(Name), Buildable_(Buildable), Upkeep_(Upkeep), Core_(Core), Options_(Options), Purchasable_(Purchasable)
 	{}
 
 	const std::string Name() const { return Name_; }
 	const std::string Buildable() const { return Buildable_; }
-
+	const std::vector<std::string> Upkeep() const { return Upkeep_; }
 	const std::vector<std::string> Core() const { return Core_; }
-	const std::vector<std::string> Optional() const { return Optional_; }
+	const std::vector<std::string> Options() const { return Options_; }
 
 	const std::vector<PurchasableSlot> Purchasable() const { return Purchasable_; }
 };
-JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseType, Name, Buildable, Core, Optional, Purchasable)
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseType, Name, Buildable, Upkeep, Core, Options, Purchasable)
 
 
 class BaseInfoSet
 {
 	std::vector<BaseType> BaseTypes_;
+	std::vector<BaseTag> Tags_;
 
 public:
-	BaseInfoSet(const std::vector<BaseType>& BaseTypes) : BaseTypes_(BaseTypes)
+	BaseInfoSet(const std::vector<BaseType>& BaseTypes, const std::vector<BaseTag>& Tags) : BaseTypes_(BaseTypes), Tags_(Tags)
 	{}
 
 	const std::vector<BaseType>& BaseTypes() const { return BaseTypes_; }
+	const std::vector<BaseTag>& Tags() const { return Tags_; }
 };
-JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseInfoSet, BaseTypes)
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseInfoSet, BaseTypes, Tags)
 
-enum BaseTypes
+// screens are in fact handled in the tags. Each one has 3 sections: Base, Party and Manipulator.
+
+enum BaseMenuPanes
 {
-	BASE_CAMP = 0,
-	BASE_SETTLEMENT = 1,
-	BASE_STRONGHOLD = 2
+	PANE_BASE_CHARACTERS = 0,
+	PANE_PARTY_CHARACTERS = 1,
+	PANE_CHARACTER_OPTIONS = 2,
+	PANE_PARTY_INVENTORY = 3,
+	PANE_BASE_INVENTORY = 4,
+	PANE_PURCHASES = 5
 };
 
 class BaseManager
@@ -115,7 +144,12 @@ class BaseManager
 	std::vector<int> baseYPos;
 
 	std::map<std::string, int> reverseBaseTypeDictionary;
+	std::map<std::string, int> reverseBaseTagDictionary;
 
+	int controlPane = 0;
+	int menuPosition = 0;
+
+	
 public:
 	BaseManager(BaseInfoSet& _bis) : baseInfoSet(_bis)
 	{}
@@ -143,10 +177,19 @@ public:
 
 	std::vector<std::pair<int, int>>& getPartyInventory(int partyID) { return baseInventory[partyID]; }
 
+	bool CharacterCanUseAction(int baseID, int characterID, int tag);
+	std::vector<BaseTag> GetCharacterActionList(int baseID, int charID);
+	int GetSelectedCharacter(int baseID);
+	
 	int GetBaseX(int baseID) { return baseXPos[baseID]; }
 	int GetBaseY(int baseID) { return baseYPos[baseID]; }
 	void SetBaseX(int baseID, int xpos) { baseXPos[baseID] = xpos; }
 	void SetBaseY(int baseID, int ypos) { baseYPos[baseID] = ypos; }
+
+	void ControlCommand(TCOD_key_t* key,int baseID);
+	
+	void RenderBaseMenu(int xpos, int ypos);
+	void RenderBaseMenu(int baseID);
 	
 	void DumpBase(int partyID);
 

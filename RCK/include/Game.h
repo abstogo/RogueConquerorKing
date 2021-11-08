@@ -95,6 +95,8 @@ class Game
 
 	std::string playLogString;
 
+	int menuPosition[GM_MAX];
+	
 	int inventoryPosition = 0;
 	int abilityPosition = 0;
 

@@ -3,15 +3,19 @@
     {
       "Name": "Camp",
       "Buildable": "True",
+      "Upkeep": [
+        "Supplies"
+      ],
       "Core": [
         "Holding",
         "Storage",
         "Rest",
-        "Upkeep:Supplies"
-      ],
-      "Optional": [
+        "Hunt",
         "Forage",
-        "Hunt"
+        "NoForage"
+      ],
+      "Options": [
+        
       ],
       "Purchasable": [
 
@@ -20,16 +24,20 @@
     {
       "Name": "SettlementBase",
       "Buildable": "False",
+      "Upkeep": [
+        "Supplies",
+        "Coin"
+      ],
       "Core": [
         "Holding",
         "Storage",
         "Rest",
         "BedRest",
-        "Return"
+        "Craft"
       ],
-      "Optional": [
+      "Options": [
         "Upkeep:Supplies",
-        "Upkeep:LivingCosts"
+        "Upkeep:Coin"
       ],
       "Purchasable": [
         {
@@ -37,6 +45,75 @@
           "Cost": 35000
         }
       ]
+    }
+  ],
+
+  "Tags": [
+    {
+      "Tag": "",
+      "Type": "",
+      "MenuText": "",
+      "Requires": []
+    },
+    {
+      "Tag": "Holding",
+      "Type": "BaseScreen",
+      "MenuText": "",
+      "Requires": []
+    },
+    {
+      "Tag": "Storage",
+      "Type": "BaseScreen",
+      "MenuText": "",
+      "Requires": []
+    },
+    {
+      "Tag": "LongRest",
+      "Type": "CharacterAction",
+      "MenuText": "Long Rest",
+      "Requires": []
+    },
+    {
+      "Tag": "BedRest",
+      "Type": "CharacterAction",
+      "MenuText": "Bed Rest",
+      "Requires": []
+    },
+    {
+      "Tag": "Hunt",
+      "Type": "CharacterAction",
+      "MenuText": "Hunt for game",
+      "Requires": []
+    },
+    {
+      "Tag": "Craft",
+      "Type": "CharacterAction",
+      "MenuText": "Craft an item",
+      "Requires": [ "Proficiency:Craft:Any", "Workshop:Craft:Any" ]
+    },
+    {
+      "Tag": "Forage",
+      "Type": "CharacterAction",
+      "MenuText": "Forage",
+      "Requires": [ "Option:NoForage" ]
+    },
+    {
+      "Tag": "NoForage",
+      "Type": "CharacterAction",
+      "MenuText": "Stop foraging",
+      "Requires": [ "Option:Forage" ]
+    },
+    {
+      "Tag": "Upkeep:Supplies",
+      "Type": "Option",
+      "MenuText": "Use party supplies for upkeep",
+      "Requires": [ "Item:Food" ]
+    },
+    {
+      "Tag": "Upkeep:Coin",
+      "Type": "Option",
+      "MenuText": "Use coin for upkeep",
+      "Requires": [ "Item:Currency" ]
     }
   ]
 }

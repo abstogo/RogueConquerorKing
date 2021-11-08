@@ -325,16 +325,17 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 	// The plan is to have camps/settlements etc explorable eventually, so the Domain mode will trigger the interface while inside them
 	if (key->c == 'd')
 	{
-		/*
-		if (mode != GM_DOMAIN)
+		if (currentMapID == -1)
 		{
-			mode = GM_DOMAIN;
+			if (mode != GM_DOMAIN)
+			{
+				mode = GM_DOMAIN;
+			}
+			else
+			{
+				mode = GM_DOMAIN;
+			}
 		}
-		else
-		{
-			mode = GM_DOMAIN;
-		}
-		*/
 	}
 	
 	
@@ -529,30 +530,30 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 		{
 			if (key->vk == TCODK_UP)
 			{
-				inventoryPosition--;
-				if (inventoryPosition < 0)
+				menuPosition[mode]--;
+				if (menuPosition[mode] < 0)
 				{
-					inventoryPosition = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
+					menuPosition[mode] = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
 				}
 			}
 			else if (key->vk == TCODK_DOWN)
 			{
-				inventoryPosition++;
-				if (inventoryPosition == mCharacterManager->GetInventory(currentCharacterID).size())
+				menuPosition[mode]++;
+				if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
 				{
-					inventoryPosition = 0;
+					menuPosition[mode] = 0;
 				}
 			}
 			else if (key->vk == TCODK_ENTER)
 			{
 				// enter is used to equip and unequip
-				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, inventoryPosition) != -1)
+				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
 				{
-					mCharacterManager->UnequipItem(currentCharacterID, inventoryPosition);
+					mCharacterManager->UnequipItem(currentCharacterID, menuPosition[mode]);
 				}
 				else
 				{
-					mCharacterManager->EquipItem(currentCharacterID, inventoryPosition);
+					mCharacterManager->EquipItem(currentCharacterID, menuPosition[mode]);
 				}
 			}
 		}
@@ -660,6 +661,45 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				break;
 			}
 				
+		}
+		break;
+
+		case(GM_DOMAIN):
+		{
+			if (key->vk == TCODK_UP)
+			{
+				menuPosition[mode]--;
+				if (menuPosition[mode] < 0)
+				{
+					menuPosition[mode] = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
+				}
+			}
+			else if (key->vk == TCODK_DOWN)
+			{
+				menuPosition[mode]++;
+				if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
+				{
+					menuPosition[mode] = 0;
+				}
+			}
+			else if (key->vk == TCODK_ENTER)
+			{
+				// enter is used to equip and unequip
+				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
+				{
+					mCharacterManager->UnequipItem(currentCharacterID, menuPosition[mode]);
+				}
+				else
+				{
+					mCharacterManager->EquipItem(currentCharacterID, menuPosition[mode]);
+				}
+			}
+		}
+		break;
+
+		case(GM_CHARACTER):
+		{
+			
 		}
 		break;
 	}
