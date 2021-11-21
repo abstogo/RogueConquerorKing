@@ -41,51 +41,99 @@ int BaseManager::shellGenerate()
 
 	baseType.push_back(0); // default is camp
 	baseType.push_back(-1);
-	std::vector<int> pcs;
-	playerCharacters.push_back(pcs);
-	std::vector<int> henchs;
-	henchmen.push_back(henchs);
-	std::vector<int> anims;
-	animals.push_back(anims);
-	std::vector<std::pair<int, int>> inv;
-	baseInventory.push_back(inv);
-	totalSuppliesFood.push_back(0);
 	baseXPos.push_back(-1);
 	baseYPos.push_back(-1);
+	basePartyID.push_back(-1);
 
 	return output;
 }
 
-void BaseManager::AddPlayerCharacter(int baseID, int characterID)
+void BaseManager::AddPlayerCharacter(int characterID)
 {
-	playerCharacters[baseID].push_back(characterID);
-	DebugLog("PC (character ID #" + std::to_string(characterID) + ") added to party #" + std::to_string(baseID));
+	playerCharacters.push_back(characterID);
+	DebugLog("PC (character ID #" + std::to_string(characterID) + ") added to party");
 }
 
-void BaseManager::AddHenchman(int baseID, int characterID)
+void BaseManager::AddHenchman(int characterID)
 {
-	henchmen[baseID].push_back(characterID);
-	DebugLog("Henchman (character ID #" + std::to_string(characterID) + ") added to party #" + std::to_string(baseID));
+	henchmen.push_back(characterID);
+	DebugLog("Henchman (character ID #" + std::to_string(characterID) + ") added to party");
 }
 
-void BaseManager::AddAnimal(int baseID, int mobID)
+void BaseManager::AddAnimal(int mobID)
 {
-	animals[baseID].push_back(mobID);
-	DebugLog("Animal (mob ID #" + std::to_string(mobID) + ") added to party #" + std::to_string(baseID));
+	animals.push_back(mobID);
+	DebugLog("Animal (mob ID #" + std::to_string(mobID) + ") added to party");
 }
 
-void BaseManager::RemoveCharacter(int baseID, int entityID)
+void BaseManager::RemoveCharacter(int entityID)
 {
-	if(std::remove(playerCharacters[baseID].begin(), playerCharacters[baseID].end(), entityID) == playerCharacters[baseID].end())
+	if(std::remove(playerCharacters.begin(), playerCharacters.end(), entityID) == playerCharacters.end())
 	{
 		// not found in the PC set, check Henches too
-		std::remove(henchmen[baseID].begin(), henchmen[baseID].end(), entityID);
+		std::remove(henchmen.begin(), henchmen.end(), entityID);
 	}
 }
 
-void BaseManager::RemoveAnimal(int baseID, int entityID)
+void BaseManager::RemoveAnimal(int entityID)
 {
-	std::remove(animals[baseID].begin(), animals[baseID].end(), entityID);
+	std::remove(animals.begin(), animals.end(), entityID);
+}
+
+void BaseManager::MergeInParty(int baseID, int partyID)
+{
+	gGame->mPartyManager->MergeParty(partyID, basePartyID[baseID]);
+	gGame->SetSelectedPartyID(basePartyID[baseID]);
+}
+
+int BaseManager::SpawnOutParty(int baseID)
+{
+	// this creates a new party with the selected characters, animals and items from the menu.
+	// Note that this does not automatically destroy the old Base 
+	// TODO: Destroy base when it is now completely empty if it has the "autodestroy" property
+
+	int oldPartyID = basePartyID[baseID];
+	int newPartyID = gGame->mPartyManager->GenerateEmptyParty();
+
+	for (int c : playerCharacters)
+	{
+		gGame->mPartyManager->AddPlayerCharacter(newPartyID,c);
+		gGame->mPartyManager->RemoveCharacter(oldPartyID, c);
+	}
+	for (int c : henchmen)
+	{
+		gGame->mPartyManager->AddHenchman(newPartyID, c);
+		gGame->mPartyManager->RemoveCharacter(oldPartyID, c);
+	}
+	for (int a : animals)
+	{
+		gGame->mPartyManager->AddAnimal(newPartyID, a);
+		gGame->mPartyManager->RemoveAnimal(oldPartyID, a);
+	}
+	playerCharacters.clear();
+	henchmen.clear();
+	animals.clear();
+
+	for (std::pair<int, int> item : inventory)
+	{
+		gGame->mPartyManager->getPartyInventory(newPartyID).push_back(item);
+		std::vector<std::pair<int, int>> oldItems = gGame->mPartyManager->getPartyInventory(oldPartyID);
+		// now reduce all the "olditems" by the number moved over, and remove the item if it's now 0
+		std::vector<std::pair<int, int>> rebuild;
+		for (std::pair<int, int> p : oldItems)
+		{
+			if (p.first == item.first)
+			{
+				p.second -= item.second;
+				if (p.second > 0)
+					rebuild.push_back(p);
+			}
+		}
+		gGame->mPartyManager->SetPartyInventory(oldPartyID, rebuild);
+	}
+	inventory.clear();
+
+	return newPartyID;
 }
 
 int BaseManager::GenerateCampAtLocation(int partyID, int basePosX, int basePosY)
@@ -93,9 +141,11 @@ int BaseManager::GenerateCampAtLocation(int partyID, int basePosX, int basePosY)
 	DebugLog("Creating a camp controlled by party #" + std::to_string(partyID) + " at (" + std::to_string(basePosX) + "," + std::to_string(basePosY) + ")");
 	int output = shellGenerate();
 
+	basePartyID[output] = partyID; // take on original Party ID
+
 	baseXPos[output] = basePosX;
 	baseYPos[output] = basePosY;
-	controllingPartyID[output] = partyID;
+
 	int campID = 0;
 	try
 	{
@@ -127,22 +177,23 @@ bool BaseManager::TimeHandler(int rounds, int turns, int hours, int days, int we
 
 void BaseManager::DumpBase(int baseID)
 {
-	DebugLog("Dumping base");
+	DebugLog("Dumping base party");
 	
-	for(int character : playerCharacters[baseID])
+	for(int character : gGame->mPartyManager->getPlayerCharacters(basePartyID[baseID]))
 	{
 		gGame->mCharacterManager->DumpCharacter(character);
 	}
-
-	for(int hench : henchmen[baseID])
+	
+	for(int hench : gGame->mPartyManager->getHenchmen(basePartyID[baseID]))
 	{
 		gGame->mCharacterManager->DumpCharacter(hench);
 	}
-
-	for(int beast : animals[baseID])
+	
+	for(int beast : gGame->mPartyManager->getAnimals(basePartyID[baseID]))
 	{
 		gGame->mMobManager->DumpMob(beast);
 	}
+	
 }
 
 
@@ -241,6 +292,7 @@ void BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			int charID = GetSelectedCharacter(baseID);
 			std::vector<BaseTag> bts = GetCharacterActionList(baseID, charID);
 			// set character to perform action
+			pcSelectedAction[baseID][charID] = key->c - '1';
 		}
 	}
 }
@@ -259,25 +311,25 @@ void BaseManager::RenderBaseMenu(int baseID)
 	gGame->sampleConsole->printFrame(0, SAMPLE_SCREEN_HEIGHT / 2, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, false, TCOD_BKGND_SET, "");
 
 	int bT = baseType[baseID];
-	int partyID = controllingPartyID[baseID];
+	int partyID = basePartyID[baseID];
 
 	if(controlPane < PANE_PARTY_INVENTORY)
 	{
 		// Character Screen:
-		// Top Left: Characters in Party located at base
-		// Top Right: Characters resident at base
+		// Top Left: Characters in Base Party
+		// Top Right: Characters in Intended Party
 		// Bottom: Choices available to selected character
 
 		// draw out the characters from the managers
 		std::vector<int> base_cs;
-		std::vector<int> base_pcs = playerCharacters[baseID];
-		std::vector<int> base_h = henchmen[baseID];
+		std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
+		std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
 		std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
 		std::copy(base_h.begin(), base_h.end(), base_cs.begin());
 
-		std::vector<int> party_cs;
-		std::copy(gGame->mPartyManager->getPlayerCharacters(partyID).begin(), gGame->mPartyManager->getPlayerCharacters(partyID).end(), party_cs.begin());
-		std::copy(gGame->mPartyManager->getHenchmen(partyID).begin(), gGame->mPartyManager->getHenchmen(partyID).end(), party_cs.begin());
+		std::vector<int> out_cs;
+		std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
+		std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
 
 		// add overall frame with title
 		gGame->sampleConsole->printFrame(0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, false, TCOD_BKGND_SET, "Party Management");
@@ -292,9 +344,9 @@ void BaseManager::RenderBaseMenu(int baseID)
 		}
 
 		// output party characters
-		for (int i = 0; i < party_cs.size(); i++)
+		for (int i = 0; i < out_cs.size(); i++)
 		{
-			std::string name = gGame->mCharacterManager->getCharacterName(party_cs[i]);
+			std::string name = gGame->mCharacterManager->getCharacterName(out_cs[i]);
 			TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 			int y_pos = 3 + i;
 			gGame->sampleConsole->printEx(2 + SAMPLE_SCREEN_WIDTH, y_pos, backg, TCOD_LEFT, name.c_str());
@@ -323,6 +375,8 @@ void BaseManager::RenderBaseMenu(int baseID)
 				BaseTag t = bt_list[i];
 				int y = SAMPLE_SCREEN_HEIGHT + 3 + i;
 				std::string outp = std::to_string(i) + " : " + t.MenuText();
+				if(t.Indicator() != "")
+					outp += " (" + t.Indicator() + ")";
 				TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 				gGame->sampleConsole->printEx(3, y, backg, TCOD_LEFT, outp.c_str());
 			}
@@ -342,7 +396,7 @@ std::vector<BaseTag> BaseManager::GetCharacterActionList(int baseID, int charID)
 	std::vector<BaseTag> output;
 
 	int bT = baseType[baseID];
-	int partyID = controllingPartyID[baseID];
+	int partyID = basePartyID[baseID];
 
 	BaseType b = baseInfoSet.BaseTypes()[bT];
 
@@ -351,10 +405,12 @@ std::vector<BaseTag> BaseManager::GetCharacterActionList(int baseID, int charID)
 		std::string c = b.Core()[i];
 		int tagID = reverseBaseTagDictionary[c];
 		BaseTag t = baseInfoSet.Tags()[tagID];
-		
-		if (CharacterCanUseAction(baseID, charID, tagID))
+		if(t.Type() == "CharacterAction")
 		{
-			output.push_back(t);
+			if (CharacterCanUseAction(baseID, charID, tagID))
+			{
+				output.push_back(t);
+			}
 		}
 	}
 
@@ -363,16 +419,18 @@ std::vector<BaseTag> BaseManager::GetCharacterActionList(int baseID, int charID)
 
 int BaseManager::GetSelectedCharacter(int baseID)
 {
-	int partyID = controllingPartyID[baseID];
+	int partyID = basePartyID[baseID];
 	
 	// draw out the characters from the managers
 	std::vector<int> base_cs;
-	std::copy(playerCharacters[baseID].begin(), playerCharacters[baseID].end(), base_cs.begin());
-	std::copy(henchmen[baseID].begin(), henchmen[baseID].end(), base_cs.begin());
+	std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
+	std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
+	std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
+	std::copy(base_h.begin(), base_h.end(), base_cs.begin());
 
-	std::vector<int> party_cs;
-	std::copy(gGame->mPartyManager->getPlayerCharacters(partyID).begin(), gGame->mPartyManager->getPlayerCharacters(partyID).end(), party_cs.begin());
-	std::copy(gGame->mPartyManager->getHenchmen(partyID).begin(), gGame->mPartyManager->getHenchmen(partyID).end(), party_cs.begin());
+	std::vector<int> out_cs;
+	std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
+	std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
 
 	
 	// selected character ID
@@ -383,7 +441,7 @@ int BaseManager::GetSelectedCharacter(int baseID)
 	}
 	else
 	{
-		charID = party_cs[menuPosition];
+		charID = out_cs[menuPosition];
 	}
 
 	return charID;
@@ -398,6 +456,17 @@ bool BaseManager::CharacterCanUseAction(int baseID, int characterID, int tag)
 	
 	if (t.Requires().size() > 0)
 		return false;
+
+	for(int i=0;i<t.Requires().size();i++)
+	{
+		std::string tagRequire = t.Requires()[i];
+		std::string opt = "Options";
+		if (std::equal(opt.begin(), opt.end(), tagRequire.begin()))
+		{
+			int activeTag = pcActiveTags[baseID][characterID][tagRequire.substr(9)];
+		}
+	}
+	
 	return true;
 }
 
@@ -407,7 +476,7 @@ void BaseManager::RenderBaseMenu(int xpos, int ypos)
 	{
 		if ((xpos == baseXPos[i]) && (ypos == baseYPos[i]))
 		{
-			if(gGame->GetSelectedPartyID() == controllingPartyID[i])
+			if(gGame->GetSelectedPartyID() == basePartyID[i])
 				RenderBaseMenu(i);
 		}
 	}

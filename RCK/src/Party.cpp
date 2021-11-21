@@ -55,10 +55,17 @@ int PartyManager::shellGenerate()
 	totalSuppliesFood.push_back(0);
 	partyXPos.push_back(-1);
 	partyYPos.push_back(-1);
+	active.push_back(true);
 
 	return output;
 }
 
+int PartyManager::GenerateEmptyParty()
+{
+	DebugLog("Creating empty Party");
+	int output = shellGenerate();
+	return output;
+}
 
 int PartyManager::GenerateBaseTestParty()
 {
@@ -116,6 +123,36 @@ void PartyManager::GenerateAnimal(int partyID, std::string name)
 {
 	int animalID = gGame->mMobManager->GenerateMonster(name, -1, -1, -1, false);
 	AddAnimal(partyID, animalID);
+}
+
+void PartyManager::MergeParty(int fromPartyID, int toPartyID)
+{
+	for (int c : playerCharacters[fromPartyID])
+	{
+		playerCharacters[toPartyID].push_back(c);
+	}
+	for (int c : henchmen[fromPartyID])
+	{
+		henchmen[toPartyID].push_back(c);
+	}
+	for (int a : animals[fromPartyID])
+	{
+		animals[toPartyID].push_back(a);
+	}
+	playerCharacters[fromPartyID].clear();
+	henchmen[fromPartyID].clear();
+	animals[fromPartyID].clear();
+
+	for (std::pair<int, int> item : partyInventory[fromPartyID])
+	{
+		partyInventory[toPartyID].push_back(item);
+	}
+	partyInventory[fromPartyID].clear();
+
+	partyXPos[fromPartyID] = -1;
+	partyYPos[fromPartyID] = -1;
+
+	active[fromPartyID] = false;
 }
 
 int PartyManager::getNextPlayerCharacter(int partyID, int currentPC)

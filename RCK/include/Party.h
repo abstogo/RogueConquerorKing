@@ -38,16 +38,17 @@ class PartyManager
 	std::vector<std::vector<std::pair<int, int>>> partyInventory; // inventory is set up as pairs of IDs and counts (eg we have 25 flasks of military oil)
 	std::vector<int> totalCarryCapacity; // in stone. Total of all porters and animals (which includes carts etc). We assume the non-porter Henches and the PCs do not carry items between dungeons.
 
-	
 	std::vector<int> totalSuppliesFood; // in mandays. 
 	// std::vector<int> totalSuppliesWater; // add this later
 
-	int nextPartyID;
+	int nextPartyID; // at some point we should make this go back to inactive entries so it doesn't inflate forever
 
 	int shellGenerate(); // just creates all the internal structures for the next party, with nothing added in
 
 	std::vector<int> partyXPos;
 	std::vector<int> partyYPos;
+
+	std::vector<bool> active;
 
 public:
 	PartyManager();
@@ -56,6 +57,7 @@ public:
 	// Manager Factory
 	static PartyManager* LoadPartyData();
 
+	int GenerateEmptyParty();
 	// convenience function 1. Generates 1 Fighter and a Mule
 	int GenerateBaseTestParty();
 	// second convenience function for AI control testing. Generates 2 Fighters, 1 Level 0 Hench and a Mule
@@ -85,6 +87,7 @@ public:
 	int getTotalCarryCapacity(int partyID) { return totalCarryCapacity[partyID]; }
 
 	std::vector<std::pair<int, int>>& getPartyInventory(int partyID) { return partyInventory[partyID]; }
+	void SetPartyInventory(int partyID, std::vector<std::pair<int, int>>& newInventory) { partyInventory[partyID] = newInventory; }
 
 	int getNextPlayerCharacter(int partyID, int currentPC = -1); // if currentPC is -1, get the first one. Does not return incapable PCs; returns -1 if no incapable PCs left (which generally means game over)
 
@@ -97,6 +100,8 @@ public:
 
 	void RemoveCharacter(int partyID, int entityID);
 	void RemoveAnimal(int partyID, int entityID);
+
+	void MergeParty(int fromID, int toID);
 	
 	void DebugLog(std::string message);
 

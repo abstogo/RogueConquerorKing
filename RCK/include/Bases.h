@@ -28,22 +28,24 @@ class BaseTag
 {
 	std::string Tag_;
 	std::string Type_;
+	std::string Indicator_;
 	std::string MenuText_;
 	std::vector<std::string> Requires_;
 
 public:
-	BaseTag(const std::string& Tag, const std::string& Type, const std::string& MenuText, const std::vector<std::string>& Requires) :
-	Tag_(Tag), Type_(Type), MenuText_(MenuText), Requires_(Requires)
+	BaseTag(const std::string& Tag, const std::string& Type, const std::string& Indicator, const std::string& MenuText, const std::vector<std::string>& Requires) :
+	Tag_(Tag), Type_(Type), Indicator_(Indicator), MenuText_(MenuText), Requires_(Requires)
 	{
 		
 	}
 
 	const std::string& Tag() const { return Tag_; }
 	const std::string& Type() const { return Type_; }
+	const std::string& Indicator() const { return Indicator_; }
 	const std::string& MenuText() const { return MenuText_; }
 	const std::vector<std::string>& Requires() const { return Requires_; }
 };
-JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseTag, Tag, Type, MenuText, Requires)
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseTag, Tag, Type, Indicator, MenuText, Requires)
 
 class BaseType
 {
@@ -119,23 +121,26 @@ class BaseManager
 	
 	// Core Base info
 	std::vector<int> baseType; // what type of Base is this? Indexes into the BaseInfoSet
-	std::vector<int> controllingPartyID; // what party controls this Base
-
-	// Resident Characters
-	// Characters can be either in a Base or in a Party. (We may add the idea of an Army later too.) These work the same way as in PartyManager
-	std::vector<std::vector<int>> playerCharacters; // playable characters resident, referenced to CharacterManager
-	std::vector<std::vector<int>> henchmen; // non-playable characters resident, referenced to CharacterManager
-	std::vector<std::vector<int>> animals; // animal henches etc, referenced to MobManager
-	// std::vector<std::vector<int>> mercenaries; // non-playable characters, only present in Region parties and Camps, referenced to TroopManager and gets instantiated into MobManager
-
-	// Inventory
-	// Bases do not have a carry capacity. (However we may end up having some kind of mechanics for large-scale storage, secure storage etc.)
-
-	std::vector<std::vector<std::pair<int, int>>> baseInventory; // inventory is set up as pairs of IDs and counts (eg we have 25 flasks of military oil)
+	//std::vector<int> controllingFaction; // to be used when we have Factions
 	
-	std::vector<int> totalSuppliesFood; // in mandays. This is only directly relevant for Camps, since other areas use Living Costs.
-	// std::vector<int> totalSuppliesWater; // add this later
+	// Base Party
+	// When the Base is created it takes on the current Party. Whenever a Party returns to the base it merges with the Base Party.
+	// When the Base is packed up, the Base Party becomes the current Party.
+	// In future we'll have more complex controls for managing characters between parties (sub-groups etc) to make big camps easier to manage,
+	// but for now this will do
 
+	std::vector<int> basePartyID;
+
+	// However, we need to store which characters will be in the split-off Party *before* they leave.
+	// The chosen characters are not yet a Party and should not be ticked until they leave.
+	// They should also be maintained where possible between trips to minimise clicks
+	// But note there is only eveer one of these as it's pure interface
+	std::vector<int> playerCharacters; 
+	std::vector<int> henchmen; 
+	std::vector<int> animals; 
+
+	std::vector<std::pair<int, int>> inventory; // inventory is set up as pairs of IDs and counts (eg we have 25 flasks of military oil)
+	
 	int nextBaseID;
 
 	int shellGenerate(); // just creates all the internal structures for the next party, with nothing added in
@@ -149,6 +154,8 @@ class BaseManager
 	int controlPane = 0;
 	int menuPosition = 0;
 
+	std::vector<std::vector<int>> pcSelectedAction;
+	std::vector<std::vector<std::map<std::string, int>>> pcActiveTags;
 	
 public:
 	BaseManager(BaseInfoSet& _bis) : baseInfoSet(_bis)
@@ -161,21 +168,21 @@ public:
 
 	int GenerateCampAtLocation(int partyID, int basePosX, int basePosY);
 
-	void AddPlayerCharacter(int baseID, int characterID);
-	void AddHenchman(int baseID, int characterID);
-	void AddAnimal(int baseID, int mobID);
+	void MergeInParty(int baseID, int partyID);
+	int SpawnOutParty(int baseID);
 
-	void RemoveCharacter(int baseID, int entityID);
-	void RemoveAnimal(int baseID, int entityID);
+	// GUI output control functions - interface is same as Party!
+
+	void AddPlayerCharacter(int characterID);
+	void AddHenchman(int characterID);
+	void AddAnimal(int mobID);
+	void RemoveCharacter(int entityID);
+	void RemoveAnimal(int entityID);
 
 	// Accessors
-	std::vector<int>& getPlayerCharacters(int partyID) { return playerCharacters[partyID]; }
-	std::vector<int>& getHenchmen(int partyID) { return henchmen[partyID]; }
-	std::vector<int>& getAnimals(int partyID) { return animals[partyID]; }
-	
-	int getTotalSuppliesFood(int partyID) { return totalSuppliesFood[partyID]; }
-
-	std::vector<std::pair<int, int>>& getPartyInventory(int partyID) { return baseInventory[partyID]; }
+	std::vector<int>& getPlayerCharacters() { return playerCharacters; }
+	std::vector<int>& getHenchmen() { return henchmen; }
+	std::vector<int>& getAnimals() { return animals; }
 
 	bool CharacterCanUseAction(int baseID, int characterID, int tag);
 	std::vector<BaseTag> GetCharacterActionList(int baseID, int charID);

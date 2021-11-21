@@ -181,7 +181,9 @@ public:
 	
 	int& GetCurrentMap() { return currentMapID; }
 	int GetSelectedCharacterID() { return currentCharacterID; }
+	void SetSelectedCharacterID(int characterID) { currentCharacterID = characterID; }
 	int GetSelectedPartyID() { return currentPartyID; }
+	void SetSelectedPartyID(int partyID) { currentPartyID = partyID; }
 
 	bool ResolveAttacks(int attackerManager, int attackerID, int defenderManager, int defenderID, bool missile); // if returns true we're finished so return to GM_MAIN
 	bool ResolveAttack(int attackBonus, int damageDie, int damageBonus, int defenderMananger, int defenderID, bool missile);

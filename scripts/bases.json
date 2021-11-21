@@ -9,7 +9,8 @@
       "Core": [
         "Holding",
         "Storage",
-        "Rest",
+        "Wait",
+        "LongRest",
         "Hunt",
         "Forage",
         "NoForage"
@@ -31,7 +32,8 @@
       "Core": [
         "Holding",
         "Storage",
-        "Rest",
+        "Wait",
+        "LongRest",
         "BedRest",
         "Craft"
       ],
@@ -58,60 +60,77 @@
     {
       "Tag": "Holding",
       "Type": "BaseScreen",
+      "Indicator": "",
       "MenuText": "",
       "Requires": []
     },
     {
       "Tag": "Storage",
       "Type": "BaseScreen",
+      "Indicator": "",
       "MenuText": "",
+      "Requires": []
+    },
+    {
+      "Tag": "Wait",
+      "Type": "CharacterAction",
+      "Indicator": "",
+      "MenuText": "Do Nothing",
       "Requires": []
     },
     {
       "Tag": "LongRest",
       "Type": "CharacterAction",
+      "Indicator": "r",
       "MenuText": "Long Rest",
       "Requires": []
     },
     {
       "Tag": "BedRest",
       "Type": "CharacterAction",
+      "Indicator": "R",
       "MenuText": "Bed Rest",
       "Requires": []
     },
     {
       "Tag": "Hunt",
       "Type": "CharacterAction",
+      "Indicator": "H",
       "MenuText": "Hunt for game",
       "Requires": []
     },
     {
       "Tag": "Craft",
       "Type": "CharacterAction",
+      "Indicator": "C",
       "MenuText": "Craft an item",
       "Requires": [ "Proficiency:Craft:Any", "Workshop:Craft:Any" ]
     },
     {
       "Tag": "Forage",
       "Type": "CharacterAction",
+      "Indicator": "F",
       "MenuText": "Forage",
       "Requires": [ "Option:NoForage" ]
     },
     {
       "Tag": "NoForage",
       "Type": "CharacterAction",
+      "Indicator": "",
       "MenuText": "Stop foraging",
       "Requires": [ "Option:Forage" ]
     },
     {
       "Tag": "Upkeep:Supplies",
       "Type": "Option",
+      "Indicator": "",
       "MenuText": "Use party supplies for upkeep",
       "Requires": [ "Item:Food" ]
     },
     {
       "Tag": "Upkeep:Coin",
       "Type": "Option",
+      "Indicator": "",
       "MenuText": "Use coin for upkeep",
       "Requires": [ "Item:Currency" ]
     }
