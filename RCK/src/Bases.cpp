@@ -297,6 +297,26 @@ void BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 	}
 }
 
+std::vector<int> BaseManager::GetBasePartyCharacters(int baseID)
+{
+	int partyID = basePartyID[baseID];
+	std::vector<int> base_cs;
+	std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
+	std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
+	std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
+	std::copy(base_h.begin(), base_h.end(), base_cs.begin());
+	return base_cs;
+}
+
+std::vector<int> BaseManager::GetOutPartyCharacters(int baseID)
+{
+	int partyID = basePartyID[baseID];
+	std::vector<int> out_cs;
+	std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
+	std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
+	return out_cs;
+}
+
 void BaseManager::RenderBaseMenu(int baseID)
 {
 	// 2 screens, the Character and Inventory screens, tab to switch
@@ -321,15 +341,8 @@ void BaseManager::RenderBaseMenu(int baseID)
 		// Bottom: Choices available to selected character
 
 		// draw out the characters from the managers
-		std::vector<int> base_cs;
-		std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
-		std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
-		std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
-		std::copy(base_h.begin(), base_h.end(), base_cs.begin());
-
-		std::vector<int> out_cs;
-		std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
-		std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
+		std::vector<int> base_cs = GetBasePartyCharacters(baseID);
+		std::vector<int> out_cs = GetOutPartyCharacters(baseID);
 
 		// add overall frame with title
 		gGame->sampleConsole->printFrame(0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, false, TCOD_BKGND_SET, "Party Management");
@@ -338,6 +351,7 @@ void BaseManager::RenderBaseMenu(int baseID)
 		for(int i = 0; i<base_cs.size();i++)
 		{
 			std::string name = gGame->mCharacterManager->getCharacterName(base_cs[i]);
+			if (gGame->mPartyManager->IsAPC(partyID, base_cs[i])) name += "*";
 			TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 			int y_pos = 3 + i;
 			gGame->sampleConsole->printEx(2, y_pos, backg, TCOD_LEFT, name.c_str());
@@ -347,6 +361,7 @@ void BaseManager::RenderBaseMenu(int baseID)
 		for (int i = 0; i < out_cs.size(); i++)
 		{
 			std::string name = gGame->mCharacterManager->getCharacterName(out_cs[i]);
+			if (gGame->mPartyManager->IsAHenchman(partyID, base_cs[i])) name += "*";
 			TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 			int y_pos = 3 + i;
 			gGame->sampleConsole->printEx(2 + SAMPLE_SCREEN_WIDTH, y_pos, backg, TCOD_LEFT, name.c_str());

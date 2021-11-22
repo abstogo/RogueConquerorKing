@@ -156,6 +156,9 @@ class BaseManager
 
 	std::vector<std::vector<int>> pcSelectedAction;
 	std::vector<std::vector<std::map<std::string, int>>> pcActiveTags;
+
+	std::vector<int> GetBasePartyCharacters(int baseID);
+	std::vector<int> GetOutPartyCharacters(int baseID);
 	
 public:
 	BaseManager(BaseInfoSet& _bis) : baseInfoSet(_bis)
