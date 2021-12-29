@@ -95,7 +95,9 @@ public:
 	int GetPartyY(int partyID) { return partyYPos[partyID]; }
 	void SetPartyX(int partyID, int xpos) { partyXPos[partyID] = xpos; }
 	void SetPartyY(int partyID, int ypos) { partyYPos[partyID] = ypos; }
-	
+
+	int GetPartyAt(int x, int y);
+
 	void DumpParty(int partyID);
 
 	void RemoveCharacter(int partyID, int entityID);

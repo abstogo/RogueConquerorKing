@@ -80,6 +80,32 @@ void BaseManager::RemoveAnimal(int entityID)
 	std::remove(animals.begin(), animals.end(), entityID);
 }
 
+int BaseManager::GetBaseAt(int find_x, int find_y)
+{
+	int output = -1;
+	int i = 0;
+	for (int x : baseXPos)
+	{
+		if (x == find_x)
+		{
+			if (baseYPos[i] == find_y)
+			{
+				output = i;
+				break;
+			}
+		}
+		i++;
+	}
+
+	return output;
+}
+
+std::string BaseManager::GetBaseType(int baseID)
+{
+	int bT = baseType[baseID];
+	return baseInfoSet.BaseTypes()[bT].Name();
+}
+
 void BaseManager::MergeInParty(int baseID, int partyID)
 {
 	gGame->mPartyManager->MergeParty(partyID, basePartyID[baseID]);

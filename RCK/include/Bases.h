@@ -182,6 +182,12 @@ public:
 	void RemoveCharacter(int entityID);
 	void RemoveAnimal(int entityID);
 
+	int GetBaseAt(int x, int y);
+	int GetBaseOwner(int baseID)
+	{
+		return basePartyID[baseID];
+	}
+
 	// Accessors
 	std::vector<int>& getPlayerCharacters() { return playerCharacters; }
 	std::vector<int>& getHenchmen() { return henchmen; }
@@ -190,6 +196,8 @@ public:
 	bool CharacterCanUseAction(int baseID, int characterID, int tag);
 	std::vector<BaseTag> GetCharacterActionList(int baseID, int charID);
 	int GetSelectedCharacter(int baseID);
+
+	std::string GetBaseType(int baseID);
 	
 	int GetBaseX(int baseID) { return baseXPos[baseID]; }
 	int GetBaseY(int baseID) { return baseYPos[baseID]; }

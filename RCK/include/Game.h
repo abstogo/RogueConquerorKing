@@ -78,6 +78,7 @@ class Game
 	int currentPartyID;
 	int currentCharacterID;
 	int currentMapID;
+	int currentBaseID;
 
 	int mode;
 	

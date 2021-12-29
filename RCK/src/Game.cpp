@@ -55,6 +55,7 @@ void Game::CreateTestGame()
 
 	currentPartyID = mPartyManager->GenerateAITestParty();
 	currentCharacterID = mPartyManager->getNextPlayerCharacter(currentPartyID);
+	currentBaseID = -1;
 
 	std::vector<std::string> indoorMap = {
 		"##############################################",
@@ -330,6 +331,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 			if (mode != GM_DOMAIN)
 			{
 				mode = GM_DOMAIN;
+				// do we have a base in this location? If not, then spawn a camp here
 			}
 			else
 			{
@@ -353,7 +355,6 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				// '>' is 'go in'. I use only one button to go up/down etc. The other button is used for region transition
 				if (key->c == '.' && key->shift)
 				{
-					
 					// we're on the region map, so we head 'down' into the local wilderness map
 					// this automatically generates a local wilderness map if one does not exist
 					int mapID = mMapManager->GetMapAtLocation(player_x, player_y);
@@ -666,34 +667,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 
 		case(GM_DOMAIN):
 		{
-			if (key->vk == TCODK_UP)
-			{
-				menuPosition[mode]--;
-				if (menuPosition[mode] < 0)
-				{
-					menuPosition[mode] = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
-				}
-			}
-			else if (key->vk == TCODK_DOWN)
-			{
-				menuPosition[mode]++;
-				if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
-				{
-					menuPosition[mode] = 0;
-				}
-			}
-			else if (key->vk == TCODK_ENTER)
-			{
-				// enter is used to equip and unequip
-				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
-				{
-					mCharacterManager->UnequipItem(currentCharacterID, menuPosition[mode]);
-				}
-				else
-				{
-					mCharacterManager->EquipItem(currentCharacterID, menuPosition[mode]);
-				}
-			}
+			mBaseManager->ControlCommand(key, currentPartyID);
 		}
 		break;
 
@@ -960,6 +934,28 @@ void Game::MoveCharacter(int new_x, int new_y)
 				//UpdateLookText(new_x, new_y);
 				double time = mMapManager->getMovementTime(currentMapID, mCharacterManager->GetCurrentSpeed(currentCharacterID));
 				mTimeManager->AdvanceTimeBy(time);
+
+				int baseID = mBaseManager->GetBaseAt(new_x, new_y);
+				if (baseID != -1)
+				{
+					// we just moved onto a base
+					if (mBaseManager->GetBaseOwner(baseID) == currentPartyID)
+					{
+						// and it's ours
+						currentBaseID = baseID;
+					}
+				}
+				else
+				{
+					int partyID = mPartyManager->GetPartyAt(new_x, new_y);
+					if (partyID != -1)
+					{
+						// we just moved onto a party
+					}
+				}
+
+				
+
 			}
 		}
 	}
@@ -1749,36 +1745,57 @@ void Game::UpdateLookText(int x, int y)
 {
 	playLogString = "";
 
-	auto items = mMapManager->getMap(currentMapID)->getItems(x, y);
-	if (items->size() > 0)
-	{
-		playLogString += mMapManager->ItemDesc(currentMapID, x, y);
-	}
 
-	int mobID = currentMap->getMobAt(x, y);
-	if(mobID != 0)
+	if (currentMapID != -1)
 	{
-		Creature& c = mMobManager->GetMonster(mobID);
-		if(c.HasCondition("Unconscious"))
+		auto items = mMapManager->getMap(currentMapID)->getItems(x, y);
+		if (items->size() > 0)
 		{
-			playLogString += "There is an unconscious " + c.GetName() + ".";
+			playLogString += mMapManager->ItemDesc(currentMapID, x, y);
 		}
-		else
+
+		int mobID = currentMap->getMobAt(x, y);
+		if (mobID != 0)
 		{
-			playLogString += "There is a " + c.GetName() + ".";
+			Creature& c = mMobManager->GetMonster(mobID);
+			if (c.HasCondition("Unconscious"))
+			{
+				playLogString += "There is an unconscious " + c.GetName() + ".";
+			}
+			else
+			{
+				playLogString += "There is a " + c.GetName() + ".";
+			}
+		}
+
+		int charID = currentMap->getCharacterAt(x, y);
+		if (charID != 0 && charID != currentCharacterID)
+		{
+			if (mCharacterManager->getCharacterHasCondition(charID, "Unconscious"))
+			{
+				playLogString += mCharacterManager->getCharacterName(charID) + "lies here, unconscious.";
+			}
+			else
+			{
+				playLogString += mCharacterManager->getCharacterName(charID) + " is here.";
+			}
 		}
 	}
-
-	int charID = currentMap->getCharacterAt(x, y);
-	if (charID != 0 && charID != currentCharacterID)
+	else
 	{
-		if(mCharacterManager->getCharacterHasCondition(charID,"Unconscious"))
+		// overland map 
+		if (currentBaseID != -1)
 		{
-			playLogString += mCharacterManager->getCharacterName(charID) + "lies here, unconscious.";
-		}
-		else
-		{
-			playLogString += mCharacterManager->getCharacterName(charID) + " is here.";
+			if (mBaseManager->GetBaseOwner(currentBaseID) == currentPartyID)
+			{
+				// this is our base!
+				playLogString += "Our " + mBaseManager->GetBaseType(currentBaseID) + " is here.";
+			}
+			else
+			{
+				// this is someone else's base!
+				playLogString += "A " + mBaseManager->GetBaseType(currentBaseID) + " is here.";
+			}
 		}
 	}
 

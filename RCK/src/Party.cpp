@@ -125,6 +125,26 @@ void PartyManager::GenerateAnimal(int partyID, std::string name)
 	AddAnimal(partyID, animalID);
 }
 
+int PartyManager::GetPartyAt(int find_x, int find_y)
+{
+	int output = -1;
+	int i = 0;
+	for (int x : partyXPos)
+	{
+		if (x == find_x)
+		{
+			if (partyYPos[i] == find_y)
+			{
+				output = i;
+				break;
+			}
+		}
+		i++;
+	}
+
+	return output;
+}
+
 void PartyManager::MergeParty(int fromPartyID, int toPartyID)
 {
 	for (int c : playerCharacters[fromPartyID])
