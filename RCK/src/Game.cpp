@@ -331,11 +331,10 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 			if (mode != GM_DOMAIN)
 			{
 				mode = GM_DOMAIN;
-				// do we have a base in this location? If not, then spawn a camp here
 			}
 			else
 			{
-				mode = GM_DOMAIN;
+				mode = GM_MAIN;
 			}
 		}
 	}
@@ -667,7 +666,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 
 		case(GM_DOMAIN):
 		{
-			mBaseManager->ControlCommand(key, currentPartyID);
+			mBaseManager->ControlCommand(key, currentBaseID);
 		}
 		break;
 
@@ -1541,6 +1540,10 @@ void Game::MainLoop()
 				RenderTargets();
 			}
 			break;
+			case GM_DOMAIN:
+			{
+				mBaseManager->RenderBaseMenu(currentBaseID);
+			}
 			}
 
 
