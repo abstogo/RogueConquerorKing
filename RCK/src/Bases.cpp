@@ -224,12 +224,26 @@ void BaseManager::DumpBase(int baseID)
 
 
 
-void BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
+bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 {
 	// if we don't have a base here (for whatever reason)
 	if (baseID == -1)
 	{
+		// "A" key creates a base
+		if (key->c == 'a')
+		{
+			// make a base! (We don't bother doing a prof check here as there is no circumstance in which no character with
+			// Adventuring will be in the party.)
+			int partyID = gGame->GetSelectedPartyID();
+			int partyX = gGame->mPartyManager->GetPartyX(partyID);
+			int partyY = gGame->mPartyManager->GetPartyY(partyID);
 
+			int newBaseID = this->GenerateCampAtLocation(partyID, partyX, partyY);
+			
+			gGame->SetSelectedBaseID(newBaseID);
+
+			return true;
+		}
 	}
 	else
 	{
@@ -329,6 +343,8 @@ void BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			}
 		}
 	}
+
+	return false;
 }
 
 std::vector<int> BaseManager::GetBasePartyCharacters(int baseID)
@@ -359,7 +375,8 @@ void BaseManager::RenderBaseMenu(int baseID)
 		gGame->sampleConsole->printFrame(0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, true, TCOD_BKGND_SET, "");
 
 		gGame->sampleConsole->printf(2, 2, "There is no camp or settlement here.");
-		gGame->sampleConsole->printf(2, 4, "Press A to have your party build a camp here.");
+		gGame->sampleConsole->printf(2, 4, "Press A to have your party");
+		gGame->sampleConsole->printf(2, 5, "build a camp here.");
 	}
 	else
 	{

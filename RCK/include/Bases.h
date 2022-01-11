@@ -204,7 +204,7 @@ public:
 	void SetBaseX(int baseID, int xpos) { baseXPos[baseID] = xpos; }
 	void SetBaseY(int baseID, int ypos) { baseYPos[baseID] = ypos; }
 
-	void ControlCommand(TCOD_key_t* key,int baseID);
+	bool ControlCommand(TCOD_key_t* key,int baseID);
 	
 	void RenderBaseMenu(int xpos, int ypos);
 	void RenderBaseMenu(int baseID);

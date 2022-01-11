@@ -186,6 +186,9 @@ public:
 	int GetSelectedPartyID() { return currentPartyID; }
 	void SetSelectedPartyID(int partyID) { currentPartyID = partyID; }
 
+	int GetSelectedBaseID() { return currentBaseID; }
+	void SetSelectedBaseID(int baseID) { currentBaseID = baseID; }
+
 	bool ResolveAttacks(int attackerManager, int attackerID, int defenderManager, int defenderID, bool missile); // if returns true we're finished so return to GM_MAIN
 	bool ResolveAttack(int attackBonus, int damageDie, int damageBonus, int defenderMananger, int defenderID, bool missile);
 	bool ResolveDamage(int damageDie, int damageBonus, int targetManager, int targetID);
