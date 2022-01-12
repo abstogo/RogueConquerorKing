@@ -353,8 +353,8 @@ std::vector<int> BaseManager::GetBasePartyCharacters(int baseID)
 	std::vector<int> base_cs;
 	std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
 	std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
-	std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
-	std::copy(base_h.begin(), base_h.end(), base_cs.begin());
+	base_cs.insert(base_cs.end(),base_pcs.begin(), base_pcs.end());
+	base_cs.insert(base_cs.end(), base_h.begin(), base_h.end());
 	return base_cs;
 }
 
@@ -362,8 +362,8 @@ std::vector<int> BaseManager::GetOutPartyCharacters(int baseID)
 {
 	int partyID = basePartyID[baseID];
 	std::vector<int> out_cs;
-	std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
-	std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
+	out_cs.insert(out_cs.end(), playerCharacters.begin(), playerCharacters.end());
+	out_cs.insert(out_cs.end(), henchmen.begin(), henchmen.end());
 	return out_cs;
 }
 
@@ -452,7 +452,7 @@ void BaseManager::RenderBaseMenu(int baseID)
 					for (int i = 0; i < bt_list.size(); i++)
 					{
 						BaseTag t = bt_list[i];
-						int y = SAMPLE_SCREEN_HEIGHT + 3 + i;
+						int y = (SAMPLE_SCREEN_HEIGHT / 2) + 2 + i;
 						std::string outp = std::to_string(i) + " : " + t.MenuText();
 						if (t.Indicator() != "")
 							outp += " (" + t.Indicator() + ")";
@@ -506,12 +506,12 @@ int BaseManager::GetSelectedCharacter(int baseID)
 	std::vector<int> base_cs;
 	std::vector<int> base_pcs = gGame->mPartyManager->getPlayerCharacters(partyID);
 	std::vector<int> base_h = gGame->mPartyManager->getHenchmen(partyID);
-	std::copy(base_pcs.begin(), base_pcs.end(), base_cs.begin());
-	std::copy(base_h.begin(), base_h.end(), base_cs.begin());
+	base_cs.insert(base_cs.end(), base_pcs.begin(), base_pcs.end());
+	base_cs.insert(base_cs.end(), base_h.begin(), base_h.end());
 
 	std::vector<int> out_cs;
-	std::copy(playerCharacters.begin(), playerCharacters.end(), out_cs.begin());
-	std::copy(henchmen.begin(), henchmen.end(), out_cs.begin());
+	out_cs.insert(out_cs.end(),playerCharacters.begin(), playerCharacters.end());
+	out_cs.insert(out_cs.end(), henchmen.begin(), henchmen.end());
 
 	
 	// selected character ID
@@ -532,8 +532,7 @@ bool BaseManager::CharacterCanUseAction(int baseID, int characterID, int tag)
 {
 	int bT = baseType[baseID];
 	BaseType b = baseInfoSet.BaseTypes()[bT];
-	std::string c = b.Core()[tag];
-	BaseTag t = baseInfoSet.Tags()[reverseBaseTagDictionary[c]];
+	BaseTag t = baseInfoSet.Tags()[tag];
 	
 	if (t.Requires().size() > 0)
 		return false;
