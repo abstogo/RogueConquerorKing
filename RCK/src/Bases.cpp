@@ -48,6 +48,8 @@ int BaseManager::shellGenerate()
 	return output;
 }
 
+// manipulate the virtual "out" party
+
 void BaseManager::AddPlayerCharacter(int characterID)
 {
 	playerCharacters.push_back(characterID);
@@ -68,16 +70,38 @@ void BaseManager::AddAnimal(int mobID)
 
 void BaseManager::RemoveCharacter(int entityID)
 {
-	if(std::remove(playerCharacters.begin(), playerCharacters.end(), entityID) == playerCharacters.end())
+	bool hench = IsAHenchman(entityID);
+	if (hench)
 	{
-		// not found in the PC set, check Henches too
-		std::remove(henchmen.begin(), henchmen.end(), entityID);
+		auto r = std::remove(henchmen.begin(), henchmen.end(), entityID);
+		henchmen.erase(r);
+	}
+	else
+	{
+		auto r = std::remove(playerCharacters.begin(), playerCharacters.end(), entityID);
+		playerCharacters.erase(r);
 	}
 }
 
 void BaseManager::RemoveAnimal(int entityID)
 {
-	std::remove(animals.begin(), animals.end(), entityID);
+	auto r = std::remove(animals.begin(), animals.end(), entityID);
+	animals.erase(r);
+}
+
+bool BaseManager::IsAPC(int entityID)
+{
+	return std::find(playerCharacters.begin(), playerCharacters.end(), entityID) != playerCharacters.end();
+}
+
+bool BaseManager::IsAHenchman(int entityID)
+{
+	return std::find(henchmen.begin(), henchmen.end(), entityID) != henchmen.end();
+}
+
+bool BaseManager::IsAnAnimal(int entityID)
+{
+	return std::find(animals.begin(), animals.end(), entityID) != animals.end();
 }
 
 int BaseManager::GetBaseAt(int find_x, int find_y)
@@ -110,6 +134,8 @@ void BaseManager::MergeInParty(int baseID, int partyID)
 {
 	gGame->mPartyManager->MergeParty(partyID, basePartyID[baseID]);
 	gGame->SetSelectedPartyID(basePartyID[baseID]);
+
+	// optional: automatically add characters to "out party"?
 }
 
 int BaseManager::SpawnOutParty(int baseID)
@@ -193,17 +219,21 @@ void BaseManager::DebugLog(std::string message)
 
 bool BaseManager::TurnHandler(int entityID, double time)
 {
+	// doesn't do anything currently, might do something if there's in-camp fights etc
 	return true;
 }
 
 bool BaseManager::TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months)
 {
+	// advance time for characters in the base, handling base/domain activities
 	return true;
 }
 
 void BaseManager::DumpBase(int baseID)
 {
-	DebugLog("Dumping base party");
+	// TODO: Dump local party
+
+	DebugLog("Dumping virtual out-party");
 	
 	for(int character : gGame->mPartyManager->getPlayerCharacters(basePartyID[baseID]))
 	{
@@ -219,10 +249,10 @@ void BaseManager::DumpBase(int baseID)
 	{
 		gGame->mMobManager->DumpMob(beast);
 	}
+
+	// TODO: Dump party inventory
 	
 }
-
-
 
 bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 {
@@ -261,17 +291,23 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 
 		if (key->vk == TCODK_LEFT || key->vk == TCODK_RIGHT)
 		{
-
+			// switch between "base party" and virtual "out party"
 			if (controlPane == PANE_BASE_CHARACTERS)
 			{
-				controlPane = PANE_PARTY_CHARACTERS;
+				if (GetOutPartyCharacters().size() > 0)
+				{
+					controlPane = PANE_PARTY_CHARACTERS;
+				}
 			}
 			else
 			{
-				if (controlPane == PANE_PARTY_CHARACTERS) controlPane = PANE_BASE_CHARACTERS;
+				if (controlPane == PANE_PARTY_CHARACTERS && GetBasePartyCharacters(baseID).size() > 0)
+				{
+					controlPane = PANE_BASE_CHARACTERS;
+				}
 			}
 
-
+			// switch between "base store" and party inventory
 			if (controlPane == PANE_PARTY_INVENTORY)
 			{
 				controlPane = PANE_BASE_INVENTORY;
@@ -287,11 +323,14 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 		{
 			menuPosition--;
 			// this is entirely dependent on what's inside the pane we're controlling
+
 			if (controlPane == PANE_BASE_CHARACTERS)
 			{
 				if (menuPosition < 0)
 				{
-					menuPosition = henchmen.size() + playerCharacters.size() + animals.size();
+					int total = GetBasePartyCharacters(baseID).size();
+
+					menuPosition = total - 1;
 				}
 			}
 
@@ -299,28 +338,80 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			{
 				if (menuPosition < 0)
 				{
-					int partyID = gGame->GetSelectedPartyID();
-					int total = gGame->mPartyManager->getPlayerCharacters(partyID).size();
-					total += gGame->mPartyManager->getHenchmen(partyID).size();
-					total += gGame->mPartyManager->getAnimals(partyID).size();
-
-					menuPosition = total;
+					menuPosition = henchmen.size() + playerCharacters.size() + animals.size() - 1;
 				}
 			}
-
 
 		}
 		else if (key->vk == TCODK_DOWN)
 		{
 			menuPosition++;
-			//if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
-			//{
-			//	menuPosition[mode] = 0;
-			//}
+			if (controlPane == PANE_BASE_CHARACTERS)
+			{
+				if (menuPosition > GetBasePartyCharacters(baseID).size() - 1)
+				{
+					menuPosition = 0;
+				}
+			}
+
+			if (controlPane == PANE_PARTY_CHARACTERS)
+			{
+				if (menuPosition > GetOutPartyCharacters().size() - 1)
+				{
+					menuPosition = 0;
+				}
+			}
+			
 		}
 		else if (key->vk == TCODK_ENTER)
 		{
-			// enter is used to equip and unequip
+			int focus = controlPane;
+			// enter moves characters and equipment between "base" and "party"
+			if (focus == PANE_BASE_CHARACTERS)
+			{
+				// add character to virtual party
+				int charID = GetSelectedCharacter(baseID);
+				int partyID = basePartyID[baseID];
+
+				bool hench = gGame->mPartyManager->IsAHenchman(partyID, charID);
+				gGame->mPartyManager->RemoveCharacter(partyID, charID);
+				hench ? AddHenchman(charID) : AddPlayerCharacter(charID);
+
+				if (GetBasePartyCharacters(baseID).size() == 0)
+				{
+					// all characters moved to other screen, so switch focus
+					controlPane = PANE_PARTY_CHARACTERS;
+					menuPosition = 0;
+				}
+				else
+				{
+					menuPosition -= 1;
+					if (menuPosition < 0) menuPosition = 0;
+				}
+			}
+			else if (focus == PANE_PARTY_CHARACTERS)
+			{
+				// remove character from virtual party
+				int charID = GetSelectedCharacter(baseID);
+				int partyID = basePartyID[baseID];
+
+				bool hench = IsAHenchman(charID);
+				RemoveCharacter(charID);
+				hench ? gGame->mPartyManager->AddHenchman(partyID, charID) : gGame->mPartyManager->AddPlayerCharacter(partyID, charID);
+
+				if (GetOutPartyCharacters().size() == 0)
+				{
+					// all characters moved to other screen, so switch focus
+					controlPane = PANE_BASE_CHARACTERS;
+					menuPosition = 0;
+				}
+				else
+				{
+					menuPosition -= 1;
+					if (menuPosition < 0) menuPosition = 0;
+				}
+			}
+
 			//if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
 			//{
 			//	mCharacterManager->UnequipItem(currentCharacterID, menuPosition[mode]);
@@ -358,9 +449,8 @@ std::vector<int> BaseManager::GetBasePartyCharacters(int baseID)
 	return base_cs;
 }
 
-std::vector<int> BaseManager::GetOutPartyCharacters(int baseID)
+std::vector<int> BaseManager::GetOutPartyCharacters()
 {
-	int partyID = basePartyID[baseID];
 	std::vector<int> out_cs;
 	out_cs.insert(out_cs.end(), playerCharacters.begin(), playerCharacters.end());
 	out_cs.insert(out_cs.end(), henchmen.begin(), henchmen.end());
@@ -406,7 +496,7 @@ void BaseManager::RenderBaseMenu(int baseID)
 
 				// draw out the characters from the managers
 				std::vector<int> base_cs = GetBasePartyCharacters(baseID);
-				std::vector<int> out_cs = GetOutPartyCharacters(baseID);
+				std::vector<int> out_cs = GetOutPartyCharacters();
 
 				// add overall frame with title
 				gGame->sampleConsole->printFrame(0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, false, TCOD_BKGND_SET, "Party Management");
@@ -425,10 +515,10 @@ void BaseManager::RenderBaseMenu(int baseID)
 				for (int i = 0; i < out_cs.size(); i++)
 				{
 					std::string name = gGame->mCharacterManager->getCharacterName(out_cs[i]);
-					if (gGame->mPartyManager->IsAHenchman(partyID, base_cs[i])) name += "*";
+					if (IsAPC(out_cs[i])) name += "*";
 					TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 					int y_pos = 3 + i;
-					gGame->sampleConsole->printEx(2 + SAMPLE_SCREEN_WIDTH, y_pos, backg, TCOD_LEFT, name.c_str());
+					gGame->sampleConsole->printEx(2 + SAMPLE_SCREEN_WIDTH / 2, y_pos, backg, TCOD_LEFT, name.c_str());
 				}
 
 				// highlight selected character

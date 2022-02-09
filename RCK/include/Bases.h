@@ -92,11 +92,11 @@ JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseInfoSet, BaseTypes, Tags)
 
 enum BaseMenuPanes
 {
-	PANE_BASE_CHARACTERS = 0,
-	PANE_PARTY_CHARACTERS = 1,
+	PANE_BASE_CHARACTERS = 0,	   // base party 
+	PANE_PARTY_CHARACTERS = 1,     // virtual "party" which will form active party on leaving
 	PANE_CHARACTER_OPTIONS = 2,
-	PANE_PARTY_INVENTORY = 3,
-	PANE_BASE_INVENTORY = 4,
+	PANE_PARTY_INVENTORY = 3,	   // base party inventory
+	PANE_BASE_INVENTORY = 4,       // base "store"
 	PANE_PURCHASES = 5
 };
 
@@ -139,6 +139,7 @@ class BaseManager
 	std::vector<int> henchmen; 
 	std::vector<int> animals; 
 
+	// unlike the characters (which are always in the internal Party), there is an internal inventory "store" for the base
 	std::vector<std::pair<int, int>> inventory; // inventory is set up as pairs of IDs and counts (eg we have 25 flasks of military oil)
 	
 	int nextBaseID;
@@ -158,7 +159,7 @@ class BaseManager
 	std::vector<std::vector<std::map<std::string, int>>> pcActiveTags;
 
 	std::vector<int> GetBasePartyCharacters(int baseID);
-	std::vector<int> GetOutPartyCharacters(int baseID);
+	std::vector<int> GetOutPartyCharacters();
 	
 public:
 	BaseManager(BaseInfoSet& _bis) : baseInfoSet(_bis)
@@ -187,6 +188,10 @@ public:
 	{
 		return basePartyID[baseID];
 	}
+
+	bool IsAPC(int entityID);
+	bool IsAHenchman(int entityID);
+	bool IsAnAnimal(int entityID);
 
 	// Accessors
 	std::vector<int>& getPlayerCharacters() { return playerCharacters; }

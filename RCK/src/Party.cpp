@@ -25,16 +25,23 @@ PartyManager* PartyManager::LoadPartyData()
 
 void PartyManager::RemoveCharacter(int partyID, int entityID)
 {
-	if(std::remove(playerCharacters[partyID].begin(), playerCharacters[partyID].end(), entityID) == playerCharacters[partyID].end())
+	bool hench = IsAHenchman(partyID, entityID);
+	if (hench)
 	{
-		// not found in the PC set, check Henches too
-		std::remove(henchmen[partyID].begin(), henchmen[partyID].end(), entityID);
+		auto r = std::remove(henchmen[partyID].begin(), henchmen[partyID].end(), entityID);
+		henchmen[partyID].erase(r);
+	}
+	else
+	{
+		auto r = std::remove(playerCharacters[partyID].begin(), playerCharacters[partyID].end(), entityID);
+		playerCharacters[partyID].erase(r);
 	}
 }
 
 void PartyManager::RemoveAnimal(int partyID, int entityID)
 {
-	std::remove(animals[partyID].begin(), animals[partyID].end(), entityID);
+	auto r = std::remove(animals[partyID].begin(), animals[partyID].end(), entityID);
+	animals[partyID].erase(r);
 }
 
 int PartyManager::shellGenerate()
