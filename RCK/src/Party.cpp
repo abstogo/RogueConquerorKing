@@ -152,29 +152,47 @@ int PartyManager::GetPartyAt(int find_x, int find_y)
 	return output;
 }
 
+void PartyManager::TransferCharacter(int sourcePartyID, int destinationPartyID, int characterID)
+{
+	bool hench = IsAHenchman(sourcePartyID, characterID);
+	RemoveCharacter(sourcePartyID, characterID);
+	hench ? AddHenchman(destinationPartyID, characterID) : AddPlayerCharacter(destinationPartyID, characterID);
+}
+
+void PartyManager::TransferAnimal(int sourcePartyID, int destinationPartyID, int mobID)
+{
+	RemoveAnimal(sourcePartyID, mobID);
+	AddAnimal(destinationPartyID, mobID);
+}
+
+void PartyManager::TransferParty(int sourcePartyID, int destinationPartyID)
+{
+	for (int c : playerCharacters[sourcePartyID])
+	{
+		playerCharacters[destinationPartyID].push_back(c);
+	}
+	for (int c : henchmen[sourcePartyID])
+	{
+		henchmen[destinationPartyID].push_back(c);
+	}
+	for (int a : animals[sourcePartyID])
+	{
+		animals[destinationPartyID].push_back(a);
+	}
+	playerCharacters[sourcePartyID].clear();
+	henchmen[sourcePartyID].clear();
+	animals[sourcePartyID].clear();
+
+	for (std::pair<int, int> item : partyInventory[sourcePartyID])
+	{
+		partyInventory[destinationPartyID].push_back(item);
+	}
+	partyInventory[sourcePartyID].clear();
+}
+
 void PartyManager::MergeParty(int fromPartyID, int toPartyID)
 {
-	for (int c : playerCharacters[fromPartyID])
-	{
-		playerCharacters[toPartyID].push_back(c);
-	}
-	for (int c : henchmen[fromPartyID])
-	{
-		henchmen[toPartyID].push_back(c);
-	}
-	for (int a : animals[fromPartyID])
-	{
-		animals[toPartyID].push_back(a);
-	}
-	playerCharacters[fromPartyID].clear();
-	henchmen[fromPartyID].clear();
-	animals[fromPartyID].clear();
-
-	for (std::pair<int, int> item : partyInventory[fromPartyID])
-	{
-		partyInventory[toPartyID].push_back(item);
-	}
-	partyInventory[fromPartyID].clear();
+	TransferParty(fromPartyID, toPartyID);
 
 	partyXPos[fromPartyID] = -1;
 	partyYPos[fromPartyID] = -1;

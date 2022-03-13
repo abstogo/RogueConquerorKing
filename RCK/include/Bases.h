@@ -124,24 +124,15 @@ class BaseManager
 	//std::vector<int> controllingFaction; // to be used when we have Factions
 	
 	// Base Party
-	// When the Base is created it takes on the current Party. Whenever a Party returns to the base it merges with the Base Party.
-	// When the Base is packed up, the Base Party becomes the current Party.
+	// Base Parties are created when the base is made and can be used to transfer characters and items
 	// In future we'll have more complex controls for managing characters between parties (sub-groups etc) to make big camps easier to manage,
-	// but for now this will do
-
+	// Why multiple parties? Because for example, wounded characters might be left in camp to recover (bed rest) with some henches to guard them
+	// while other characters rove around the wilderness. Likewise a freshened party may leave treasure with the carts in the base while dungeoneering.
+	// In all these cases, party events (eg daily encounter rolls in wilderness) will continue to happen to the base party.
 	std::vector<int> basePartyID;
+	// the Owner Party is the party which created this base. This is generally the player's Party, although this may change in future.
+	std::vector<int> ownerPartyID;
 
-	// However, we need to store which characters will be in the split-off Party *before* they leave.
-	// The chosen characters are not yet a Party and should not be ticked until they leave.
-	// They should also be maintained where possible between trips to minimise clicks
-	// But note there is only eveer one of these as it's pure interface
-	std::vector<int> playerCharacters; 
-	std::vector<int> henchmen; 
-	std::vector<int> animals; 
-
-	// unlike the characters (which are always in the internal Party), there is an internal inventory "store" for the base
-	std::vector<std::pair<int, int>> inventory; // inventory is set up as pairs of IDs and counts (eg we have 25 flasks of military oil)
-	
 	int nextBaseID;
 
 	int shellGenerate(); // just creates all the internal structures for the next party, with nothing added in
@@ -158,9 +149,12 @@ class BaseManager
 	std::vector<std::vector<int>> pcSelectedAction;
 	std::vector<std::vector<std::map<std::string, int>>> pcActiveTags;
 
-	std::vector<int> GetBasePartyCharacters(int baseID);
-	std::vector<int> GetOutPartyCharacters();
+	void getBasePartyCharacters(std::vector<int>& out, int baseID);
+	void getVisitingPartyCharacters(std::vector<int>& out, int partyID);
 	
+	int getBasePartyCharacterCount(int baseID);
+	int getVisitingCharacterCount(int partyID);
+
 public:
 	BaseManager(BaseInfoSet& _bis) : baseInfoSet(_bis)
 	{}
@@ -172,31 +166,26 @@ public:
 
 	int GenerateCampAtLocation(int partyID, int basePosX, int basePosY);
 
-	void MergeInParty(int baseID, int partyID);
-	int SpawnOutParty(int baseID);
-
-	// GUI output control functions - interface is same as Party!
-
-	void AddPlayerCharacter(int characterID);
-	void AddHenchman(int characterID);
-	void AddAnimal(int mobID);
-	void RemoveCharacter(int entityID);
-	void RemoveAnimal(int entityID);
-
 	int GetBaseAt(int x, int y);
 	int GetBaseOwner(int baseID)
 	{
-		return basePartyID[baseID];
+		return ownerPartyID[baseID];
 	}
 
-	bool IsAPC(int entityID);
-	bool IsAHenchman(int entityID);
-	bool IsAnAnimal(int entityID);
+	bool IsAPC(int entityID, int baseID);
+	bool IsAHenchman(int entityID, int baseID);
+	bool IsAnAnimal(int entityID, int baseID);
 
 	// Accessors
-	std::vector<int>& getPlayerCharacters() { return playerCharacters; }
-	std::vector<int>& getHenchmen() { return henchmen; }
-	std::vector<int>& getAnimals() { return animals; }
+	std::vector<int>& getPlayerCharacters(int baseID);
+	std::vector<int>& getHenchmen(int baseID);
+	std::vector<int>& getAnimals(int baseID);
+
+	void AddPlayerCharacter(int characterID, int baseID);
+	void AddHenchman(int characterID, int baseID);
+	void AddAnimal(int mobID, int baseID);
+	void RemoveCharacter(int entityID, int baseID);
+	void RemoveAnimal(int entityID, int baseID);
 
 	bool CharacterCanUseAction(int baseID, int characterID, int tag);
 	std::vector<BaseTag> GetCharacterActionList(int baseID, int charID);

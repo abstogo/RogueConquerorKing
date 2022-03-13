@@ -503,6 +503,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 						currentMapID = -1;
 						currentMap = NULL;
 						mTimeManager->DeregisterEntities();
+						AddActionLogText("", true); // clear the action log
 					}
 
 					return true;

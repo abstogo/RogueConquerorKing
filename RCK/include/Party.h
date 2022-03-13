@@ -63,7 +63,7 @@ public:
 	// second convenience function for AI control testing. Generates 2 Fighters, 1 Level 0 Hench and a Mule
 	int GenerateAITestParty();
 
-	// Generators
+	// Member Manipulators
 	void AddPlayerCharacter(int partyID, int characterID);
 	void GeneratePlayerCharacter(int partyID, std::string name, const std::string _class);
 
@@ -72,6 +72,15 @@ public:
 
 	void AddAnimal(int partyID, int mobID);
 	void GenerateAnimal(int partyID, std::string name);
+
+	void RemoveCharacter(int partyID, int entityID);
+	void RemoveAnimal(int partyID, int entityID);
+
+	void MergeParty(int fromID, int toID); // transfer all characters and destroy original party
+
+	void TransferCharacter(int sourcePartyID, int destinationPartyID, int characterID);
+	void TransferAnimal(int sourcePartyID, int destinationPartyID, int mobID);
+	void TransferParty(int sourcePartyID, int destinationPartyID);
 
 	// Accessors
 	std::vector<int>& getPlayerCharacters(int partyID) { return playerCharacters[partyID]; }
@@ -100,10 +109,7 @@ public:
 
 	void DumpParty(int partyID);
 
-	void RemoveCharacter(int partyID, int entityID);
-	void RemoveAnimal(int partyID, int entityID);
-
-	void MergeParty(int fromID, int toID);
+	
 	
 	void DebugLog(std::string message);
 
