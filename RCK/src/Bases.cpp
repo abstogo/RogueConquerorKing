@@ -287,17 +287,23 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			// switch between "base party" and virtual "out party"
 			if (controlPane == PANE_BASE_CHARACTERS)
 			{
-				if (getVisitingCharacterCount(gGame->GetSelectedPartyID()) > 0)
+				int visitorCount = getVisitingCharacterCount(gGame->GetSelectedPartyID());
+				if (visitorCount > 0)
 				{
 					controlPane = PANE_PARTY_CHARACTERS;
+					if (menuPosition > visitorCount - 1) menuPosition = visitorCount - 1;
 				}
 			}
 			else
 			{
-
-				if (controlPane == PANE_PARTY_CHARACTERS && getBasePartyCharacterCount(baseID) > 0)
+				if (controlPane == PANE_PARTY_CHARACTERS)
 				{
-					controlPane = PANE_BASE_CHARACTERS;
+					int baseCount = getBasePartyCharacterCount(baseID);
+					if(baseCount > 0)
+					{
+						controlPane = PANE_BASE_CHARACTERS;
+						if (menuPosition > baseCount - 1) menuPosition = baseCount - 1;
+					}
 				}
 			}
 
@@ -363,16 +369,17 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 		else if (key->vk == TCODK_ENTER)
 		{
 			int focus = controlPane;
+			int charID = GetSelectedCharacter(baseID);
+			int partyID = basePartyID[baseID];
+			int visitingPartyID = gGame->GetSelectedPartyID();
 			// enter moves characters and equipment between "base" and "party"
 			if (focus == PANE_BASE_CHARACTERS)
 			{
 				// move character from base party to visiting party
-				int charID = GetSelectedCharacter(baseID);
-				int partyID = basePartyID[baseID];
 
-				bool hench = gGame->mPartyManager->IsAHenchman(partyID, charID);
-				gGame->mPartyManager->RemoveCharacter(partyID, charID);
-				hench ? AddHenchman(charID,baseID) : AddPlayerCharacter(charID,baseID);
+				bool hench = IsAHenchman(charID, baseID);
+				RemoveCharacter(charID,baseID);
+				hench ? gGame->mPartyManager->AddHenchman(visitingPartyID,charID) : gGame->mPartyManager->AddPlayerCharacter(visitingPartyID, charID);
 
 				if (getBasePartyCharacterCount(baseID) == 0)
 				{
@@ -388,13 +395,11 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			}
 			else if (focus == PANE_PARTY_CHARACTERS)
 			{
-				// remove character from virtual party
-				int charID = GetSelectedCharacter(baseID);
-				int partyID = basePartyID[baseID];
+				// move character from visiting party to base party
 
-				bool hench = IsAHenchman(charID,baseID);
-				RemoveCharacter(charID,baseID);
-				hench ? gGame->mPartyManager->AddHenchman(partyID, charID) : gGame->mPartyManager->AddPlayerCharacter(partyID, charID);
+				bool hench = gGame->mPartyManager->IsAHenchman(visitingPartyID,charID);
+				gGame->mPartyManager->RemoveCharacter(visitingPartyID, charID);
+				hench ? AddHenchman(charID, baseID) : AddPlayerCharacter(charID, baseID);
 
 				if (getVisitingCharacterCount(gGame->GetSelectedPartyID()) == 0)
 				{
