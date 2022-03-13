@@ -201,6 +201,10 @@ int BaseManager::GenerateCampAtLocation(int partyID, int basePosX, int basePosY)
 		campID = 0; // default first one
 	}
 	baseType[output] = campID;
+
+	// add base to region map
+
+	gGame->mMapManager->getRegionMap()->setBase(basePosX, basePosY, output);
 	
 	return output;
 }
