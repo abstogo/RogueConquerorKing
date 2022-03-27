@@ -192,7 +192,9 @@ class CharacterManager
 	std::vector<int> pcMapID;
 	std::vector<int> pcRemainingCleaves;
 
-	
+	std::vector<std::set<std::string>> pcTravelModes;
+	std::vector<std::string> pcDomainAction;
+
 	std::vector<unsigned long long> pcCapabilityFlags;
 
 	std::vector<std::vector<std::pair<int, int>>> pcConditions;
@@ -252,6 +254,14 @@ public:
 		unsigned long long c = CapabilityLookup[capabilityName];
 		return getCharacterCapabilityFlag(id, (CapabilityFlags)c);
 	}
+
+	std::string getCharacterDomainAction(int id);
+	void setCharacterDomainAction(int id, std::string action);
+
+	bool getCharacterTravelModeSet(int id, std::string mode);
+	void setCharacterTravelMode(int id, std::string mode);
+	void unsetCharacterTravelMode(int id, std::string mode);
+	void toggleCharacterTravelMode(int id, std::string mode);
 
 	bool getCharacterHasCondition(int id, int condition);
 	bool getCharacterHasCondition(int id, std::string condition);

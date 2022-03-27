@@ -31,10 +31,11 @@ class BaseTag
 	std::string Indicator_;
 	std::string MenuText_;
 	std::vector<std::string> Requires_;
+	std::vector<std::string> Excludes_;
 
 public:
-	BaseTag(const std::string& Tag, const std::string& Type, const std::string& Indicator, const std::string& MenuText, const std::vector<std::string>& Requires) :
-	Tag_(Tag), Type_(Type), Indicator_(Indicator), MenuText_(MenuText), Requires_(Requires)
+	BaseTag(const std::string& Tag, const std::string& Type, const std::string& Indicator, const std::string& MenuText, const std::vector<std::string>& Requires, const std::vector<std::string>& Excludes) :
+	Tag_(Tag), Type_(Type), Indicator_(Indicator), MenuText_(MenuText), Requires_(Requires),Excludes_(Excludes)
 	{
 		
 	}
@@ -44,8 +45,9 @@ public:
 	const std::string& Indicator() const { return Indicator_; }
 	const std::string& MenuText() const { return MenuText_; }
 	const std::vector<std::string>& Requires() const { return Requires_; }
+	const std::vector<std::string>& Excludes() const { return Excludes_; }
 };
-JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseTag, Tag, Type, Indicator, MenuText, Requires)
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(BaseTag, Tag, Type, Indicator, MenuText, Requires, Excludes)
 
 class BaseType
 {
@@ -146,7 +148,6 @@ class BaseManager
 	int controlPane = 0;
 	int menuPosition = 0;
 
-	std::vector<std::vector<int>> pcSelectedAction;
 	std::vector<std::vector<std::map<std::string, int>>> pcActiveTags;
 
 	void getBasePartyCharacters(std::vector<int>& out, int baseID);

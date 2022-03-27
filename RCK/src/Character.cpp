@@ -289,6 +289,10 @@ void CharacterManager::BaseGenerate()
 	// set no behaviour
 	pcCurrentBehaviour.push_back(-1);
 
+	// set no domain action/travel mode
+	pcDomainAction.push_back("");
+	pcTravelModes.push_back({"Normal"});
+
 	// remaining cleaves
 	pcRemainingCleaves.push_back(0);
 
@@ -1520,4 +1524,42 @@ std::vector<int> CharacterManager::GetConditionCharactersOnMap(int mapID, std::s
 	}
 	
 	return output;
+}
+
+std::string CharacterManager::getCharacterDomainAction(int id)
+{
+	return pcDomainAction[id];
+}
+
+void CharacterManager::setCharacterDomainAction(int id, std::string action)
+{
+	pcDomainAction[id] = action;
+}
+
+bool CharacterManager::getCharacterTravelModeSet(int id, std::string mode)
+{
+	std::set<std::string> g = pcTravelModes[id];
+	return g.find(mode) != g.end();
+}
+
+void CharacterManager::setCharacterTravelMode(int id, std::string mode)
+{
+	pcTravelModes[id].insert(mode);
+}
+
+void CharacterManager::unsetCharacterTravelMode(int id, std::string mode)
+{
+	pcTravelModes[id].erase(mode);
+}
+
+void CharacterManager::toggleCharacterTravelMode(int id, std::string mode)
+{
+	if (getCharacterTravelModeSet(id, mode))
+	{
+		unsetCharacterTravelMode(id, mode);
+	}
+	else
+	{
+		setCharacterTravelMode(id, mode);
+	}
 }

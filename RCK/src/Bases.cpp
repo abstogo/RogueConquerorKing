@@ -45,8 +45,7 @@ int BaseManager::shellGenerate()
 	basePartyID.push_back(-1);
 	ownerPartyID.push_back(-1);
 
-	pcSelectedAction.reserve(pcSelectedAction.size() + 1);
-	pcActiveTags.reserve(pcActiveTags.size() + 1);
+	pcActiveTags.push_back({});
 
 	return output;
 }
@@ -429,14 +428,32 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 		}
 		else if (key->c >= '1' && key->c <= '9')
 		{
-			// option selection!
-			if (controlPane < PANE_CHARACTER_OPTIONS)
+			// character option selected
+			int charID = GetSelectedCharacter(baseID);
+			std::vector<BaseTag> bts = GetCharacterActionList(baseID, charID);
+			// set character to perform action
+			int idx = key->c - '1';
+			BaseTag& bt = bts[idx];
+			if(bt.Type() == "CharacterAction")
+				gGame->mCharacterManager->setCharacterDomainAction(charID, bts[idx].Tag());
+
+			if (bt.Type() == "TravelMode")
 			{
-				// character option selected
-				int charID = GetSelectedCharacter(baseID);
-				std::vector<BaseTag> bts = GetCharacterActionList(baseID, charID);
-				// set character to perform action
-				pcSelectedAction[baseID][charID] = key->c - '1';
+				std::vector<std::string> excludes = bts[idx].Excludes();
+				for (std::string exc : excludes)
+				{
+					if (gGame->mCharacterManager->getCharacterDomainAction(charID) == exc)
+					{
+						// this travel mode deactivates the domain action
+						gGame->mCharacterManager->setCharacterDomainAction(charID, "");
+					}
+
+					if (gGame->mCharacterManager->getCharacterTravelModeSet(charID, exc))
+					{
+						gGame->mCharacterManager->unsetCharacterTravelMode(charID, exc);
+					}
+				}
+				gGame->mCharacterManager->toggleCharacterTravelMode(charID, bts[idx].Tag());
 			}
 		}
 	}
@@ -492,8 +509,29 @@ void BaseManager::RenderBaseMenu(int baseID)
 				// output base characters
 				for (int i = 0; i < base_cs.size(); i++)
 				{
-					std::string name = gGame->mCharacterManager->getCharacterName(base_cs[i]);
-					if (gGame->mPartyManager->IsAPC(partyID, base_cs[i])) name += "*";
+					int charID = base_cs[i];
+					std::string name = gGame->mCharacterManager->getCharacterName(charID);
+					if (gGame->mPartyManager->IsAPC(partyID, charID)) name += "*";
+					std::string currentDomainAction = gGame->mCharacterManager->getCharacterDomainAction(charID);
+					std::vector<BaseTag> cal = GetCharacterActionList(baseID, charID);
+					std::string status = "";
+					for (BaseTag bt : cal)
+					{
+						// we have 1 domain action at a time, so if we match on that, indicate
+						if (bt.Tag() == currentDomainAction)
+						{
+							status += bt.Indicator();
+						}
+
+						// we can have multiple domain travel modes, indicate them
+						if (gGame->mCharacterManager->getCharacterTravelModeSet(charID, bt.Tag()))
+						{
+							status += bt.Indicator();
+						}
+					}
+
+					if (status != "") name += " " + status;
+					
 					TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 					int y_pos = 3 + i;
 					gGame->sampleConsole->printEx(2, y_pos, backg, TCOD_LEFT, name.c_str());
@@ -502,8 +540,22 @@ void BaseManager::RenderBaseMenu(int baseID)
 				// output party characters
 				for (int i = 0; i < out_cs.size(); i++)
 				{
+					int charID = out_cs[i];
 					std::string name = gGame->mCharacterManager->getCharacterName(out_cs[i]);
 					if (IsAPC(out_cs[i],baseID)) name += "*";
+					std::string currentDomainAction = gGame->mCharacterManager->getCharacterDomainAction(charID);
+					std::vector<BaseTag> cal = GetCharacterActionList(baseID, charID);
+					for (BaseTag bt : cal)
+					{
+						// we have 1 domain action at a time, so if we match on that, indicate
+						if (bt.Tag() == currentDomainAction)
+							name += " " + bt.Indicator();
+
+						// we can have multiple domain travel modes, indicate them
+						if (gGame->mCharacterManager->getCharacterTravelModeSet(charID, bt.Tag()))
+							name += " " + bt.Indicator();
+					}
+
 					TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 					int y_pos = 3 + i;
 					gGame->sampleConsole->printEx(2 + SAMPLE_SCREEN_WIDTH / 2, y_pos, backg, TCOD_LEFT, name.c_str());
@@ -531,7 +583,7 @@ void BaseManager::RenderBaseMenu(int baseID)
 					{
 						BaseTag t = bt_list[i];
 						int y = (SAMPLE_SCREEN_HEIGHT / 2) + 2 + i;
-						std::string outp = std::to_string(i) + " : " + t.MenuText();
+						std::string outp = std::to_string(i + 1) + " : " + t.MenuText();
 						if (t.Indicator() != "")
 							outp += " (" + t.Indicator() + ")";
 						TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
@@ -564,7 +616,7 @@ std::vector<BaseTag> BaseManager::GetCharacterActionList(int baseID, int charID)
 		std::string c = b.Core()[i];
 		int tagID = reverseBaseTagDictionary[c];
 		BaseTag t = baseInfoSet.Tags()[tagID];
-		if(t.Type() == "CharacterAction")
+		if(t.Type() == "CharacterAction" || t.Type() == "TravelMode")
 		{
 			if (CharacterCanUseAction(baseID, charID, tagID))
 			{

@@ -12,8 +12,7 @@
         "Wait",
         "LongRest",
         "Hunt",
-        "Forage",
-        "NoForage"
+        "Forage"
       ],
       "Options": [
         
@@ -56,84 +55,88 @@
       "Type": "",
       "Indicator": "",
       "MenuText": "",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "Holding",
       "Type": "BaseScreen",
       "Indicator": "",
       "MenuText": "",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "Storage",
       "Type": "BaseScreen",
       "Indicator": "",
       "MenuText": "",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "Wait",
       "Type": "CharacterAction",
       "Indicator": "",
       "MenuText": "Do Nothing",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "LongRest",
       "Type": "CharacterAction",
       "Indicator": "r",
       "MenuText": "Long Rest",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "BedRest",
       "Type": "CharacterAction",
       "Indicator": "R",
       "MenuText": "Bed Rest",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "Hunt",
       "Type": "CharacterAction",
       "Indicator": "H",
       "MenuText": "Hunt for game",
-      "Requires": []
+      "Requires": [],
+      "Excludes": []
     },
     {
       "Tag": "Craft",
       "Type": "CharacterAction",
       "Indicator": "C",
       "MenuText": "Craft an item",
-      "Requires": [ "Proficiency:Craft:Any", "Workshop:Craft:Any" ]
+      "Requires": [ "Proficiency:Craft:Any", "Workshop:Craft:Any" ],
+      "Excludes": []
     },
     {
       "Tag": "Forage",
-      "Type": "CharacterAction",
+      "Type": "TravelMode",
       "Indicator": "F",
       "MenuText": "Forage",
-      "Requires": [ "Option:NoForage" ]
-    },
-    {
-      "Tag": "NoForage",
-      "Type": "CharacterAction",
-      "Indicator": "",
-      "MenuText": "Stop foraging",
-      "Requires": [ "Option:Forage" ]
+      "Requires": [],
+      "Excludes": ["Hunt","BedRest"]
     },
     {
       "Tag": "Upkeep:Supplies",
       "Type": "Option",
       "Indicator": "",
       "MenuText": "Use party supplies for upkeep",
-      "Requires": [ "Item:Food" ]
+      "Requires": [ "Item:Food" ],
+      "Excludes": []
     },
     {
       "Tag": "Upkeep:Coin",
       "Type": "Option",
       "Indicator": "",
       "MenuText": "Use coin for upkeep",
-      "Requires": [ "Item:Currency" ]
+      "Requires": [ "Item:Currency" ],
+      "Excludes": []
     }
   ]
 }
