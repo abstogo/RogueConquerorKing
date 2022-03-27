@@ -433,27 +433,30 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			std::vector<BaseTag> bts = GetCharacterActionList(baseID, charID);
 			// set character to perform action
 			int idx = key->c - '1';
-			BaseTag& bt = bts[idx];
-			if(bt.Type() == "CharacterAction")
-				gGame->mCharacterManager->setCharacterDomainAction(charID, bts[idx].Tag());
-
-			if (bt.Type() == "TravelMode")
+			if (idx >= 0 && idx < bts.size())
 			{
-				std::vector<std::string> excludes = bts[idx].Excludes();
-				for (std::string exc : excludes)
-				{
-					if (gGame->mCharacterManager->getCharacterDomainAction(charID) == exc)
-					{
-						// this travel mode deactivates the domain action
-						gGame->mCharacterManager->setCharacterDomainAction(charID, "");
-					}
+				BaseTag& bt = bts[idx];
+				if (bt.Type() == "CharacterAction")
+					gGame->mCharacterManager->setCharacterDomainAction(charID, bts[idx].Tag());
 
-					if (gGame->mCharacterManager->getCharacterTravelModeSet(charID, exc))
+				if (bt.Type() == "TravelMode")
+				{
+					std::vector<std::string> excludes = bts[idx].Excludes();
+					for (std::string exc : excludes)
 					{
-						gGame->mCharacterManager->unsetCharacterTravelMode(charID, exc);
+						if (gGame->mCharacterManager->getCharacterDomainAction(charID) == exc)
+						{
+							// this travel mode deactivates the domain action
+							gGame->mCharacterManager->setCharacterDomainAction(charID, "");
+						}
+
+						if (gGame->mCharacterManager->getCharacterTravelModeSet(charID, exc))
+						{
+							gGame->mCharacterManager->unsetCharacterTravelMode(charID, exc);
+						}
 					}
+					gGame->mCharacterManager->toggleCharacterTravelMode(charID, bts[idx].Tag());
 				}
-				gGame->mCharacterManager->toggleCharacterTravelMode(charID, bts[idx].Tag());
 			}
 		}
 	}
