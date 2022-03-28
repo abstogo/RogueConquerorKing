@@ -593,6 +593,10 @@ void BaseManager::RenderBaseMenu(int baseID)
 						gGame->sampleConsole->printEx(3, y, backg, TCOD_LEFT, outp.c_str());
 					}
 				}
+
+				// timeskip controls
+				std::string time_control = "Press X to skip 1 day";
+				gGame->sampleConsole->printEx(SAMPLE_SCREEN_WIDTH - 2, SAMPLE_SCREEN_HEIGHT - 2, TCOD_BKGND_NONE, TCOD_RIGHT, time_control.c_str());
 			}
 			else
 			{

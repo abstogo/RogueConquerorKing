@@ -1521,7 +1521,7 @@ void Game::MainLoop()
 			MainGameHandleKeyboard(&key);
 
 			RenderScreenFurniture();
-			RenderUI();
+			RenderUI(currentCharacterID);
 			RenderMap();
 
 			switch (mode)
@@ -1731,18 +1731,20 @@ void Game::RenderScreenFurniture()
 	// currently none. May add some later
 }
 
-void Game::RenderUI()
+void Game::RenderUI(int selectedCharacterID)
 {
 	// Three main screen regions. Top left and middle is the main map, the bottom is the log, right side is a stats summary
-	std::string name = mCharacterManager->getCharacterName(currentCharacterID);
-	std::string char_class = mCharacterManager->getCharacterClass(currentCharacterID)->Name();
-	std::string level = std::to_string(mCharacterManager->getCharacterLevel(currentCharacterID));
-	std::string hp = std::to_string(mCharacterManager->getCharacterCurrentHitPoints(currentCharacterID)) + "/" + std::to_string(mCharacterManager->getCharacterTotalHitPoints(currentCharacterID));
+	std::string name = mCharacterManager->getCharacterName(selectedCharacterID);
+	std::string char_class = mCharacterManager->getCharacterClass(selectedCharacterID)->Name();
+	std::string level = std::to_string(mCharacterManager->getCharacterLevel(selectedCharacterID));
+	std::string hp = std::to_string(mCharacterManager->getCharacterCurrentHitPoints(selectedCharacterID)) + "/" + std::to_string(mCharacterManager->getCharacterTotalHitPoints(selectedCharacterID));
 
 	TCODConsole::root->printf(60, 4, name.c_str());
 	TCODConsole::root->printf(60, 5, char_class.c_str());
 	TCODConsole::root->printf(60, 6, level.c_str());
 	TCODConsole::root->printf(60, 8, hp.c_str());
+
+	// TODO: Status indicators
 }
 
 void Game::UpdateLookText(int x, int y)

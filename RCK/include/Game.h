@@ -150,7 +150,7 @@ public:
 	
 	void RenderMap();
 	void RenderScreenFurniture();
-	void RenderUI();
+	void RenderUI(int selectedCharacterID);
 	void RenderActionLog();
 	void ClearLookText();
 	void UpdateLookText(int x, int y);
