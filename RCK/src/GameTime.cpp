@@ -74,6 +74,10 @@ bool TimeManager::AdvanceTimeBy(long double time)
 				// gGame->mItemManager->TurnHandler(*ent_iter, *time_iter);
 			}
 			break;
+		case MANAGER_BASE:
+			{
+				result = gGame->mBaseManager->TurnHandler(*ent_iter, time_elapsed);
+			}
 		}
 		
 		if (result) break;
@@ -103,6 +107,7 @@ bool TimeManager::AdvanceTimeBy(long double time)
 		gGame->mMapManager->TimeHandler(roundsPassed, turnsPassed, hoursPassed, daysPassed, weeksPassed, monthsPassed);
 		gGame->mMobManager->TimeHandler(roundsPassed, turnsPassed, hoursPassed, daysPassed, weeksPassed, monthsPassed);
 		gGame->mPartyManager->TimeHandler(roundsPassed, turnsPassed, hoursPassed, daysPassed, weeksPassed, monthsPassed);
+		gGame->mBaseManager->TimeHandler(roundsPassed, turnsPassed, hoursPassed, daysPassed, weeksPassed, monthsPassed);
 	}
 
 	// advance by intervals. 
@@ -113,6 +118,40 @@ bool TimeManager::AdvanceTimeBy(long double time)
 	}
 	
 	return result;
+}
+
+GameDateTime TimeManager::GetCalendarTime()
+{
+	GameDateTime out;
+
+	long double ctime = masterTime;
+
+	long double year = GetTimePeriodInSeconds(TIME_YEAR);
+
+	out.years = ctime / year;
+	ctime = fmod(ctime, year);
+
+	long double month = GetTimePeriodInSeconds(TIME_MONTH);
+
+	out.months = ctime / month;
+	ctime = fmod(ctime, month);
+
+	long double day = GetTimePeriodInSeconds(TIME_DAY);
+
+	out.days = ctime / day;
+	ctime = fmod(ctime, day);
+
+	long double hour = GetTimePeriodInSeconds(TIME_HOUR);
+
+	out.hours = ctime / hour;
+	ctime = fmod(ctime, hour);
+
+	long double minute = GetTimePeriodInSeconds(TIME_MINUTE);
+
+	out.minutes = ctime / minute;
+	ctime = fmod(ctime, minute);
+
+	out.seconds = fabs(ctime);
 }
 
 void TimeManager::RegisterNewEntity(int entityID, int manager)

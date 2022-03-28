@@ -22,20 +22,34 @@
 enum TIME_PERIOD
 {
 	TIME_ROUND=0,
+	TIME_MINUTE,
 	TIME_TURN,
 	TIME_HOUR,
 	TIME_DAY,
 	TIME_WEEK,
-	TIME_MONTH
+	TIME_MONTH,
+	TIME_YEAR
 };
 
 static double long time_periods[] = {
-	10.0L,							// 1 round = 10 seconds
-	60.0L * 10.0L,					// 1 turn = 10 minutes
-	60.0L * 60.0L,					// 1 hour
-	60.0L * 60.0L * 24.0L,			// 1 day
-	60.0L * 60.0L * 24.0L * 7.0L,	// 1 week
-	60.0L * 60.0L * 24.0L * 30.0L	// 1 month
+	10.0L,									// 1 round = 10 seconds
+	60.0L,									// 1 minute
+	60.0L * 10.0L,							// 1 turn = 10 minutes
+	60.0L * 60.0L,							// 1 hour
+	60.0L * 60.0L * 24.0L,					// 1 day
+	60.0L * 60.0L * 24.0L * 7.0L,			// 1 week
+	60.0L * 60.0L * 24.0L * 30.0L,			// 1 month
+	60.0L * 60.0L * 24.0L * 30.0L * 12.0L	// 1 year
+};
+
+struct GameDateTime
+{
+	int years;
+	int months;
+	int days;
+	int hours;
+	int minutes;
+	int seconds;
 };
 
 
@@ -75,6 +89,8 @@ public:
 	void DumpTimeToFile(std::string filename);
 
 	long double GetRunningTime();
+
+	GameDateTime GetCalendarTime();
 
 	static long double GetTimePeriodInSeconds(TIME_PERIOD period)
 	{

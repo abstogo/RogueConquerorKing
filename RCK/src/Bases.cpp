@@ -216,13 +216,13 @@ void BaseManager::DebugLog(std::string message)
 bool BaseManager::TurnHandler(int entityID, double time)
 {
 	// doesn't do anything currently, might do something if there's in-camp fights etc
-	return true;
+	return false;
 }
 
 bool BaseManager::TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months)
 {
 	// advance time for characters in the base, handling base/domain activities
-	return true;
+	return false;
 }
 
 void BaseManager::DumpBase(int baseID)
