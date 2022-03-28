@@ -741,7 +741,8 @@ bool Game::TargetHandler(int entityID, int returnCode)
 }
 
 void Game::MoveCharacter(int new_x, int new_y)
-{	
+{
+	// a somewhat modified version of the CharacterManager's "MoveTo" function used for the current character under player control
 	if (!gGame->mMapManager->isOutOfBounds(currentMapID, new_x, new_y))
 	{
 		if (currentMapID != -1)

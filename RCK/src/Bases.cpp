@@ -222,6 +222,8 @@ void BaseManager::DebugLog(std::string message)
 bool BaseManager::TurnHandler(int entityID, double time)
 {
 	// this triggers at the end of every day, so we can handle daily activities
+
+	// Bed rest heals 1d3 hit points and reduces bed rest requirement
 	
 	// always interrupt, so we run for 1 day per press of advance day key
 	// TODO: Allow advancing more than a single day
