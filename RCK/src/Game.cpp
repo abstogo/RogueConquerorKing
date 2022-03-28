@@ -1521,30 +1521,34 @@ void Game::MainLoop()
 			MainGameHandleKeyboard(&key);
 
 			RenderScreenFurniture();
-			RenderUI(currentCharacterID);
+
 			RenderMap();
 
 			switch (mode)
 			{
-			case GM_CHARACTER:
-			{
-				RenderCharacterSheet();
-			}
-			break;
-			case GM_INVENTORY:
-			{
-				RenderInventory();
-			}
-			break;
-			case GM_TARGET:
-			{
-				RenderTargets();
-			}
-			break;
-			case GM_DOMAIN:
-			{
-				mBaseManager->RenderBaseMenu(currentBaseID);
-			}
+				case GM_CHARACTER:
+				{
+					RenderUI(currentCharacterID);
+					RenderCharacterSheet();
+				}
+				break;
+				case GM_INVENTORY:
+				{
+					RenderUI(currentCharacterID);
+					RenderInventory();
+				}
+				break;
+				case GM_TARGET:
+				{
+					RenderUI(currentCharacterID);
+					RenderTargets();
+				}
+				break;
+				case GM_DOMAIN:
+				{
+					// RenderUI is called from inside, to give selected character info
+					mBaseManager->RenderBaseMenu(currentBaseID);
+				}
 			}
 
 

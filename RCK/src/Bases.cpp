@@ -592,6 +592,10 @@ void BaseManager::RenderBaseMenu(int baseID)
 						TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
 						gGame->sampleConsole->printEx(3, y, backg, TCOD_LEFT, outp.c_str());
 					}
+
+					// UI for selected character
+
+					gGame->RenderUI(charID);
 				}
 
 				// timeskip controls
