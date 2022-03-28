@@ -204,6 +204,12 @@ int BaseManager::GenerateCampAtLocation(int partyID, int basePosX, int basePosY)
 	// add base to region map
 
 	gGame->mMapManager->getRegionMap()->setBase(basePosX, basePosY, output);
+
+	// add base to timing system
+	// next flag happens at the end of the current day
+
+	long double day = TimeManager::GetTimePeriodInSeconds(TIME_DAY);
+	gGame->mTimeManager->SetEntityTime(output, MANAGER_BASE, day - fmod(gGame->mTimeManager->GetRunningTime(), day));
 	
 	return output;
 }
@@ -215,13 +221,15 @@ void BaseManager::DebugLog(std::string message)
 
 bool BaseManager::TurnHandler(int entityID, double time)
 {
-	// doesn't do anything currently, might do something if there's in-camp fights etc
-	return false;
+	// this triggers at the end of every day, so we can handle daily activities
+	
+	// always interrupt, so we run for 1 day per press of advance day key
+	// TODO: Allow advancing more than a single day
+	return true;
 }
 
 bool BaseManager::TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months)
 {
-	// advance time for characters in the base, handling base/domain activities
 	return false;
 }
 
@@ -458,6 +466,17 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 					gGame->mCharacterManager->toggleCharacterTravelMode(charID, bts[idx].Tag());
 				}
 			}
+		}
+		else if (key->c == 'X' || key->c == 'x')
+		{
+			// advance time to next day boundary, triggering daily domain action turn
+
+			long double day = TimeManager::GetTimePeriodInSeconds(TIME_DAY);
+			gGame->mTimeManager->AdvanceTimeBy(day - fmod(gGame->mTimeManager->GetRunningTime(), day));
+		}
+		else if (key->c == 'F' || key->c == 'f')
+		{
+			// move all non-Unconscious characters into out-party and leave Domain mode
 		}
 	}
 

@@ -101,6 +101,8 @@ bool TimeManager::AdvanceTimeBy(long double time)
 	int monthsPassed = (int)(roundsPassed / (360 * 24 * 30));
 
 	// if any time intervals have passed then call the managers to inform them
+	// TODO: This doesn't really work as we can have multiple entities with sub-round times, meaning all of them will be lost until we have
+	// a gap of more than 10s. Need to pass TimeHandler raw times.
 	if(roundsPassed > 0)
 	{
 		gGame->mCharacterManager->TimeHandler(roundsPassed, turnsPassed, hoursPassed, daysPassed, weeksPassed, monthsPassed);
@@ -128,30 +130,32 @@ GameDateTime TimeManager::GetCalendarTime()
 
 	long double year = GetTimePeriodInSeconds(TIME_YEAR);
 
-	out.years = ctime / year;
+	out.years = (int)(ctime / year);
 	ctime = fmod(ctime, year);
 
 	long double month = GetTimePeriodInSeconds(TIME_MONTH);
 
-	out.months = ctime / month;
+	out.months = (int)(ctime / month);
 	ctime = fmod(ctime, month);
 
 	long double day = GetTimePeriodInSeconds(TIME_DAY);
 
-	out.days = ctime / day;
+	out.days = (int)(ctime / day);
 	ctime = fmod(ctime, day);
 
 	long double hour = GetTimePeriodInSeconds(TIME_HOUR);
 
-	out.hours = ctime / hour;
+	out.hours = (int)(ctime / hour);
 	ctime = fmod(ctime, hour);
 
 	long double minute = GetTimePeriodInSeconds(TIME_MINUTE);
 
-	out.minutes = ctime / minute;
+	out.minutes = (int)(ctime / minute);
 	ctime = fmod(ctime, minute);
 
-	out.seconds = fabs(ctime);
+	out.seconds = (int)(fabs(ctime));
+
+	return out;
 }
 
 void TimeManager::RegisterNewEntity(int entityID, int manager)

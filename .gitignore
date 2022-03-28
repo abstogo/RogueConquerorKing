@@ -519,3 +519,7 @@ Thumbs.db
 libtcod.pc
 .mypy_cache/
 buildsys/conan/conanworkspace.cmake
+/docs
+/RCK/docs
+/samples
+/tests

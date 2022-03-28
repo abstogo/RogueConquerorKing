@@ -93,7 +93,7 @@ bool CharacterManager::TurnHandler(int entityID, double time)
 
 	if (gGame->GetSelectedCharacterID() == entityID)
 	{
-		// do nothing
+		// selected characters do not run turns, so do nothing
 		return false;
 	}
 	
