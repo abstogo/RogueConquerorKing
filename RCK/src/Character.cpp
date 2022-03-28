@@ -187,26 +187,31 @@ bool CharacterManager::TimeHandler(int rounds, int turns, int hours, int days, i
 		std::vector<int> expired;
 		for (int d = 0; d < pcConditions[c].size(); d++)
 		{
-			if (pcConditions[c][d].second != -255)
+			std::string recoveryType = gGame->mConditionManager->GetRecovery(pcConditions[c][d].first);
+			// special conditions do not degrade over time
+			if (recoveryType != "Special")
 			{
-				pcConditions[c][d].second -= rounds * 10.0L;
-				if (pcConditions[c][d].second < 0)
+				if (pcConditions[c][d].second != -255)
 				{
-					expired.push_back(d);
+					pcConditions[c][d].second -= rounds * 10.0L;
+					if (pcConditions[c][d].second < 0)
+					{
+						expired.push_back(d);
+					}
 				}
-			}
-			for (int e = 0; e < expired.size(); e++)
-			{
-				// check for the specific case where we were bleeding to death
-				if (gGame->mConditionManager->GetNameFromIndex(expired[e])=="Dying")
+				for (int e = 0; e < expired.size(); e++)
 				{
-					// bled out
-					gGame->CharacterDeath(c);
-				}
-				else
-				{
-					pcConditions[c].erase(pcConditions[c].begin() + expired[e]);
-					updateNeeded = true;
+					// check for the specific case where we were bleeding to death
+					if (gGame->mConditionManager->GetNameFromIndex(expired[e]) == "Dying")
+					{
+						// bled out
+						gGame->CharacterDeath(c);
+					}
+					else
+					{
+						pcConditions[c].erase(pcConditions[c].begin() + expired[e]);
+						updateNeeded = true;
+					}
 				}
 			}
 		}
@@ -1186,6 +1191,21 @@ int CharacterManager::RemoveCondition(int id, int condition)
 	return -1;
 }
 
+int CharacterManager::ReduceCondition(int id, int condition, int timeToReduce)
+{
+	std::vector<std::pair<int, int>>::iterator iter = std::find_if(pcConditions[id].begin(), pcConditions[id].end(), [&](std::pair<int, int> t_cond) { return t_cond.first == condition; });
+	if (iter != pcConditions[id].end())
+	{
+		(*iter).second -= timeToReduce;
+		if ((*iter).second <= 0.0L)
+		{
+			// counted down so remove it
+			return RemoveCondition(id, condition);
+		}
+	}
+	return -1;
+}
+
 int CharacterManager::SetCondition(int id, std::string condition,int time)
 {
 	int index = gGame->mConditionManager->GetConditionIndex(condition);
@@ -1196,6 +1216,12 @@ int CharacterManager::RemoveCondition(int id, std::string condition)
 {
 	int index = gGame->mConditionManager->GetConditionIndex(condition);
 	return RemoveCondition(id, index);
+}
+
+int CharacterManager::ReduceCondition(int id, std::string condition, int timeToReduce)
+{
+	int index = gGame->mConditionManager->GetConditionIndex(condition);
+	return ReduceCondition(id, index, timeToReduce);
 }
 
 void CharacterManager::DebugLog(std::string message)

@@ -242,6 +242,8 @@ class ConditionManager
 	std::vector<int> ArmorClassBonus;
 	std::vector<int> SurpriseBonus;
 
+	std::vector<std::string> Recovery;
+
 	std::map<std::string, int> NameLookup; // reverse name to index
 	std::vector<std::vector<int>> Includes;
 	
@@ -266,6 +268,8 @@ public:
 	// We are checking to see if someone is Helpless, but the character will not automatically get the Helpless condition added, so we need a secondary lookup
 	// the Inclusions vec contains a list of every included condition, so we check the includes for every condition we know we have.
 	bool HasCondition(std::vector<int>& conditions, int findVal);
+
+	std::string GetRecovery(int index) { return Recovery[index]; }
 
 	void DebugLog(std::string message);
 };

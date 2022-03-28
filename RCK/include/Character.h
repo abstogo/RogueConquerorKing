@@ -338,9 +338,11 @@ public:
 
 	int SetCondition(int id, int condition, int time);
 	int RemoveCondition(int id, int condition);
+	int ReduceCondition(int id, int condition, int timeToReduce);
 
 	int SetCondition(int id, std::string condition,int time);
 	int RemoveCondition(int id, std::string condition);
+	int ReduceCondition(int id, std::string condition, int timeToReduce);
 
 	std::vector<MortalEffect*>  GetMortalEffects(int id);
 	void AddMortalEffect(int id, MortalEffect* effect);

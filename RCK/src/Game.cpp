@@ -1444,7 +1444,7 @@ bool Game::ResolveDamage(int damageDie, int damageBonus, int defenderMananger, i
 			gGame->AddActionLogText(c + " falls!");
 			mCharacterManager->SetCondition(defenderID,"Unconscious",-255);
 			mCharacterManager->SetCondition(defenderID, "Injured",-255);
-			mCharacterManager->SetBehaviour(defenderID, "Unconscious"); // will be moved into the condition management eventually
+			mCharacterManager->SetBehaviour(defenderID, "Unconscious"); 
 			// if the defender is the currently active character
 			if(defenderID == currentCharacterID)
 			{
@@ -1453,7 +1453,7 @@ bool Game::ResolveDamage(int damageDie, int damageBonus, int defenderMananger, i
 				{
 					// GAME OVER!
 					gGame->AddActionLogText("Game over!");
-					// end game element? Traditionally there's an endgame screen or summat
+					// TODO: end game element? Traditionally there's an endgame screen or summat
 					ClearGame();
 					mode = GM_MENU;
 				}

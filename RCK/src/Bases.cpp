@@ -219,11 +219,42 @@ void BaseManager::DebugLog(std::string message)
 	gLog->Log("Base Manager", message);
 }
 
-bool BaseManager::TurnHandler(int entityID, double time)
+bool BaseManager::TurnHandler(int baseID, double time)
 {
 	// this triggers at the end of every day, so we can handle daily activities
 
-	// Bed rest heals 1d3 hit points and reduces bed rest requirement
+	// all base actions require the character to be in the base party; other daily actions are managed by PartyManager.
+	std::vector<int> basePartyCharIDs;
+	getBasePartyCharacters(basePartyCharIDs, baseID);
+
+	// Bed rest heals 1d3 hit points and reduces bed rest requirement.
+	std::vector<int> bedResters;
+	
+	std::copy_if(basePartyCharIDs.begin(), basePartyCharIDs.end(), bedResters.begin(), [](int c) {return (gGame->mCharacterManager->getCharacterDomainAction(c) == "BedRest"); });
+	for (int c : bedResters)
+	{
+		if (gGame->mCharacterManager->getCharacterHasCondition(c, "Recovering"))
+		{
+			// bed rest timer reduced by 1 day
+			gGame->mCharacterManager->ReduceCondition(c, "Recovering", TimeManager::GetTimePeriodInSeconds(TIME_DAY));
+		}
+
+		// roll 1d3
+		TCOD_dice_t damageRoller;
+		damageRoller.nb_faces = 3;
+		damageRoller.nb_rolls = 1; // needs updating for eg monster attacks for 2d6, lightning bolt etc
+		damageRoller.addsub = 0;
+		damageRoller.multiplier = 1;
+
+		int healHP = gGame->randomiser->diceRoll(damageRoller);
+		int currentHP = gGame->mCharacterManager->getCharacterCurrentHitPoints(c);
+		int maxHP = gGame->mCharacterManager->getCharacterTotalHitPoints(c);
+
+		currentHP += healHP;
+		if (currentHP > maxHP) currentHP = maxHP;
+
+		gGame->mCharacterManager->setCharacterCurrentHitPoints(c, currentHP);
+	}
 	
 	// always interrupt, so we run for 1 day per press of advance day key
 	// TODO: Allow advancing more than a single day
