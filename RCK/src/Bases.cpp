@@ -720,6 +720,7 @@ bool BaseManager::CharacterCanUseAction(int baseID, int characterID, int tag)
 	BaseType b = baseInfoSet.BaseTypes()[bT];
 	BaseTag t = baseInfoSet.Tags()[tag];
 	
+	/// TODO: action requirements (player tags, items, situations)
 	if (t.Requires().size() > 0)
 		return false;
 
