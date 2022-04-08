@@ -513,8 +513,9 @@ doc/doxyxml/
 /build*
 !/buildsys
 buildsys/scons/*/
-buildsys/msvs/*/
 Thumbs.db
 libtcod.pc
 .mypy_cache/
 buildsys/conan/conanworkspace.cmake
+/samples/samples_c.c
+/samples/samples_cpp.cpp
