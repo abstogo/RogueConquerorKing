@@ -314,17 +314,6 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 	}
 	else
 	{
-		if (key->vk == TCODK_TAB)
-		{
-			if (controlPane < 3)
-			{
-				controlPane = controlPane + 3;
-			}
-			else
-			{
-				controlPane = controlPane - 3;
-			}
-		}
 
 		if (key->vk == TCODK_LEFT || key->vk == TCODK_RIGHT)
 		{
@@ -352,6 +341,7 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			}
 
 			// switch between "base store" and party inventory
+			/**
 			if (controlPane == PANE_PARTY_INVENTORY)
 			{
 				controlPane = PANE_BASE_INVENTORY;
@@ -360,6 +350,7 @@ bool BaseManager::ControlCommand(TCOD_key_t* key,int baseID)
 			{
 				if (controlPane == PANE_BASE_INVENTORY) controlPane = PANE_PARTY_INVENTORY;
 			}
+			*/
 
 		}
 
