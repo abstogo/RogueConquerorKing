@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{7b3b5bd2-f7a6-4fc1-966e-8ea449c6bfbf}</UniqueIdentifier>
+      <Extensions>json;csv</Extensions>
+    </Filter>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{e2c8ef38-e27e-4566-9954-8f2286c13d02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\RCK\include\Character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\GameTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Maps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\ItemTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Mobs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Conditions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\OutputLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Party.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Bases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\RCK\src\Character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\GameTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Maps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\ItemTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Mobs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Conditions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\OutputLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Party.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Bases.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\scripts\thief_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\ability_bonus.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\ability_prime_req.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\classes.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\cleric_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\cleric_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\fighter_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\fighter_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\mage_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\mage_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\statistics.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\thief_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\equipment.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\decoration.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\creatures.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\conditions.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\ranges.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\mortal_wounds.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\mortal_wound_effects.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\bases.json">
+      <Filter>Scripts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\RCK\docs\RCK_Plan.txt">
+      <Filter>Documents</Filter>
+    </Text>
+    <Text Include="..\..\RCK\docs\RCK_Time.txt">
+      <Filter>Documents</Filter>
+    </Text>
+    <Text Include="..\..\RCK\docs\RCK_Tags.txt">
+      <Filter>Documents</Filter>
+    </Text>
+    <Text Include="..\..\RCK\docs\RCK_Modes.txt">
+      <Filter>Documents</Filter>
+    </Text>
+    <Text Include="..\..\RCK\docs\RCK_Proficiencies.txt">
+      <Filter>Documents</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

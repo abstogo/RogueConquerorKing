@@ -150,8 +150,11 @@ int ItemManager::GenerateItemFromTemplate(int templateID)
 	// generate decoration
 
 	// no decorations in this version
-	int decorationValue = 0;
+	int decorationBaseValue = 0;
+	int decorationMaterialValue = 0;
 
+	
+	int decorationValue = decorationBaseValue * decorationMaterialValue;
 	// value = base value * material multiplier + decoration value * material multiplier
 
 	items.Value.push_back(undecoratedValue + decorationValue);
