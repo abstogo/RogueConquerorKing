@@ -1,0 +1,61 @@
+{
+  "Spells": [
+    {
+      "Name": "Magic Missile",
+      "Source": "Arcane",
+      "Level": 1,
+      "Type": "Blast",
+      "Duration": "Instant",
+      "DurationModifiers": [],
+      "Range": 150,
+      "Target": "1_5lvl",
+      "TargetModifiers": [],
+      "Dice": "1d4+1_per_level",
+      "DiceLimit": 3,
+      "DiceModifiers": [],
+      "SavingThrow": "None",
+      "AdditionalEffects": [],
+      "EffectModifiers": [],
+      "ProficiencyBonus": "",
+      "ReversesTo": ""
+    },
+    {
+      "Name": "Cure Light Wounds",
+      "Source": "Divine",
+      "Level": 1,
+      "Type": "Healing",
+      "Duration": "Instant",
+      "DurationModifiers": [],
+      "Range": 0,
+      "Target": "1",
+      "TargetModifiers": [],
+      "Dice": "1d6+1",
+      "DiceLimit": 1,
+      "DiceModifiers": [],
+      "SavingThrow": "None",
+      "AdditionalEffects": [],
+      "EffectModifiers": [],
+      "ProficiencyBonus": "",
+      "ReversesTo": "Cause Light Wounds"
+    },
+    {
+      "Name": "Cause Light Wounds",
+      "Source": "Divine",
+      "Level": 1,
+      "Type": "Healing",
+      "Duration": "Instant",
+      "DurationModifiers": [],
+      "Range": 0,
+      "Target": "1",
+      "TargetModifiers": [ "AttackRoll" ],
+      "Dice": "1d6+1",
+      "DiceLimit": 1,
+      "DiceModifiers": [],
+      "SavingThrow": "None",
+      "AdditionalEffects": [],
+      "EffectModifiers": [],
+      "ProficiencyBonus": "",
+      "ReversesTo": "Cure Light Wounds"
+    }
+  ]
+}

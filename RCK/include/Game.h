@@ -8,6 +8,7 @@
 #include "ItemTemplate.h"
 #include "Party.h"
 #include "Bases.h"
+#include "Spells.h"
 
 /*
  * The Game class exists to contain the various managers etc for the game and coordinate the game's functions
@@ -24,6 +25,7 @@ class ConditionManager;
 class MortalWoundManager;
 class PartyManager;
 class BaseManager;
+class SpellManager;
 
 enum ManagerType
 {
@@ -36,6 +38,7 @@ enum ManagerType
 	MANAGER_MORTAL,
 	MANAGER_PARTY,
 	MANAGER_BASE,
+	MANAGER_SPELLS,
 	MANAGER_MAX
 };
 
@@ -208,6 +211,7 @@ public:
 	MortalWoundManager* mMortalManager;
 	PartyManager* mPartyManager;
 	BaseManager* mBaseManager;
+	SpellManager* mSpellManager;
 	
 	TCODConsole* sampleConsole;
 

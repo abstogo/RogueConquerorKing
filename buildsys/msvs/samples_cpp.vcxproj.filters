@@ -55,6 +55,9 @@
     <ClInclude Include="..\..\RCK\include\Bases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\RCK\include\Spells.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\RCK\src\Character.cpp">
@@ -91,6 +94,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\RCK\src\Bases.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\RCK\src\Spells.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,6 +162,9 @@
       <Filter>Scripts</Filter>
     </None>
     <None Include="..\..\scripts\bases.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\scripts\spellbook_core.json">
       <Filter>Scripts</Filter>
     </None>
   </ItemGroup>

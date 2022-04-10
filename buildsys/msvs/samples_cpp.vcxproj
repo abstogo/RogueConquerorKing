@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\RCK\include\Maps.h" />
     <ClInclude Include="..\..\RCK\include\Mobs.h" />
     <ClInclude Include="..\..\RCK\include\Party.h" />
+    <ClInclude Include="..\..\RCK\include\Spells.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\RCK\src\Bases.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="..\..\RCK\src\Maps.cpp" />
     <ClCompile Include="..\..\RCK\src\Mobs.cpp" />
     <ClCompile Include="..\..\RCK\src\Party.cpp" />
+    <ClCompile Include="..\..\RCK\src\Spells.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\scripts\ability_bonus.csv" />
@@ -64,6 +66,7 @@
     <None Include="..\..\scripts\mortal_wounds.csv" />
     <None Include="..\..\scripts\mortal_wound_effects.json" />
     <None Include="..\..\scripts\ranges.csv" />
+    <None Include="..\..\scripts\spellbook_core.json" />
     <None Include="..\..\scripts\statistics.json" />
     <None Include="..\..\scripts\thief_advancement.csv" />
     <None Include="..\..\scripts\thief_chart.csv" />
@@ -200,6 +203,7 @@ $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\externals\jsoncons\include;$(SolutionDir)..\..\RCK\include;$(SolutionDir)..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -22,6 +22,7 @@ void Game::StartGame()
 	mMortalManager = MortalWoundManager::LoadMortalWoundData();
 	mPartyManager = PartyManager::LoadPartyData();
 	mBaseManager = BaseManager::LoadBaseData();
+	mSpellManager = SpellManager::LoadSpells();
 
 	DebugLog("Game Managers Created");
 
