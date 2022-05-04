@@ -10,7 +10,7 @@ ClassManager* ClassManager::LoadClasses()
 {
 	gLog->Log("Class Loader", "Started");
 
-	std::string classFilename = "scripts/classes.json";
+	std::string classFilename = "RCK/scripts/classes.json";
 	std::ifstream is(classFilename);
 
 	ClassManager* output = new ClassManager(jsoncons::decode_json<ClassSet>(is));
@@ -29,7 +29,7 @@ ClassManager* ClassManager::LoadClasses()
 
 		ACKSClass* cl = (ACKSClass*)&classList[i];
 
-		std::string csv_name = "scripts/" + cl->Name() + "_chart.csv";
+		std::string csv_name = "RCK/scripts/" + cl->Name() + "_chart.csv";
 		std::transform(csv_name.begin(), csv_name.end(), csv_name.begin(), ::tolower);
 		std::ifstream csv(csv_name);
 
@@ -120,7 +120,7 @@ void AdvancementStore::LoadAdvancementSets()
 	std::vector<std::string> columnNames;
 	std::vector<std::vector<int>> columnValues;
 	
-	std::string csv_name = "scripts/advancement.csv";
+	std::string csv_name = "RCK/scripts/advancement.csv";
 	std::ifstream csv(csv_name);
 
 	jsoncons::csv::csv_options options;
@@ -175,7 +175,7 @@ void AdvancementStore::LoadAdvancementSets()
 		// skip Monsters (they have a save derived from a base class)
 		if (i != 0)
 		{
-			std::string adv_csv_name = "scripts/" + name + "_advancement.csv";
+			std::string adv_csv_name = "RCK/scripts/" + name + "_advancement.csv";
 			std::transform(adv_csv_name.begin(), adv_csv_name.end(), adv_csv_name.begin(), ::tolower);
 			std::ifstream adv_csv(adv_csv_name);
 

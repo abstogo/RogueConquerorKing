@@ -8,7 +8,7 @@ MobManager* MobManager::LoadMobData()
 {
 	gLog->Log("Monster Loader", "Started");
 
-	std::string mobFilename = "scripts/creatures.json";
+	std::string mobFilename = "RCK/scripts/creatures.json";
 	
 	std::ifstream is(mobFilename);
 

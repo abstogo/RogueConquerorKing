@@ -258,6 +258,8 @@ class MapManager : public ITCODPathCallback
 	std::vector<Map*> mapStore;
 
 	std::vector<std::vector<std::string>> terrain_prefabs; 
+
+	void GeneratePrefabs();
 	
 public:
 	MapManager();

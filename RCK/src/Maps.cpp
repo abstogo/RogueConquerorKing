@@ -105,11 +105,10 @@ int Map::removeMob(int mobID)
 	return *p;
 }
 
-
-MapManager::MapManager()
+void MapManager::GeneratePrefabs()
 {
 	terrain_prefabs.resize(TERRAIN_MAX);
-	
+
 	terrain_prefabs[TERRAIN_PLAINS] = {
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . . . .",
@@ -206,6 +205,11 @@ MapManager::MapManager()
 		". . . . . . . . . . . . . . . . . . . . . . . ",
 		" . . . . . . . . . . . . . . . . . . . . # . .",
 	};
+}
+
+MapManager::MapManager()
+{
+	GeneratePrefabs();
 
 	mapStore.push_back(NULL);
 }

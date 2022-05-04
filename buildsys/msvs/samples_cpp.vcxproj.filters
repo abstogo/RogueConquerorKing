@@ -20,6 +20,9 @@
     <Filter Include="Documents">
       <UniqueIdentifier>{e2c8ef38-e27e-4566-9954-8f2286c13d02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Prefabs">
+      <UniqueIdentifier>{a3e3dbc6-2ae7-4a33-8631-52d20b33481e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\RCK\include\Character.h">
@@ -95,71 +98,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\scripts\thief_chart.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\ability_bonus.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\ability_prime_req.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\advancement.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\classes.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\cleric_advancement.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\cleric_chart.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\fighter_advancement.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\fighter_chart.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\mage_advancement.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\mage_chart.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\statistics.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\thief_advancement.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\equipment.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\decoration.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\creatures.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\conditions.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\ranges.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\mortal_wounds.csv">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\mortal_wound_effects.json">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="..\..\scripts\bases.json">
-      <Filter>Scripts</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="..\..\RCK\docs\RCK_Plan.txt">
       <Filter>Documents</Filter>
     </Text>
@@ -175,5 +113,70 @@
     <Text Include="..\..\RCK\docs\RCK_Proficiencies.txt">
       <Filter>Documents</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\RCK\scripts\thief_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\ability_bonus.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\ability_prime_req.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\bases.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\classes.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\cleric_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\cleric_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\conditions.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\creatures.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\decoration.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\equipment.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\fighter_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\fighter_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\mage_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\mage_chart.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\mortal_wound_effects.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\mortal_wounds.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\ranges.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\statistics.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\thief_advancement.csv">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
