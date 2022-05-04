@@ -113,6 +113,24 @@
     <Text Include="..\..\RCK\docs\RCK_Proficiencies.txt">
       <Filter>Documents</Filter>
     </Text>
+    <Text Include="..\..\RCK\prefabs\o_desert1.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
+    <Text Include="..\..\RCK\prefabs\o_forest1.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
+    <Text Include="..\..\RCK\prefabs\o_hills1.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
+    <Text Include="..\..\RCK\prefabs\o_mountain1.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
+    <Text Include="..\..\RCK\prefabs\o_plains1.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
+    <Text Include="..\..\RCK\prefabs\r_test.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\RCK\scripts\thief_chart.csv">
@@ -177,6 +195,9 @@
     </None>
     <None Include="..\..\RCK\scripts\thief_advancement.csv">
       <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\prefabs\maps.json">
+      <Filter>Prefabs</Filter>
     </None>
   </ItemGroup>
 </Project>

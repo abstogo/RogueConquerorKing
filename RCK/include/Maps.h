@@ -21,9 +21,6 @@
 #define INDOOR_MAP_WIDTH SAMPLE_SCREEN_WIDTH
 #define INDOOR_MAP_HEIGHT SAMPLE_SCREEN_HEIGHT
 
-// content setup
-// needs to be replaced with datafile and interaction setup (for proficiencies, magic etc)
-
 // regional cell data is split into two elements - terrain type and content
 // terrain is used for movement rate and also for local map generation
 enum RegionTerrainTypes
@@ -129,6 +126,11 @@ enum Ortho_Movement
 	ORTHO_DOWNRIGHT,
 	ORTHO_UPRIGHT
 };
+
+
+// load map prefab data
+
+
 
 struct RegionMap
 {

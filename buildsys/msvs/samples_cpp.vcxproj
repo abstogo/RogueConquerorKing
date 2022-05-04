@@ -51,8 +51,15 @@
     <Text Include="..\..\RCK\docs\RCK_Proficiencies.txt" />
     <Text Include="..\..\RCK\docs\RCK_Tags.txt" />
     <Text Include="..\..\RCK\docs\RCK_Time.txt" />
+    <Text Include="..\..\RCK\prefabs\o_desert1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_forest1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_hills1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_mountain1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_plains1.txt" />
+    <Text Include="..\..\RCK\prefabs\r_test.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\RCK\prefabs\maps.json" />
     <None Include="..\..\RCK\scripts\ability_bonus.csv" />
     <None Include="..\..\RCK\scripts\ability_prime_req.csv" />
     <None Include="..\..\RCK\scripts\advancement.csv" />
