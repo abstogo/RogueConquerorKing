@@ -207,10 +207,9 @@ void MapManager::GeneratePrefabs()
 	};
 }
 
-MapManager::MapManager()
+MapManager::MapManager(TerrainTypeSet& tts) : terrainTypes(tts)
 {
-	GeneratePrefabs();
-
+	//GeneratePrefabs();
 	mapStore.push_back(NULL);
 }
 
@@ -360,8 +359,16 @@ std::vector<int> MapManager::filterByFOV(int sourceManager, int sourceID, int ta
 
 MapManager* MapManager::LoadMaps()
 {
-	MapManager* newManager = new MapManager();
+	
 	gLog->Log("Map Manager", "Started");
+
+	const std::string mapsFilename = "RCK/prefabs/maps.json";
+
+	std::ifstream is(mapsFilename);
+
+	MapManager* newManager = new MapManager(jsoncons::decode_json<TerrainTypeSet>(is));
+
+
 	return newManager;
 }
 

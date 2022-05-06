@@ -9,6 +9,11 @@
 #include <list>
 #include <queue>
 #include <string>
+#include <jsoncons/json.hpp>
+#include <jsoncons_ext/jsonpath/json_query.hpp>
+#include <jsoncons/json_type_traits_macros.hpp>
+#include <jsoncons_ext/csv/csv.hpp>
+#include <fstream>
 #include "OutputLog.h"
 
 // sample screen size
@@ -129,7 +134,46 @@ enum Ortho_Movement
 
 
 // load map prefab data
+class TerrainType
+{
+	std::string Name_;
+	std::string RegionMapSymbol_;
+	int OverlandTravelMultiplier_;
+	int EncounterProbability_;
+	std::string EncounterTable_;
+	std::string Generator_;
+	std::vector<std::string> Prefabs_;
 
+public:
+	TerrainType(const std::string& Name, const std::string& RegionMapSymbol, const int OverlandTravelMultiplier,
+				 const int EncounterProbability, const std::string& EncounterTable, const std::string& Generator,
+				 const std::vector<std::string>& Prefabs)
+		: Name_(Name), RegionMapSymbol_(RegionMapSymbol), OverlandTravelMultiplier_(OverlandTravelMultiplier),
+		  EncounterProbability_(EncounterProbability), EncounterTable_(EncounterTable), Generator_(Generator),
+		  Prefabs_(Prefabs)
+	{}
+
+	const std::string& Name() { return Name_; }
+	const std::string& RegionMapSymbol() { return RegionMapSymbol_; }
+	const int OverlandTravelMultiplier() { return OverlandTravelMultiplier_; }
+	const int EncounterProbability() { return EncounterProbability_; }
+	const std::string& EncounterTable() { return EncounterTable_; }
+	const std::string& Generator() { return Generator_; }
+	std::vector<std::string> Prefabs() { return Prefabs_; }
+};
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(TerrainType, Name, RegionMapSymbol, OverlandTravelMultiplier, EncounterProbability, EncounterTable, Generator, Prefabs)
+
+class TerrainTypeSet
+{
+	std::vector<TerrainType> TerrainTypes_;
+
+public:
+	TerrainTypeSet(const std::vector<TerrainType>& TerrainTypes) : TerrainTypes_(TerrainTypes)
+	{}
+
+	std::vector<TerrainType> TerrainTypes() { return TerrainTypes_; }
+};
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(TerrainTypeSet, TerrainTypes)
 
 
 struct RegionMap
@@ -260,11 +304,12 @@ class MapManager : public ITCODPathCallback
 	std::vector<Map*> mapStore;
 
 	std::vector<std::vector<std::string>> terrain_prefabs; 
+	TerrainTypeSet terrainTypes;
 
 	void GeneratePrefabs();
 	
 public:
-	MapManager();
+	MapManager(TerrainTypeSet& tts);
 	~MapManager();
 
 	Map* getMap(int index);
