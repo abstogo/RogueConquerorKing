@@ -303,7 +303,7 @@ class MapManager : public ITCODPathCallback
 	RegionMap* regionMap;
 	std::vector<Map*> mapStore;
 
-	std::vector<std::vector<std::string>> terrain_prefabs; 
+	std::vector<std::vector<std::vector<std::string>>> terrain_prefabs;
 	TerrainTypeSet terrainTypes;
 
 	void GeneratePrefabs();
