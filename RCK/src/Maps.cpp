@@ -715,7 +715,7 @@ Map* MapManager::mapFromText(std::vector<std::string> hmap, bool outdoor)
 	return mapStore[index];
 }
 
-void MapManager::renderRegionMap(TCODConsole* sampleConsole)
+void MapManager::renderRegionMap(TCODConsole* sampleConsole, int centroid_x, int centroid_y)
 {
 	
 	int map_width = OUTDOOR_MAP_WIDTH;
@@ -790,7 +790,7 @@ void MapManager::renderRegionMap(TCODConsole* sampleConsole)
 	}
 }
 
-void MapManager::renderMap(TCODConsole* sampleConsole, int index)
+void MapManager::renderMap(TCODConsole* sampleConsole, int index, int centroid_x, int centroid_y)
 {
 	Map* map = mapStore[index];
 	bool outdoor = map->outdoor;
@@ -800,14 +800,44 @@ void MapManager::renderMap(TCODConsole* sampleConsole, int index)
 
 	TCODColor baseColor = TCODColor::lighterGrey;
 
+	int screen_map_x0 = centroid_x - int(map_width / 2);
+	int screen_map_x1 = screen_map_x0 + map_width;
+
+	if (screen_map_x0 < 0)
+	{
+		screen_map_x1 -= (screen_map_x0);
+		screen_map_x0 = 0;
+	}
+
+	if (screen_map_x1 > map->width)
+	{
+		screen_map_x0 -= (screen_map_x1 - map->width);
+		screen_map_x1 = map_width;
+	}
+
+	int screen_map_y0 = centroid_y - int(map_height / 2);
+	int screen_map_y1 = screen_map_y0 + map_height;
+
+	if (screen_map_y0 < 0)
+	{
+		screen_map_y1 -= (screen_map_y0);
+		screen_map_y0 = 0;
+	}
+
+	if (screen_map_y1 > map->height)
+	{
+		screen_map_y0 -= (screen_map_y1 - map->height);
+		screen_map_y1 = map->height;
+	}
+
 	// draw the hex map
-	for (int y = 0; y < map_height; y++)
+	for (int y = screen_map_y0; y < screen_map_y1; y++)
 	{
 		bool stepped = y & 0x1;
-		for (int x = 0; x < map_width; x++)
+		for (int x = screen_map_x0; x < screen_map_x1; x++)
 		{
-			int render_x = outdoor ? x * 2 : x;
-			int render_y = outdoor ? y * 2 : y;
+			int render_x = outdoor ? (x - screen_map_x0) * 2 : (x - screen_map_x0);
+			int render_y = outdoor ? (y - screen_map_y0) * 2 : (y - screen_map_y0);
 			render_x += (outdoor && stepped) ? 1 : 0;
 
 			int content = map->getContent(x, y);

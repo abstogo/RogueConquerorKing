@@ -339,8 +339,8 @@ public:
 	
 	// this manager handles the main rendering, since it controls the map status & context (hex/square, lighting etc)
 	// if the index is -1, show the region map, if >=0 then show a local map
-	void renderMap(TCODConsole* sampleConsole, int index);
-	void renderRegionMap(TCODConsole* sampleConsole);
+	void renderMap(TCODConsole* sampleConsole, int index, int centroid_x, int centroid_y);
+	void renderRegionMap(TCODConsole* sampleConsole, int centroid_x, int centroid_y);
 
 	// mobile element (player, monster) are rendered through here too
     void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);
