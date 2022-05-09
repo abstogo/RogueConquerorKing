@@ -131,6 +131,9 @@
     <Text Include="..\..\RCK\prefabs\r_test.txt">
       <Filter>Prefabs</Filter>
     </Text>
+    <Text Include="..\..\RCK\prefabs\o_plains2.txt">
+      <Filter>Prefabs</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\RCK\scripts\thief_chart.csv">

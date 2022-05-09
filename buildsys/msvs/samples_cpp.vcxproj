@@ -56,6 +56,7 @@
     <Text Include="..\..\RCK\prefabs\o_hills1.txt" />
     <Text Include="..\..\RCK\prefabs\o_mountain1.txt" />
     <Text Include="..\..\RCK\prefabs\o_plains1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_plains2.txt" />
     <Text Include="..\..\RCK\prefabs\r_test.txt" />
   </ItemGroup>
   <ItemGroup>

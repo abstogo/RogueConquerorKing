@@ -493,8 +493,8 @@ void MapManager::BuildRegionMapFromText(std::vector<std::string> hmap_terrain)
 // builds an outdoor map from an array of strings (could be loaded from a file etc)
 int MapManager::buildMapFromText(std::vector<std::string> hmap,bool outdoor)
 {
-	int map_width = SAMPLE_SCREEN_WIDTH;
-	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
+	int map_width = hmap[0].size();
+	int map_height = hmap.size();
 
 	int index = buildEmptyMap(outdoor ? map_width / 2 : map_width, map_height, outdoor ? MAP_WILDERNESS : MAP_DUNGEON);
 	Map* newMap = mapStore[index];
