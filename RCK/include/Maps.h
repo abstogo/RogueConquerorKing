@@ -9,6 +9,11 @@
 #include <list>
 #include <queue>
 #include <string>
+#include <jsoncons/json.hpp>
+#include <jsoncons_ext/jsonpath/json_query.hpp>
+#include <jsoncons/json_type_traits_macros.hpp>
+#include <jsoncons_ext/csv/csv.hpp>
+#include <fstream>
 #include "OutputLog.h"
 
 // sample screen size
@@ -20,9 +25,6 @@
 
 #define INDOOR_MAP_WIDTH SAMPLE_SCREEN_WIDTH
 #define INDOOR_MAP_HEIGHT SAMPLE_SCREEN_HEIGHT
-
-// content setup
-// needs to be replaced with datafile and interaction setup (for proficiencies, magic etc)
 
 // regional cell data is split into two elements - terrain type and content
 // terrain is used for movement rate and also for local map generation
@@ -129,6 +131,50 @@ enum Ortho_Movement
 	ORTHO_DOWNRIGHT,
 	ORTHO_UPRIGHT
 };
+
+
+// load map prefab data
+class TerrainType
+{
+	std::string Name_;
+	std::string RegionMapSymbol_;
+	int OverlandTravelMultiplier_;
+	int EncounterProbability_;
+	std::string EncounterTable_;
+	std::string Generator_;
+	std::vector<std::string> Prefabs_;
+
+public:
+	TerrainType(const std::string& Name, const std::string& RegionMapSymbol, const int OverlandTravelMultiplier,
+				 const int EncounterProbability, const std::string& EncounterTable, const std::string& Generator,
+				 const std::vector<std::string>& Prefabs)
+		: Name_(Name), RegionMapSymbol_(RegionMapSymbol), OverlandTravelMultiplier_(OverlandTravelMultiplier),
+		  EncounterProbability_(EncounterProbability), EncounterTable_(EncounterTable), Generator_(Generator),
+		  Prefabs_(Prefabs)
+	{}
+
+	const std::string& Name() { return Name_; }
+	const std::string& RegionMapSymbol() { return RegionMapSymbol_; }
+	const int OverlandTravelMultiplier() { return OverlandTravelMultiplier_; }
+	const int EncounterProbability() { return EncounterProbability_; }
+	const std::string& EncounterTable() { return EncounterTable_; }
+	const std::string& Generator() { return Generator_; }
+	std::vector<std::string> Prefabs() { return Prefabs_; }
+};
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(TerrainType, Name, RegionMapSymbol, OverlandTravelMultiplier, EncounterProbability, EncounterTable, Generator, Prefabs)
+
+class TerrainTypeSet
+{
+	std::vector<TerrainType> TerrainTypes_;
+
+public:
+	TerrainTypeSet(const std::vector<TerrainType>& TerrainTypes) : TerrainTypes_(TerrainTypes)
+	{}
+
+	std::vector<TerrainType> TerrainTypes() { return TerrainTypes_; }
+};
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(TerrainTypeSet, TerrainTypes)
+
 
 struct RegionMap
 {
@@ -257,10 +303,13 @@ class MapManager : public ITCODPathCallback
 	RegionMap* regionMap;
 	std::vector<Map*> mapStore;
 
-	std::vector<std::vector<std::string>> terrain_prefabs; 
+	std::vector<std::vector<std::vector<std::string>>> terrain_prefabs;
+	TerrainTypeSet terrainTypes;
+
+	void GeneratePrefabs();
 	
 public:
-	MapManager();
+	MapManager(TerrainTypeSet& tts);
 	~MapManager();
 
 	Map* getMap(int index);
@@ -290,8 +339,8 @@ public:
 	
 	// this manager handles the main rendering, since it controls the map status & context (hex/square, lighting etc)
 	// if the index is -1, show the region map, if >=0 then show a local map
-	void renderMap(TCODConsole* sampleConsole, int index);
-	void renderRegionMap(TCODConsole* sampleConsole);
+	void renderMap(TCODConsole* sampleConsole, int index, int centroid_x, int centroid_y);
+	void renderRegionMap(TCODConsole* sampleConsole, int centroid_x, int centroid_y);
 
 	// mobile element (player, monster) are rendered through here too
     void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);

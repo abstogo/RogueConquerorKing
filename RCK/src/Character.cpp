@@ -6,7 +6,7 @@ CharacterManager* CharacterManager::LoadCharacteristics()
 {
 	gLog->Log("Characteristic Loader","Started");
 
-	const std::string statsFilename = "scripts/statistics.json";
+	const std::string statsFilename = "RCK/scripts/statistics.json";
 	
 	std::ifstream is(statsFilename);
 
@@ -39,7 +39,7 @@ CharacterManager* CharacterManager::LoadCharacteristics()
 	
 	// read the characteristic bonuses from ability_bonus.csv
 
-	const std::string abilityBonusFilename = "scripts/ability_bonus.csv";
+	const std::string abilityBonusFilename = "RCK/scripts/ability_bonus.csv";
 
 	std::ifstream cs(abilityBonusFilename);
 	
@@ -62,7 +62,7 @@ CharacterManager* CharacterManager::LoadCharacteristics()
 
 	gLog->Log("Characteristic Loader", "Decoded " + abilityBonusFilename);
 
-	const std::string abilityRequisiteFilename = "scripts/ability_prime_req.csv";
+	const std::string abilityRequisiteFilename = "RCK/scripts/ability_prime_req.csv";
 	
 	std::ifstream prs(abilityRequisiteFilename);
 

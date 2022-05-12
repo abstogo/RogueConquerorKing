@@ -9,7 +9,7 @@ ItemManager* ItemManager::LoadItemTemplates()
 
 	gLog->Log("Item Loader", "Started");
 
-	std::string itemRangeFilename = "scripts/ranges.csv";
+	std::string itemRangeFilename = "RCK/scripts/ranges.csv";
 	
 	std::ifstream rs(itemRangeFilename);
 
@@ -51,8 +51,8 @@ ItemManager* ItemManager::LoadItemTemplates()
 
 	rs.close();
 
-	std::string equipmentFilename = "scripts/equipment.json";
-	std::string decorationFilename = "scripts/decoration.json";
+	std::string equipmentFilename = "RCK/scripts/equipment.json";
+	std::string decorationFilename = "RCK/scripts/decoration.json";
 	
 	std::ifstream is(equipmentFilename);
 	std::ifstream ds(decorationFilename);

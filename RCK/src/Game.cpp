@@ -1627,12 +1627,12 @@ void Game::RenderMap()
 
 	if (currentMapID == -1)
 	{
-		mMapManager->renderRegionMap(sampleConsole);
+		mMapManager->renderRegionMap(sampleConsole,player_x,player_y);
 		mMapManager->renderAtPosition(sampleConsole, -1, player_x, player_y, '@', TCODColor::white);
 	}
 	else
 	{
-		mMapManager->renderMap(sampleConsole, currentMapID);
+		mMapManager->renderMap(sampleConsole, currentMapID,player_x,player_y);
 
 		std::vector<int> chars = mPartyManager->getPlayerCharacters(currentPartyID);
 		for (int ch : chars)
