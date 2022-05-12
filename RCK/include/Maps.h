@@ -343,7 +343,7 @@ public:
 	void renderRegionMap(TCODConsole* sampleConsole, int centroid_x, int centroid_y);
 
 	// mobile element (player, monster) are rendered through here too
-    void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);
+    void renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int centroid_x, int centroid_y, int x, int y, char c, TCODColor foreground = TCODColor::lighterGrey);
 
 	// connects one local map to another at the specified point
 	void connectMaps(int map1, int map2, int x1, int y1, int x2, int y2);
