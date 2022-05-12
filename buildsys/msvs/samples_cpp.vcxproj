@@ -46,34 +46,42 @@
     <ClCompile Include="..\..\RCK\src\Party.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\scripts\ability_bonus.csv" />
-    <None Include="..\..\scripts\ability_prime_req.csv" />
-    <None Include="..\..\scripts\advancement.csv" />
-    <None Include="..\..\scripts\bases.json" />
-    <None Include="..\..\scripts\classes.json" />
-    <None Include="..\..\scripts\cleric_advancement.csv" />
-    <None Include="..\..\scripts\cleric_chart.csv" />
-    <None Include="..\..\scripts\conditions.json" />
-    <None Include="..\..\scripts\decoration.json" />
-    <None Include="..\..\scripts\equipment.json" />
-    <None Include="..\..\scripts\fighter_advancement.csv" />
-    <None Include="..\..\scripts\fighter_chart.csv" />
-    <None Include="..\..\scripts\mage_advancement.csv" />
-    <None Include="..\..\scripts\mage_chart.csv" />
-    <None Include="..\..\scripts\creatures.json" />
-    <None Include="..\..\scripts\mortal_wounds.csv" />
-    <None Include="..\..\scripts\mortal_wound_effects.json" />
-    <None Include="..\..\scripts\ranges.csv" />
-    <None Include="..\..\scripts\statistics.json" />
-    <None Include="..\..\scripts\thief_advancement.csv" />
-    <None Include="..\..\scripts\thief_chart.csv" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="..\..\RCK\docs\RCK_Modes.txt" />
     <Text Include="..\..\RCK\docs\RCK_Plan.txt" />
     <Text Include="..\..\RCK\docs\RCK_Proficiencies.txt" />
     <Text Include="..\..\RCK\docs\RCK_Tags.txt" />
     <Text Include="..\..\RCK\docs\RCK_Time.txt" />
+    <Text Include="..\..\RCK\prefabs\o_desert1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_forest1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_hills1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_mountain1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_plains1.txt" />
+    <Text Include="..\..\RCK\prefabs\o_plains2.txt" />
+    <Text Include="..\..\RCK\prefabs\r_test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\RCK\prefabs\maps.json" />
+    <None Include="..\..\RCK\scripts\ability_bonus.csv" />
+    <None Include="..\..\RCK\scripts\ability_prime_req.csv" />
+    <None Include="..\..\RCK\scripts\advancement.csv" />
+    <None Include="..\..\RCK\scripts\bases.json" />
+    <None Include="..\..\RCK\scripts\classes.json" />
+    <None Include="..\..\RCK\scripts\cleric_advancement.csv" />
+    <None Include="..\..\RCK\scripts\cleric_chart.csv" />
+    <None Include="..\..\RCK\scripts\conditions.json" />
+    <None Include="..\..\RCK\scripts\creatures.json" />
+    <None Include="..\..\RCK\scripts\decoration.json" />
+    <None Include="..\..\RCK\scripts\equipment.json" />
+    <None Include="..\..\RCK\scripts\fighter_advancement.csv" />
+    <None Include="..\..\RCK\scripts\fighter_chart.csv" />
+    <None Include="..\..\RCK\scripts\mage_advancement.csv" />
+    <None Include="..\..\RCK\scripts\mage_chart.csv" />
+    <None Include="..\..\RCK\scripts\mortal_wounds.csv" />
+    <None Include="..\..\RCK\scripts\mortal_wound_effects.json" />
+    <None Include="..\..\RCK\scripts\ranges.csv" />
+    <None Include="..\..\RCK\scripts\statistics.json" />
+    <None Include="..\..\RCK\scripts\thief_advancement.csv" />
+    <None Include="..\..\RCK\scripts\thief_chart.csv" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{21EA5A6A-100A-4B9E-B395-1B6602148AE5}</ProjectGuid>

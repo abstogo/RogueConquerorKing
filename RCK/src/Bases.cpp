@@ -4,7 +4,7 @@ BaseManager* BaseManager::LoadBaseData()
 {
 	gLog->Log("Base Loader", "Started");
 	
-	std::string baseFilename = "scripts/bases.json";
+	std::string baseFilename = "RCK/scripts/bases.json";
 	std::ifstream is(baseFilename);
 
 	BaseManager* output = new BaseManager(jsoncons::decode_json<BaseInfoSet>(is));
