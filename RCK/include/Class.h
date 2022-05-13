@@ -104,6 +104,8 @@ public:
 	std::vector<int> LevelHitDie;
 	std::vector<int> LevelHitBonus;
 
+	std::vector<std::vector<int>> LevelSpellsPerDay;
+
 	std::vector<int> PrimeReqIdx;
 	
 	std::map<std::string, std::vector<int>> LevelTagBonuses; // compiled list of tags per level

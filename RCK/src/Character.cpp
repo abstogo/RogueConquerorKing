@@ -301,6 +301,11 @@ void CharacterManager::BaseGenerate()
 	// remaining cleaves
 	pcRemainingCleaves.push_back(0);
 
+	// spells per day
+	std::vector<int> spells = { 0,0,0,0,0,0 };
+	pcDailySpells.push_back(spells);
+	// spell repertoire
+
 	std::vector<MortalEffect*> meff;
 	pcMortalWounds.push_back(meff);
 }
@@ -375,7 +380,6 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	// level 1
 	pcLevel.push_back(1);
 
-
 	// get hit points from class
 	int hitDie = acksClass.HitDie();
 
@@ -384,6 +388,9 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	pcCurrentHitPoints.push_back(hitDie);
 	
 	BaseGenerate();
+
+	// construct spell setup
+	RefreshDailySpells(output);
 	
 	// and build the caches
 	UpdateProficiencyCache(output);
@@ -395,8 +402,20 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	DumpProficiencyCache(output);
 	DumpTagCache(output);
 
-	
 	return output;
+}
+
+void CharacterManager::RefreshDailySpells(int characterID)
+{
+	const ACKSClass* cl = this->getCharacterClass(characterID);
+	int level = this->getCharacterLevel(characterID);
+	if(cl->LevelSpellsPerDay.size() > 0)
+	{
+		for (int i = 0; i < cl->LevelSpellsPerDay[level].size(); i++)
+		{
+			pcDailySpells[characterID][i] = cl->LevelSpellsPerDay[level][i];
+		}
+	}
 }
 
 int CharacterManager::SelectBehaviour(int entityID)

@@ -172,6 +172,8 @@ class CharacterManager
 	std::vector<int> pcExperience;
 	std::vector<int> pcCurrentArmourClass;
 
+	std::vector<std::vector<int>> pcDailySpells;
+
 	std::vector<std::map<std::string, int>> pcCollectedTags;
 
 	std::vector<std::string> pcName;
@@ -307,7 +309,6 @@ public:
 	int AddInventoryItem(int characterID, int itemID);				// returns inventory index
 	int RemoveInventoryItem(int characterID, int inventoryID);		// returns item ID
 
-
 	std::list<int> GetInventory(int characterID)
 	{
 		return pcInventory[characterID];
@@ -323,6 +324,10 @@ public:
 	int GetCurrentAC(int characterID);
 
 	int GetCurrentDamageBonus(int characterID, bool missile);
+
+	// spell management
+	void RefreshDailySpells(int characterID);
+
 
 	double MoveTo(int entityID, int new_x, int new_y, int currentTime);
 	int GetPlayerX(int characterID) { return pcXPos[characterID]; }

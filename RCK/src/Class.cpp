@@ -87,6 +87,33 @@ ClassManager* ClassManager::LoadClasses()
 			}
 		}
 
+		std::string spell_csv_name = "RCK/scripts/" + cl->Name() + "_spell_adv.csv";
+		std::transform(spell_csv_name.begin(), spell_csv_name.end(), spell_csv_name.begin(), ::tolower);
+		std::ifstream spell_csv(spell_csv_name);
+
+		options.assume_header(false);
+
+		if (spell_csv.is_open())
+		{
+			jsoncons::ojson jo = jsoncons::csv::decode_csv<jsoncons::ojson>(spell_csv, options);
+			int rowCount = 0;
+			int size = jo.size();
+			// quickly push out the size values
+			cl->LevelSpellsPerDay.resize(size);
+
+			for (const auto& row : jo.array_range())
+			{
+				for (int i = 0; i < row.size(); i++)
+				{
+					cl->LevelSpellsPerDay[rowCount].push_back(row[i].as<int>());
+				}
+				
+				rowCount++;
+			}
+
+			csv.close();
+		}
+
 		// extract the indices for the class's prime reqs
 		
 		for(auto rq : cl->PrimeRequisites())

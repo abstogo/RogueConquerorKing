@@ -208,7 +208,13 @@
     <None Include="..\..\RCK\prefabs\maps.json">
       <Filter>Prefabs</Filter>
     </None>
-    <None Include="..\..\scripts\spellbook_core.json">
+    <None Include="..\..\RCK\scripts\spellbook_core.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\cleric_spell_adv.csv">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\..\RCK\scripts\mage_spell_adv.csv">
       <Filter>Scripts</Filter>
     </None>
   </ItemGroup>

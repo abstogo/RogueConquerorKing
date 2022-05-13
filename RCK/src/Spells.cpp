@@ -7,7 +7,7 @@ SpellManager* SpellManager::LoadSpells()
 {
 	gLog->Log("Spell Loader", "Started");
 
-	std::string scriptsFolder = "scripts";
+	std::string scriptsFolder = "RCK/scripts";
 	
 	SpellManager* sm = new SpellManager();
 	for (const auto& entry : fs::directory_iterator(scriptsFolder))

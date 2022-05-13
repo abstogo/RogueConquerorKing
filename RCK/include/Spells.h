@@ -25,6 +25,7 @@ class Spell
 	std::string Source_;
 	int Level_;
 	std::string Type_;
+	std::string Effect_;
 	std::string Duration_;
 	std::vector<std::string> DurationModifiers_;
 	int Range_;
@@ -41,8 +42,8 @@ class Spell
 
 
 public:
-	Spell(const std::string Name, const std::string Source, const int Level, const std::string Type, const std::string Duration, const std::vector<std::string> DurationModifiers, const int Range, const std::string Target, const std::vector<std::string> TargetModifiers, const std::string Dice, const int DiceLimit, const std::vector<std::string> DiceModifiers, const std::string SavingThrow, const std::vector<std::string> AdditionalEffects, const std::vector<std::string> EffectModifiers, const std::string ProficiencyBonus, const std::string ReversesTo)
-		: Name_(Name), Source_(Source), Level_(Level), Type_(Type), Duration_(Duration), DurationModifiers_(DurationModifiers), Range_(Range), Target_(Target), TargetModifiers_(TargetModifiers), Dice_(Dice), DiceLimit_(DiceLimit), DiceModifiers_(DiceModifiers), SavingThrow_(SavingThrow), AdditionalEffects_(AdditionalEffects), EffectModifiers_(EffectModifiers), ProficiencyBonus_(ProficiencyBonus), ReversesTo_(ReversesTo)
+	Spell(const std::string Name, const std::string Source, const int Level, const std::string Type, const std::string Effect, const std::vector<std::string> AdditionalEffects, const std::vector<std::string> EffectModifiers, const std::string Duration, const std::vector<std::string> DurationModifiers, const int Range, const std::string Target, const std::vector<std::string> TargetModifiers, const std::string Dice, const int DiceLimit, const std::vector<std::string> DiceModifiers, const std::string SavingThrow,const std::string ProficiencyBonus, const std::string ReversesTo)
+		: Name_(Name), Source_(Source), Level_(Level), Type_(Type), Effect_(Effect), Duration_(Duration), DurationModifiers_(DurationModifiers), Range_(Range), Target_(Target), TargetModifiers_(TargetModifiers), Dice_(Dice), DiceLimit_(DiceLimit), DiceModifiers_(DiceModifiers), SavingThrow_(SavingThrow), AdditionalEffects_(AdditionalEffects), EffectModifiers_(EffectModifiers), ProficiencyBonus_(ProficiencyBonus), ReversesTo_(ReversesTo)
 	{}
 
 	const std::string Name() {
@@ -53,6 +54,9 @@ public:
 	}
 	const std::string Type() {
 		return Type_;
+	}
+	const std::string Effect() {
+		return Effect_;
 	}
 	const std::string Duration() {
 		return Duration_;
@@ -93,7 +97,7 @@ public:
 		return EffectModifiers_;
 	}
 };
-JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(Spell, Name, Source, Level, Type, Duration, DurationModifiers, Range, Target, TargetModifiers, Dice, DiceLimit, DiceModifiers, SavingThrow, AdditionalEffects, EffectModifiers, ProficiencyBonus, ReversesTo)
+JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(Spell, Name, Source, Level, Type, Effect, AdditionalEffects, EffectModifiers, Duration, DurationModifiers, Range, Target, TargetModifiers, Dice, DiceLimit, DiceModifiers, SavingThrow, ProficiencyBonus, ReversesTo)
 
 class SpellSet
 {

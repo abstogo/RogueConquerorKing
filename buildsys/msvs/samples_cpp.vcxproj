@@ -70,6 +70,7 @@
     <None Include="..\..\RCK\scripts\classes.json" />
     <None Include="..\..\RCK\scripts\cleric_advancement.csv" />
     <None Include="..\..\RCK\scripts\cleric_chart.csv" />
+    <None Include="..\..\RCK\scripts\cleric_spell_adv.csv" />
     <None Include="..\..\RCK\scripts\conditions.json" />
     <None Include="..\..\RCK\scripts\creatures.json" />
     <None Include="..\..\RCK\scripts\decoration.json" />
@@ -78,9 +79,11 @@
     <None Include="..\..\RCK\scripts\fighter_chart.csv" />
     <None Include="..\..\RCK\scripts\mage_advancement.csv" />
     <None Include="..\..\RCK\scripts\mage_chart.csv" />
+    <None Include="..\..\RCK\scripts\mage_spell_adv.csv" />
     <None Include="..\..\RCK\scripts\mortal_wounds.csv" />
     <None Include="..\..\RCK\scripts\mortal_wound_effects.json" />
     <None Include="..\..\RCK\scripts\ranges.csv" />
+    <None Include="..\..\RCK\scripts\spellbook_core.json" />
     <None Include="..\..\RCK\scripts\statistics.json" />
     <None Include="..\..\RCK\scripts\thief_advancement.csv" />
     <None Include="..\..\RCK\scripts\thief_chart.csv" />
