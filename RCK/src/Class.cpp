@@ -91,7 +91,7 @@ ClassManager* ClassManager::LoadClasses()
 		std::transform(spell_csv_name.begin(), spell_csv_name.end(), spell_csv_name.begin(), ::tolower);
 		std::ifstream spell_csv(spell_csv_name);
 
-		options.assume_header(false);
+		options.assume_header(true);
 
 		if (spell_csv.is_open())
 		{
@@ -103,7 +103,7 @@ ClassManager* ClassManager::LoadClasses()
 
 			for (const auto& row : jo.array_range())
 			{
-				for (int i = 0; i < row.size(); i++)
+				for (int i = 1; i < row.size(); i++)
 				{
 					cl->LevelSpellsPerDay[rowCount].push_back(row[i].as<int>());
 				}

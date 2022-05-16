@@ -176,6 +176,12 @@
       "LevelledAbilities": [
         {
           "Level": 1,
+          "Name": "Spellcasting",
+          "Type": "Capability:Magic",
+          "Value": 1
+        },
+        {
+          "Level": 1,
           "Name": "Use Arcane Magic",
           "Type": "Capability:Magic:Arcane",
           "Value": 1

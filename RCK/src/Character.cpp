@@ -405,6 +405,17 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	return output;
 }
 
+int CharacterManager::GetMaxSpellLevel(int characterID)
+{
+	return pcDailySpells[characterID].size();
+}
+
+int CharacterManager::GetSpellsPerDay(int characterID, int spellLevel)
+{
+	if (pcDailySpells[characterID].size() == 0) return 0;
+	return pcDailySpells[characterID][spellLevel];
+}
+
 void CharacterManager::RefreshDailySpells(int characterID)
 {
 	const ACKSClass* cl = this->getCharacterClass(characterID);

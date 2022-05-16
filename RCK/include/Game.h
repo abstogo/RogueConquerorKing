@@ -50,7 +50,7 @@ enum GAME_MODE
 	GM_INVENTORY,		// inventory mode, renders inventory window and allows wielding, dropping etc
 	GM_CHARACTER,		// character sheet mode, displays character statistics and allows levelling up
 //	GM_ABILITY,			// character ability mode (class abilities & proficiencies)
-//	GM_SPELL,			// spells mode
+	GM_SPELL,			// spells mode
 //  GM_ARMY,			// army management mode
 	GM_DOMAIN,			// domain management mode, includes camping, settlements
 //	GM_TEXTENTRY,		// text entry mode, accepts text input
@@ -103,6 +103,9 @@ class Game
 	
 	int inventoryPosition = 0;
 	int abilityPosition = 0;
+	int spellPosition = 0;
+
+	int spellbookLevel = 0;
 
 	// target mode data
 	int targetCursorX, targetCursorY; // target cursor for rendering purposes
@@ -128,7 +131,7 @@ class Game
 	
 	void MoveCharacter(int new_x, int new_y);
 
-	void RenderOffscreenUI(bool inventory, bool character);
+	void RenderOffscreenUI(GAME_MODE game_mode);
 
 	std::vector<int> GetTargetedEntities();
 
@@ -163,6 +166,7 @@ public:
 
 	void RenderCharacterSheet();
 	void RenderInventory();
+	void RenderSpellbook();
 
 	void RenderTargets();
 
@@ -217,9 +221,10 @@ public:
 
 	TCODConsole* characterScreen = nullptr;
 	TCODConsole* inventoryScreen = nullptr;
+	TCODConsole* spellbookScreen = nullptr;
 
-	TCODConsole* characterShot = nullptr;
-	TCODConsole* inventoryShot = nullptr;
+	// TCODConsole* characterShot = nullptr;
+	// TCODConsole* inventoryShot = nullptr;
 
 	TCODRandom* randomiser = TCODRandom::getInstance();
 };

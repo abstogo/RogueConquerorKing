@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <string>
 
 Game* gGame;
 
@@ -310,16 +311,39 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 	// "s"/"S" is the "spell" button and opens the Spells window to allow for casting spells
 	if (key->c == 's')
 	{
-		/*
-		if (mode != GM_SPELL)
+		if(mCharacterManager->getCharacterCapabilityFlag(currentCharacterID,"Magic"))
 		{
-			mode = GM_SPELL;
+			if (mode != GM_SPELL)
+			{
+				mode = GM_SPELL;
+
+				spellbookLevel = 0;
+
+				bool found = false; bool failed = false;
+				
+				while (!found && !failed)
+				{
+					spellbookLevel++;
+					if (spellbookLevel == 7)
+					{
+						failed = true;
+					}
+					else
+					{
+						int spellsAtLevel = mCharacterManager->getCharacterClass(currentCharacterID)->LevelSpellsPerDay[mCharacterManager->getCharacterLevel(currentCharacterID)][spellbookLevel-1];
+						if (spellsAtLevel > 0)
+						{
+							found = true;
+						}
+					}
+				}
+
+			}
+			else
+			{
+				mode = GM_MAIN;
+			}
 		}
-		else
-		{
-			mode = GM_MAIN;
-		}
-		*/
 	}
 
 	// "d"/"D" is the "domain" button and opens the Domain window to control camps/settlements/domains.
@@ -663,6 +687,83 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				break;
 			}
 				
+		}
+		break;
+
+		case(GM_SPELL):
+		{
+			if (key->vk == TCODK_UP)
+			{
+				spellPosition--;
+				if (spellPosition < 0)
+				{
+					//spellPosition = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
+				}
+			}
+			else if (key->vk == TCODK_DOWN)
+			{
+				spellPosition++;
+				/**
+				if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
+				{
+					menuPosition[mode] = 0;
+				}
+				*/
+			}
+			else if (key->vk == TCODK_LEFT)
+			{
+				bool found = false;
+				while (!found)
+				{
+					spellbookLevel++;
+					if (spellbookLevel == 7)
+					{
+						spellbookLevel = 0;
+					}
+					else
+					{
+						int spellsAtLevel = mCharacterManager->getCharacterClass(currentCharacterID)->LevelSpellsPerDay[mCharacterManager->getCharacterLevel(currentCharacterID)][spellbookLevel];
+						if (spellsAtLevel > 0)
+						{
+							found = true;
+						}
+					}
+				}
+			}
+			else if (key->vk == TCODK_RIGHT)
+			{
+				bool found = false;
+				while (!found)
+				{
+					spellbookLevel++;
+					if (spellbookLevel > mCharacterManager->GetMaxSpellLevel(currentCharacterID))
+					{
+						spellbookLevel = 0;
+					}
+					else
+					{
+						int spellsAtLevel = mCharacterManager->getCharacterClass(currentCharacterID)->LevelSpellsPerDay[mCharacterManager->getCharacterLevel(currentCharacterID)][spellbookLevel-1];
+						if (spellsAtLevel > 0)
+						{
+							found = true;
+						}
+					}
+				}
+			}
+			else if (key->vk == TCODK_ENTER)
+			{
+				// enter attempts to cast the selected spell
+				/**
+				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
+				{
+					mCharacterManager->UnequipItem(currentCharacterID, menuPosition[mode]);
+				}
+				else
+				{
+					mCharacterManager->EquipItem(currentCharacterID, menuPosition[mode]);
+				}
+				*/
+			}
 		}
 		break;
 
@@ -1551,10 +1652,17 @@ void Game::MainLoop()
 					// RenderUI is called from inside, to give selected character info
 					mBaseManager->RenderBaseMenu(currentBaseID);
 				}
+				break;
+				case GM_SPELL:
+				{
+					RenderUI(currentCharacterID);
+					RenderSpellbook();
+				}
+				break;
 			}
 
 
-			RenderOffscreenUI(mode == GM_INVENTORY, mode == GM_CHARACTER);
+			RenderOffscreenUI((GAME_MODE)mode);
 
 			RenderActionLog();
 		}
@@ -1964,6 +2072,51 @@ void Game::RenderMenu()
 	}
 }
 
+void Game::RenderSpellbook()
+{
+	
+	if (spellbookScreen == nullptr)
+	{
+		spellbookScreen = new TCODConsole(SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT);
+	}
+
+	spellbookScreen->clear();
+
+	spellbookScreen->printFrame(0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT, false, TCOD_BKGND_SET, "Spellbook");
+
+	// print the levels for the "tabs"
+
+	int maxSpells = mCharacterManager->GetMaxSpellLevel(currentCharacterID);
+
+	for (int i = 0; i < maxSpells; i++)
+	{
+		int spells = mCharacterManager->GetSpellsPerDay(currentCharacterID, i);
+		int xPos = 3 + i * 5;
+		int yPos = 3;
+
+		spellbookScreen->printEx(xPos, yPos, TCOD_BKGND_NONE, TCOD_LEFT, std::to_string(i+1).c_str());
+
+		if (i == spellbookLevel - 1)
+		{
+			spellbookScreen->setCharForeground(xPos, yPos, TCODColor::white);
+		}
+		else
+		{
+			spellbookScreen->setCharForeground(xPos, yPos, TCODColor::darkGrey);
+		}
+	}
+
+	if (spellbookLevel != 0)
+	{
+		std::string output = "Remaining Spells:" + std::to_string(mCharacterManager->GetSpellsPerDay(currentCharacterID, spellbookLevel-1));
+		spellbookScreen->printEx(2, 5, TCOD_BKGND_NONE, TCOD_LEFT, output.c_str());
+	}
+	else
+	{
+		spellbookScreen->printEx(3, 3, TCOD_BKGND_NONE, TCOD_LEFT, "Current character has no spells.");
+	}
+}
+
 
 void Game::RenderInventory()
 {
@@ -2014,22 +2167,34 @@ void Game::RenderInventory()
 	}
 }
 
-void Game::RenderOffscreenUI(bool inventory, bool character)
+void Game::RenderOffscreenUI(GAME_MODE gm)
 {
 	static int x = 0, y = 0; // secondary screen position
 
 	TCODSystem::setFps(30); // fps limited to 30
 
-	if (character)
+	switch(gm)
 	{
-		TCODConsole::blit(characterScreen, 0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT,
-			sampleConsole, x, y, 1.0f, 0.75f);
-	}
+	case GM_CHARACTER:
+		{
+			TCODConsole::blit(characterScreen, 0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT,
+				sampleConsole, x, y, 1.0f, 0.75f);
+		}
+		break;
 
-	if (inventory)
-	{
-		TCODConsole::blit(inventoryScreen, 0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT,
-			sampleConsole, x, y, 1.0f, 0.75f);
+	case GM_INVENTORY:
+		{
+			TCODConsole::blit(inventoryScreen, 0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT,
+				sampleConsole, x, y, 1.0f, 0.75f);
+		}
+		break;
+
+	case GM_SPELL:
+		{
+			TCODConsole::blit(spellbookScreen, 0, 0, SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT,
+				sampleConsole, x, y, 1.0f, 1.0f);
+		}
+		break;
 	}
 
 }

@@ -328,6 +328,8 @@ public:
 	// spell management
 	void RefreshDailySpells(int characterID);
 
+	int GetSpellsPerDay(int characterID, int spellLevel);
+	int GetMaxSpellLevel(int characterID);
 
 	double MoveTo(int entityID, int new_x, int new_y, int currentTime);
 	int GetPlayerX(int characterID) { return pcXPos[characterID]; }

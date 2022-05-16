@@ -92,6 +92,7 @@ int PartyManager::GenerateAITestParty()
 
 	GeneratePlayerCharacter(output, "BaseTestFighter1", "Fighter");
 	GeneratePlayerCharacter(output, "BaseTestThief1", "Thief");
+	GeneratePlayerCharacter(output, "BaseTestMage1", "Mage");
 	GenerateHenchman(output, "Hench");
 	GenerateAnimal(output, "Mule");
 
