@@ -1,0 +1,626 @@
+Proficiency implementation:
+
+We'll be including proficiencies from Core and PC, plus some enhancements from HFH to make the game more playable. There will be some proficiencies which won't translate easily; we'll make a list and ask for suggestions as to how to use them. Some others will not have effect until after Release 1, since they affect mechanics that we won't be covering to start with.
+
+GENERAL:
+
+Adventuring 
+Effect:provides Capabilities/Tags for basic adventuring tasks
+Planned addition: Proficiencies 1
+
+Alchemy
+Effects: Identify potions, Craft Potions
+Planned addition: Identify potions - Release 1. Craft Potions - Not release 1
+
+Animal Husbandry
+Effects: Heal beasts
+Planned addition: Not initial release
+
+Animal Training
+Effects: Train creature in specific tasks
+Planned addition: Not initial release
+
+Art (split proficiency)
+Effects: Produce artworks, ply trade
+Planned addition: Crafting 1
+
+Bargaining
+Effects: +10%/-10% bonus to prices, reaction bonus for bargainers
+Planned addition: Diplomancy/Proficiencies 2
+
+Caving 
+Effects: Keep internal map, 11+ roll to reconstruct route(?)
+Planned addition: Not initial release
+
+Collegiate Wizardry
+Effects: Identify arcane symbols, spell signatures, grimoires, and trappings.
+Planned addition: Not initial release (?)
+
+Craft (Split Proficiency)
+Effects: Identify masterwork items, rare materials, master's marks, etc. Produce escalating amount of crafted materials per times purchased.
+Planned addition: Crafting 1 (entire subsystem just for this proficiency!)
+
+Diplomacy
+Effects: +2 bonus to reaction rolls
+Planned addition: Diplomancy
+
+Disguise
+Effects: Make self look like someone else on 11+, familiar target can break on 14+ (including Wisdom)
+Planned addition: Not initial release
+
+Endurance
+Effects: Do not need to rest every 6 turns, can force march extra without penalties
+Planned addition: Proficiencies 1
+
+Engineering
+Effects: Can plan, design, construct buildings 25,000gp/purchase. Historical lore roll 11+.
+Planned addition: Not initial release
+
+Gambling
+Effects: Earn 1d6gp/month/purchase ply trade. Manage gambling odds (?)
+Planned addition: Proficiencies 2 (Ply trade), not initial release (odds)
+
+Healing
+Effects: Mortal Wound bonus, identify diseases, increase healing rate, use herbs, extra purchases give special abilities
+Planned addition: Proficiencies 1
+
+Intimidation
+Effects: +2 to reaction rolls with 5HD or less targets
+Planned addition: Diplomancy
+
+Knowledge (split Proficiency)
+Effects: Know stuff, ply trade as Sage
+Planned addition: Not initial release
+
+Labor (split Proficiency)
+Effects: Ply trade 3d4gp per month
+Planned addition: Proficiencies 2
+
+Language
+Effects: Speak/Read other language
+Planned addition: Not initial release
+
+Leadership
+Effects: +1 Hench, +1 base domain morale
+Planned addition: Proficiencies 1
+
+Lip Reading
+Effects: Glean information, hijinks bonus
+Planned addition: Not initial release
+
+Manual of Arms
+Effects: Train troops (?), ply trade 25gp/month
+Planned addition: Proficiencies 2
+
+Mapping
+Effects: Understand and make paper maps
+Planned addition: Not initial release
+
+Military Strategy
+Effects: Mass combat bonuses
+Planned addition: Not initial release
+
+Mimicry
+Effects: Mimic natural animal
+Planned addition: Not initial release
+
+Naturalism
+Effects: Identify plants, foraging bonus
+Planned addition: Proficiencies 3
+
+Navigation
+Effects: Not getting lost, seafaring nav
+Planned addition: Not initial release
+
+Performance (Split proficiency)
+Effects: Escalating ply trade
+Planned addition: Proficiencies 2
+
+Profession (Split proficiency)
+Effects: Escalating ply trade
+Planned addition: Proficiencies 2
+
+Riding (Split proficiency)
+Effects: Mounted combat
+Planned addition: Not initial release
+
+Seafaring
+Effects: Crew sailing ships, captain if twice, master mariner if 3
+Planned addition: Not initial release
+
+Seduction
+Effects: Bonus to reaction rolls with opposite sex
+Planned addition: Diplomancy
+
+Siege Engineering
+Effects: Operate war machine/build defensive works, x2 can construct war machines
+Planned addition: Not initial release
+
+Signaling
+Effects: Mass combat
+Planned addition: Not initial release
+
+Survival
+Effects: Auto-forage, bonus to foraging
+Planned addition: Proficiencies 1
+
+Theology
+Effects: Identify religious symbols, spell signatures, trappings, holy days.
+Planned addition: Not initial release
+
+Tracking
+Effects: Follow tracks, effectiveness depends on ground.
+Planned addition: Not initial release
+
+Trapping
+Effects: Build/detect/disable pits/snares/deadfalls
+Planned addition: Proficiencies 3
+
+----
+
+PROFESSIONAL:
+FIGHTER:
+
+Acrobatics
+Effects: +2 to agility-based saving throws, 20+ to tumble behind enemy and inflict Vulnerable on them
+Planned addition: Not initial release (probably the Elf release, since it's the Nightblade ability)
+
+Alertness
+Effects: +4 to Hear Noise / Detect Secret Doors, Automatic detect secret doors on 18+, +1 vs Surprise
+Planned addition: Proficiencies 3
+
+Berserkergang 
+Effects: Imposes "Raging" condition on character until end of combat.
+Planned addition: Proficiencies 1
+
+Blind Fighting
+Effects: Can attack blind or vs invisible at lower penalty.
+Planned addition: Proficiencies 3
+
+Combat Reflexes 
+Effects: +1 bonus to surprise and initiative (How to implement in RL timing system?)
+Planned addition: Proficiencies 1
+
+Combat Trickery (disarm, force back, knock down, overrun, sunder, incapacitate) 
+Effects: Reduced penalty for performing Combat Maneuvers.
+Planned addition: Proficiencies 1
+
+Command 
+Effects: +2 to hench morale rolls.
+Planned addition: Proficiencies 1
+
+Dungeon Bashing 
+Effects: +4 to Open Door and Feats of Strength
+Planned addition: Proficiencies 3
+
+Fighting Style (Split proficiency)
+Effects: Specific bonus for each fighting style
+Planned addition: Proficiencies 1
+
+Precise Shooting 
+Effects: Reduced penalty for shooting into melee (normally -4, reduces -2 per purchase)
+Planned addition: Proficiencies 1
+
+Running 
+Effects: Base movement speed increased by 30' when wearing chain or lighter
+Planned addition: Proficiencies 1
+
+Skirmishing 
+Effects: Pull out of close combat without triggering attacks
+Planned addition: Proficiencies 1
+
+Swashbuckling 
+Effects: +1 bonus to AC if wearing leather or lighter, increases by level
+Planned addition: Proficiencies 1
+
+Weapon Finesse 
+Effects: Attack using Dex modifier instead of Str
+Planned addition: Proficiencies 1
+
+Weapon Focus (Split proficiency)
+Effects: Inflict double damage on a natural 20
+Planned addition: Proficiencies 1
+
+
+---
+CLERIC
+
+
+Apostasy 
+Effects: Extra available spells?
+Planned addition: Not initial release (some future gods-release probably)
+
+Battle Magic 
+Effects: +1 initiative, +2 effective class levels for purpose of dispel/resist
+Planned addition: Doesn't fit the game as is, needs a new version.
+
+Beast Friendship  
+Effects: 11+ to identify flora/fauna. Can interpret animal body language. +2 reaction rolls for animals. Can take animal henches.
+Planned addition: Proficiencies 1 (for henches), Proficiencies 3 (the rest)
+
+Contemplation 
+Effects: Perform 6-turn trance to regain spell.
+Planned addition: Proficiencies 1
+
+Divine Blessing 
+Effects: +2 to all saving throws
+Planned addition: Proficiencies 1
+
+Divine Health 
+Effects: Immune to all disease including magical.
+Planned addition: Proficiencies 1 (but probably no diseases for a while)
+
+Laying on Hands 
+Effects: Gain ability to heal 2hp/level on self or other. 1 use/day/purchase.
+Planned addition: Proficiencies 1
+
+Loremastery 
+Effects: Decipher occult runes, remember history, identify historic artifacts, 18+ (improves 1/character level)
+Planned addition: Not initial release
+
+Magical Engineering 
+Effects: +1 to magical research throws, identify common magical items 11+. Improves +1 to m. research, +4 to identify per purchase.
+Planned addition: Treasure 2 (maybe?)
+
+Martial Training 
+Effects: Add 1 extra set of weapons to weapon proficiencies.
+Planned addition: Proficiencies 1
+
+Prestidigitation 
+Effects: Minor illusions, simple tricks, can pick pockets as thief of half-level.
+Planned addition: Visibility (for pick pockets, the rest can bugger off)
+
+Prophecy 
+Effects: Premonitions and dreams of the past and future - equivalent to commune spell.
+Planned addition: Not initial release (some future gods-release probably)
+
+Quiet Magic 
+Effects: Hear Noise roll equired to hear spellcasting.
+Planned addition: Proficiencies 3
+
+Righteous Turning 
+Effects: Add Wisdom bonus to turning throw and HD turned.
+Planned addition: Proficiencies 1
+
+Sensing Evil 
+Effects: Detect Evil at will, 60ft range, takes 1 turn.
+Planned addition: Proficiencies 1
+
+Sensing Power 
+Effects: Detect spellcasters within 60ft range, estimate relative level of power, can detect magic used in last 24 hours, takes 1 turn.
+Planned addition: Magic 2
+
+Unflappable Casting
+Effects: Do not suffer delay after getting spell interrupted.
+Planned addition: Proficiencies 1
+
+----
+
+MAGE:
+
+Black Lore of Zahar
+Effects: Control undead as a Chaotic cleric of half class level, -2 for enemies making Death saves against magic, necromantic spells and research cast as though 2 class levels higher.
+Planned addition: Proficiencies 1
+
+Elementalism (Split proficiencies)
+Effects: Spells using element +1 damage/die, -2 saving throws. Elementals gain +1hp/HD. Magic Missiles become elemental.
+Planned addition: Proficiencies 1
+
+Elven Bloodline 
+Effects: Lifespan x3, immune to Paralysis. 
+Planned addition: Proficiencies 1 (but ageing largely irrelevant).
+
+Familiar 
+Effects: Gain familiar.
+Planned addition: Not initial release.
+
+Illusion Resistance 
+Effects: +4 to saving throws against magical illusions.
+Planned addition: Proficiencies 1
+
+Mystic Aura 
+Effects: +2 to reaction rolls; if 12+, subject becomes Charmed.
+Planned addition: Proficiencies 3
+
+Soothsaying
+Effects: Contact Higher Plane 1/week.
+Planned addition: Not initial release (some future gods-release probably)
+
+Transmogrification 
+Effects: Polymorph spells at +2 class levels, -2 to saves, +2 class levels for crossbreeds
+Planned addition: Proficiencies 1
+
+----
+
+THIEF:
+
+Arcane Dabbling
+Effects: Attempt to use wands, staves, and other mage-only magic items with 18+ reduced by 2 per class level.
+Planned addition: Treasure 2
+
+Cat Burglary 
+Effects: Make Climb Walls roll to walk on things that shouldn't be passable, make second proficiency roll at -4 to prevent falling.
+Planned addition: Not initial release (z-levels releases)
+
+Contortionism
+Effects: 18+ proficiency roll to escape from bonds or slip through small spaces.
+Planned addition: Not initial release 
+
+Lockpicking 
+Effects: +2 to Open Locks, can attempt 1 round Open Locks at -4.
+Planned addition: Proficiencies 3
+
+Skulking 
+Effects: +2 to Hide In Shadows and Move Silently.
+Planned addition: Proficiencies 3
+
+Sniping 
+Effects: Can backstab/ambush at up to short range using missile weapons.
+Planned addition: Proficiencies 3
+
+Trap Finding
+Effects: +2 to Detect Trap and Remove Trap, can attempt 1 round Detect Trap at -4.
+Planned addition: Proficiencies 3
+---
+
+OTHERS:
+(These proficiencies are for Assassin, Bard, Bladedancer, Explorer, Elf and Dwarf)
+
+Eavesdropping
+Magical Music
+Dwarven Brewing
+Goblin-Slaying
+Land Surveying
+Mountaineering
+Passing Without Trace
+Wakefulness
+
+
+----
+
+PROFICIENCIES 0:
+
+Adventuring 
+Effect:provides Capabilities/Tags for basic adventuring tasks
+Planned addition: Proficiencies 0
+
+Endurance
+Effects: Do not need to rest every 6 turns, can force march extra without penalties
+Planned addition: Proficiencies 0
+
+Healing
+Effects: Mortal Wound bonus, identify diseases, increase healing rate, use herbs, extra purchases give special abilities
+Planned addition: Proficiencies 0
+
+Leadership
+Effects: +1 Hench, +1 base domain morale
+Planned addition: Proficiencies 0
+
+Berserkergang 
+Effects: Imposes "Raging" condition on character until end of combat.
+Planned addition: Proficiencies 0
+
+Running 
+Effects: Base movement speed increased by 30' when wearing chain or lighter
+Planned addition: Proficiencies 0
+
+Swashbuckling 
+Effects: +1 bonus to AC if wearing leather or lighter, increases by level
+Planned addition: Proficiencies 0
+
+Weapon Finesse 
+Effects: Attack using Dex modifier instead of Str
+Planned addition: Proficiencies 0
+
+Weapon Focus (Split proficiency)
+Effects: Inflict double damage on a natural 20
+Planned addition: Proficiencies 0
+
+Fighting Style (Split proficiency)
+Effects: Specific bonus for each fighting style
+Planned addition: Proficiencies 0
+
+Divine Blessing 
+Effects: +2 to all saving throws
+Planned addition: Proficiencies 0
+
+Divine Health 
+Effects: Immune to all disease including magical.
+Planned addition: Proficiencies 0 (but probably no diseases for a while)
+
+Martial Training 
+Effects: Add 1 extra set of weapons to weapon proficiencies.
+Planned addition: Proficiencies 0
+
+Elven Bloodline 
+Effects: Lifespan x3, immune to Paralysis. 
+Planned addition: Proficiencies 0 (but ageing largely irrelevant).
+
+PROFICIENCIES 1:
+
+Survival
+Effects: Auto-forage, bonus to foraging
+Planned addition: Proficiencies 1
+
+Combat Reflexes 
+Effects: +1 bonus to surprise and initiative (How to implement in RL timing system?)
+Planned addition: Proficiencies 1
+
+Combat Trickery (disarm, force back, knock down, overrun, sunder, incapacitate) 
+Effects: Reduced penalty for performing Combat Maneuvers.
+Planned addition: Proficiencies 1
+
+Command 
+Effects: +2 to hench morale rolls.
+Planned addition: Proficiencies 1
+
+Precise Shooting 
+Effects: Reduced penalty for shooting into melee (normally -4, reduces -2 per purchase)
+Planned addition: Proficiencies 1
+
+Skirmishing 
+Effects: Pull out of close combat without triggering attacks
+Planned addition: Proficiencies 1
+
+Beast Friendship  
+Effects: 11+ to identify flora/fauna. Can interpret animal body language. +2 reaction rolls for animals. Can take animal henches.
+Planned addition: Proficiencies 1 (for henches), Proficiencies 3 (the rest)
+
+Contemplation 
+Effects: Perform 6-turn trance to regain spell.
+Planned addition: Proficiencies 1
+
+Laying on Hands 
+Effects: Gain ability to heal 2hp/level on self or other. 1 use/day/purchase.
+Planned addition: Proficiencies 1
+
+Righteous Turning 
+Effects: Add Wisdom bonus to turning throw and HD turned.
+Planned addition: Proficiencies 1
+
+Sensing Evil 
+Effects: Detect Evil at will, 60ft range, takes 1 turn.
+Planned addition: Proficiencies 1
+
+Unflappable Casting
+Effects: Do not suffer delay after getting spell interrupted.
+Planned addition: Proficiencies 1
+
+Black Lore of Zahar
+Effects: Control undead as a Chaotic cleric of half class level, -2 for enemies making Death saves against magic, necromantic spells and research cast as though 2 class levels higher.
+Planned addition: Proficiencies 1
+
+Elementalism (Split proficiencies)
+Effects: Spells using element +1 damage/die, -2 saving throws. Elementals gain +1hp/HD. Magic Missiles become elemental.
+Planned addition: Proficiencies 1
+
+Illusion Resistance 
+Effects: +4 to saving throws against magical illusions.
+Planned addition: Proficiencies 1
+
+Transmogrification 
+Effects: Polymorph spells at +2 class levels, -2 to saves, +2 class levels for crossbreeds
+Planned addition: Proficiencies 1
+
+
+PROFICIENCIES 2:
+
+Alchemy
+Effects: Identify potions, Craft Potions
+Planned addition: Identify potions - Treasure 2. Craft Potions - Not initial release
+
+Art (split proficiency)
+Effects: Produce artworks, ply trade
+Planned addition: Crafting 1/Proficiencies 2
+
+Bargaining
+Effects: +10%/-10% bonus to prices, reaction bonus for bargainers
+Planned addition: Diplomancy/Proficiencies 2
+
+Craft (Split Proficiency)
+Effects: Identify masterwork items, rare materials, master's marks, etc. Produce escalating amount of crafted materials per times purchased.
+Planned addition: Crafting 1 (entire subsystem just for this proficiency!) / Proficiencies 2
+
+Gambling
+Effects: Earn 1d6gp/month/purchase ply trade. Manage gambling odds (?)
+Planned addition: Proficiencies 2 (Ply trade), not initial release (odds)
+
+Labor (split Proficiency)
+Effects: Ply trade 3d4gp per month
+Planned addition: Proficiencies 2
+
+Manual of Arms
+Effects: Train troops (?), ply trade 25gp/month
+Planned addition: Proficiencies 2
+
+Performance (Split proficiency)
+Effects: Escalating ply trade
+Planned addition: Proficiencies 2
+
+Profession (Split proficiency)
+Effects: Escalating ply trade
+Planned addition: Proficiencies 2
+
+
+PROFICIENCIES 3:
+
+
+Bargaining
+Effects: +10%/-10% bonus to prices, reaction bonus for bargainers
+Planned addition: Diplomancy/Proficiencies 2
+
+Diplomacy
+Effects: +2 bonus to reaction rolls
+Planned addition: Diplomancy
+
+Intimidation
+Effects: +2 to reaction rolls with 5HD or less targets
+Planned addition: Diplomancy
+
+Naturalism
+Effects: Identify plants, foraging bonus
+Planned addition: Proficiencies 3
+
+Seduction
+Effects: Bonus to reaction rolls with opposite sex
+Planned addition: Diplomancy
+
+Trapping
+Effects: Build/detect/disable pits/snares/deadfalls
+Planned addition: Proficiencies 3
+
+Alertness
+Effects: +4 to Hear Noise / Detect Secret Doors, Automatic detect secret doors on 18+, +1 vs Surprise
+Planned addition: Proficiencies 3
+
+Blind Fighting
+Effects: Can attack blind or vs invisible at lower penalty.
+Planned addition: Proficiencies 3
+
+Dungeon Bashing 
+Effects: +4 to Open Door and Feats of Strength
+Planned addition: Proficiencies 3
+
+Magical Engineering 
+Effects: +1 to magical research throws, identify common magical items 11+. Improves +1 to m. research, +4 to identify per purchase.
+Planned addition: Treasure 2 (maybe?)
+
+Prestidigitation 
+Effects: Minor illusions, simple tricks, can pick pockets as thief of half-level.
+Planned addition: Visibility (for pick pockets, the rest can bugger off)
+
+Quiet Magic 
+Effects: Hear Noise roll equired to hear spellcasting.
+Planned addition: Proficiencies 3
+
+Sensing Evil 
+Effects: Detect Evil at will, 60ft range, takes 1 turn.
+Planned addition: Proficiencies 1
+
+Sensing Power 
+Effects: Detect spellcasters within 60ft range, estimate relative level of power, can detect magic used in last 24 hours, takes 1 turn.
+Planned addition: Magic 2
+
+Mystic Aura 
+Effects: +2 to reaction rolls; if 12+, subject becomes Charmed.
+Planned addition: Proficiencies 3
+
+Arcane Dabbling
+Effects: Attempt to use wands, staves, and other mage-only magic items with 18+ reduced by 2 per class level.
+Planned addition: Treasure 2
+
+Lockpicking 
+Effects: +2 to Open Locks, can attempt 1 round Open Locks at -4.
+Planned addition: Proficiencies 3
+
+Skulking 
+Effects: +2 to Hide In Shadows and Move Silently.
+Planned addition: Proficiencies 3
+
+Sniping 
+Effects: Can backstab/ambush at up to short range using missile weapons.
+Planned addition: Proficiencies 3
+
+Trap Finding
+Effects: +2 to Detect Trap and Remove Trap, can attempt 1 round Detect Trap at -4.
+Planned addition: Proficiencies 3

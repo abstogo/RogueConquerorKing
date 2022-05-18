@@ -1,0 +1,70 @@
+Distinct Modes of Play:
+
+DUNGEON MAP
+Timing: Tick by tick, controlled by action trigger.
+Display: Square map and controls
+Scale: 1 square = 5ft
+Control: Character (Tab to swap)
+Resources: Fatigue, Torches, etc
+Notes: Basic game mode.
+Links: Dungeon Map to Dungeon Map (level changes or extension maps), Dungeon Map to Wilderness Map (doors/stairs)
+
+WILDERNESS MAP
+Timing: Controlled by action trigger, tick by tick
+Display: Hex map and controls
+Scale: 1 hex = 5yd
+Control: Character (Tab to swap)
+Resources: Fatigue
+Notes: Second basic game mode
+Links: Wilderness Map to Wilderness Map (automatically at edges), Wilderness Map to Dungeon Map (entrances to dungeons), Wilderness Map to Region Map (anywhere as long as no enemies nearby - "zoom out" function)
+
+REGION MAP
+Timing: Controlled by action trigger, usually measured
+Display: Hex map and controls
+Scale: 1 hex = 6 mile
+Control: Party
+Resources: Fatigue, Supplies
+Notes: Overland travel mode. Doesn't do much else at Adventurer tier; might be more use for army control at Conqueror tier.
+Links: Region Map to Wilderness Map (anywhere - "zoom in" function), Region Map to Settlement, Region Map to Camp.
+
+CAMP
+Timing: Controlled by menu selections, using Campaign Activities rules
+Display: Camp Menu
+Scale: N/A. Restricted to a single Region hex location. (Can optionally be added as a generated Local map - for camp attacks etc.)
+Control: Party
+Resources: Supplies plus running costs (mercenaries etc)
+Notes: Camps are constructed by parties from the Region map. Due to the ability to issue orders to Hunt or Forage it's relatively easy to maintain Supplies while not moving as long as you have some henches available.
+
+(Note on Supplies - it's the abstracted pile of rations etc. Bought rations add to the party's Supply rating, as do Hunt/Forage rolls, looted food and so on.)
+
+Longer term, it should be possible to build a Camp in the following circumstances:
+1) Dungeon areas with no hostiles ('safe zones', zero spawn rate?)
+2) Wilderness map with no hostiles.
+3) Anywhere in Region map.
+
+Camps provide these major needs: Somewhere to rest between delves (especially for mages), somewhere to keep gear and loot between delves, somewhere to keep dungeon-unfriendly gear like pack animals and carts, and somewhere for mercenaries (who will not enter dungeons) to wait. They are not intended to fulfil the roles of a Settlement.
+
+SETLLEMENT
+Timing: Controlled by menu selections, using Campaign Activities rules
+Display: Settlement Menu
+Scale: N/A. Menu displays all data for current Settlement
+Control: Party
+Resources: Mostly time and gold
+Notes: Used for tasks such as buying/selling gear and goods, gathering Rumours, setting up workshops, looking for quests, and hiring Hirelings and PCs. The basic idea is that a PC or hench can be set to "look for" a particular thing, such as a quest giving location or workshop space or whatever. Proficiencies can also be used here (eg Craft or Art or Perform) if flagged as available.
+Links: Settlement to Region Map, Settlement to Stronghold (if Urban), Settlement to Dungeon (if hidden dungeon in Settlement)
+
+There will be a game option to determine if XP for treasure is granted at a Camp or a Settlement. Default will be Settlement as per standard ACKS rules but that might be quite frustrating for videogame players.
+
+Note that a Settlement is not necessarily actually a city, village or town - it could be just a fort with a gate village, or even a large coaching inn at a crossroad. We use the word "Settlement" as a generalised term. Turos Tem is a good example of a Settlement. The main differentiating factors are Settlement Class (as per standard ACKS rules) and the flags for which services are available.
+
+Since urban settlements are much more fleshed out after Capital of the Borderlands (and Siadonos on Patreon), may look at building settlements as a series of Districts generated as local square maps, with shopfronts etc. Size of settlement will determine how many Districts they have.
+
+STRONGHOLD
+Timing: Controlled by menu selections, using Campaign and Domain Activities rules
+Display: Menu
+Scale: N/A
+Control: Domain
+Resources: Variable (but mostly money lol)
+Notes: Any character-built stronghold - Castles, Wilderness Forts, Sanctums, Temples. The primary distinction between a Base and a Stronghold is that a Stronghold is built by a player and (optionally) exerts control over a domain.
+
+Building Strongholds or other structures in the wilderness will require a Camp, to manage the supplies, hirelings etc. We can provide a DF-style building mechanic in the Base interface to set out building designs. Strongholds are the only permanent (non-Camp) base of operations the PCs can build. As per the Revised Stronghold rules it will be possible for a sufficiently wealthy character to build a Stronghold long before Level 9 if they wish to do so, at steep penalties, but players may be willing to do so for convenience.

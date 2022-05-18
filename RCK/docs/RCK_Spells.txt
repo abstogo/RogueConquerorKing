@@ -1,0 +1,34 @@
+Magic Implementation Notes:
+
+All Effects: Optional Saves. Option for additional effects. Range of potential Targets.
+Concept - divide effects based on Target for multi-use effects like Light.
+
+DirectDamage - inflict damage on enemy. Optional attack roll. Variable damage dice and maximums.
+	Examples:  Magic Missile, Lightning Bolt, Fireball, Cause <x> Wounds
+
+Inflict - place a Condition on the target. Optional attack roll.
+	Examples: Sleep, Light (one of), Bane/Bless, Protection from Evil/Good, Shield
+
+Illuminate - causes the target area to be lit up. Variable light intensity (including negative)
+	Examples: Light, Darkness
+
+Enchant - add/remove a specific Quality to an item. Variable Quality, specific types of target
+	Examples: Light, Purify Food/Water, Hold Portal
+
+Detect - creates special Look mode that reveals specific information
+	Examples: Detect Magic, Detect Invisible, Detect Evil, Detect Good
+
+Recruit - moves target character to the caster's party
+	Examples: Charm
+
+Summon - create a new hench or animal in the caster's party
+	Examples: Floating Disc
+
+Benefit - target gains a Capability
+	Examples: Read Languages
+
+Healing - target has HP restored and/or injuries stabilised.
+	Examples: Cure <x> Wounds
+
+Protect - target cannot be attacked (variably by specific tags)
+	Examples: Protection from Evil, Sanctuary
