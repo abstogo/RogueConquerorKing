@@ -1,0 +1,74 @@
+Specific areas to develop:
+
+- Hex Map (completed)
+- Internal Map (completed)
+- ACKS Characters - Stats, Class, Bonuses, Tag System (completed)
+- Basic Items and Inventory (completed)
+- Enemies 1 - Basic Monsters (completed)
+- Combat 1 - Attacks, AC, melee and missile, cleaves (completed)
+- Party system - PCs, Henches, animals, switching main character (completed)
+- Mortal Wounds and medical checks (completed)
+- Conditions (in progress)
+- Wilderness - Local and Region prefab maps (in progress)
+- Wilderness - hex biomes
+- Wilderness - travel
+- Wilderness - random encounters
+- Fatigue - in dungeon, in local wilderness
+- Camping (Domain Activities part 1) : Time passing, bed rest, basic healing, using supplies (in progress)
+- Settlements (Domain Activities part 2) : Markets, living expenses, hirelings
+- Proficiences 0 : Initial implementation of proficiencies
+- Inventory 2 - Enhanced inventory to handle currency and fractions of "loads"
+- Advancement - XP for treasure returned to town, XP for monsters slain, level up screen
+- Magic 1 - initial spell setup. Spells per day, spell screen, simple spells (add Condition, attack, etc)
+- Generation 1 - initial character generation. Pick 1 from 5 with suggested classes. (All other characters are pregens, 1 of each other Core class implemented - so a Fighter main gets a Mage and Cleric generated)
+- Enemies 2 - add more monsters to prefab maps, add treasure to lairs
+- Evil 1 - Alignment, Energy drain, undead immunities, Turn Undead, Control Undead, "Evil" quality, Detect Evil
+
+== PREVIEW 1 ==
+Allows for basic adventuring in prefab maps, includes some content for Fighter, Mage and Cleric (but not really Thief yet). Core game cycle in place: Go out, kill baddies, take their stuff, get XP, level up, repeat.
+
+- Combat 2 - Combat Maneuvers, improved combat timing rules
+- Proficiencies 1 - simple enhancements
+- Generation 2 - Templates added, pick template at character generation. All other PC options made using Templates.
+- Crafting 1 - Produce mundane stuff
+- Proficiencies 2 - money making proficiencies in settlements, hunting/foraging/etc
+- Diplomancy - Monster Bands (party-equivalent for Mobs), reaction rolls, reaction roll Proficiencies
+- Dungeons 1 : Simple BSP-driven room based dungeons, with "rooms" using ACKS randomisation
+- Treasure 1 - Generate treasure for dungeon rooms based on ACKS treasure tables (no magic items yet)
+- Enemies 3 - Improved Behaviours for Monsters and PCs/Henches, including Defend and Stand Off.
+
+== PREVIEW 2 ==
+Allows for more complex adventuring in a number of generated dungeons using template chargen and proficiencies, plus more activities in the town.
+
+- Visibility - Light & dark for dungeons, day/night cycle for wilderness, light sources, stealth, surprise
+- Dungeons 2 - Doors, containers, locks, traps, secret doors, generated treasure in containers.
+- Mechanisms 1 - Detect/remove traps, secret doors, detect secret doors
+- Proficiencies 3 - Proficiencies that enhance diplomacy/lighting/mechanisms
+- Quests 1 - Basic quest types (kill monster, rescue character, clear lair, find object), "quest board"
+- Magic 2 - Spells to handle diplomacy/lighting/mechanisms/object location
+- Treasure 2 - Basic magic items, scrolls, potions, generate all kinds of treasure from Core like jewellery and trinkets
+
+== RELEASE 1 ==
+All 4 Core classes almost completed - cleric and arcane magic, thief skills, quests, rewards all in place.
+
+After Release 1?
+- Local map generation
+- Enhanced dungeon generation (for lairs etc)
+- Regional map generation (? maybe prefab only)
+- Generate trade modifiers between cities on map
+- Additional core human classes - Assassin, Bladedancer, Bard, Explorer
+- Faction system - membership in groups eg mage's towers, thieves guilds etc
+- Strongholds and Domains - building system, followers, Domain Activities
+- Metahuman release - Elven classes, Dwarf classes (except for Machinist), Elf and Dwarf factions, Elf and Dwarf settlements and strongholds, Elf and Dwarf Domains
+- Magic to the Max - magic research, ritual magic, magic item creation
+- Sagely Ways - Languages & Lore, add information to things in-universe, scramble languages, scramble potion descriptions
+- Terrain - Multiple z-levels inside a single dungeon map or region, climbing, levitation, flying, rivers, swimming, sailing
+- Sacred and Profane - gods and religion in general
+
+This should cover everything in core!
+
+Later Releases:
+- Machinery to the Max - Dwarven Machinist and automatons
+- Classes Galore - All the remaining Player's Companion classes
+- Spellmaker - create your own spells based on the existing effect types
+- Warfare - Armies, BR-based mass combat, wars, sieges

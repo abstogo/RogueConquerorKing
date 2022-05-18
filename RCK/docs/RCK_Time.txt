@@ -1,0 +1,36 @@
+40ft / round
+
+1 round = 10 seconds
+
+1 turn = 60 rounds
+
+1 turn of exercise every 5 turns
+
+1 square = 5ft
+
+
+
+Types of movement:
+40 / 30 / 20 / 10
+Squares per 10-second round:
+8  /  6 /  4 /  2
+Squares per second:
+0.8 / 0.6 / 0.4 / 0.2
+
+Seconds per square:
+1.25 / 1.67 / 2.5 / 5
+
+Each 1-square move pushes a number of ticks based on speed. 
+
+Each (round-length) action pushes 10 ticks.
+
+Each tick, everthing else updates its time and moves if it should
+
+60 rounds in a turn
+600 ticks in a turn
+Therefore 
+
+Base Fatigue: 3000
+Every tick of action uses 1 Fatigue
+
+Resting for 1 turn restores all Fatigue. Therefore resting for 1 tick restores 5 Fatigue.
