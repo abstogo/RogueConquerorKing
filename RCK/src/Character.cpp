@@ -305,6 +305,7 @@ void CharacterManager::BaseGenerate()
 	std::vector<int> spells = { 0,0,0,0,0,0 };
 	pcDailySpells.push_back(spells);
 	// spell repertoire
+	pcSpellRepertoire.push_back(std::vector<std::vector<int>>());
 
 	std::vector<MortalEffect*> meff;
 	pcMortalWounds.push_back(meff);
@@ -388,14 +389,17 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	pcCurrentHitPoints.push_back(hitDie);
 	
 	BaseGenerate();
-
-	// construct spell setup
-	RefreshDailySpells(output);
 	
 	// and build the caches
 	UpdateProficiencyCache(output);
 	UpdateTagCache(output);
 	UpdateCapabilities(output);
+
+	// construct spell setup
+	RefreshDailySpells(output);
+
+	// build initial spell repertoire
+	BuildRepertoire(output);
 
 	// dump debug output of character
 
@@ -403,6 +407,66 @@ int CharacterManager::GenerateTestCharacter(std::string name, const std::string 
 	DumpTagCache(output);
 
 	return output;
+}
+
+void CharacterManager::BuildRepertoire(int characterID)
+{
+	if (!getCharacterCapabilityFlag(characterID, "Spellcasting")) return;
+
+	if (getCharacterCapabilityFlag(characterID, "Magic:Arcane"))
+	{
+		// mage repertoires are a little more complex. If we reach this phase and it's not already been sorted (eg by template), pick randoms
+		// rep count is spells per day + intelligence bonus at each level
+		std::vector<int> arcaneRepByLevel = pcDailySpells[characterID];
+		int bonus = getTagValue(characterID, "Spells:Arcane:RepertoirePerLevel");
+		if (bonus < 0) bonus = 0;
+		std::for_each(arcaneRepByLevel.begin(), arcaneRepByLevel.end(), [bonus](int& n) { n += bonus; });
+
+		// at each level, if our current repertoires do not match, adjust accordingly
+		for (auto repAtLevel : pcSpellRepertoire)
+		{
+			for (int i = 0; i < repAtLevel.size(); i++)
+			{
+				if (repAtLevel[i].size() < arcaneRepByLevel[i])
+				{
+					// too few spells - add random ones we don't already have
+					int toGain = arcaneRepByLevel[i] - repAtLevel[i].size();
+
+					std::vector<int> allSpells = gGame->mSpellManager->getSpellsAtLevel("Arcane", i);
+					std::vector<int> newSpells;
+					for (int p : allSpells)
+					{
+						if (std::find(arcaneRepByLevel.begin(), arcaneRepByLevel.end(), p) == arcaneRepByLevel.end())
+						{
+							newSpells.push_back(p);
+						}
+					}
+
+					if (toGain > newSpells.size()) toGain = newSpells.size();
+
+					for (int l = 0; l < toGain; l++)
+					{
+						int index = gGame->randomiser->getInt(0, newSpells.size());
+						repAtLevel[i].push_back(newSpells[index]);
+						newSpells.erase(newSpells.begin() + index);
+					}
+				}
+
+				if (repAtLevel[i].size() > arcaneRepByLevel[i])
+				{
+					// too many spells - lose randomly
+					int toLose = repAtLevel[i].size() - arcaneRepByLevel[i];				
+					std::vector<int> newSpellsAtLevel = repAtLevel[i];
+					for (int i = 0; i < toLose; i++)
+					{
+						int spellToDrop = gGame->randomiser->getInt(0, newSpellsAtLevel.size());
+						newSpellsAtLevel.erase(newSpellsAtLevel.begin() + spellToDrop);
+					}
+					repAtLevel[i] = newSpellsAtLevel;
+				}
+			}
+		}
+	}
 }
 
 int CharacterManager::GetMaxSpellLevel(int characterID)

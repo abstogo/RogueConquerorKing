@@ -16,8 +16,27 @@
 // spell effects are stored and managed here.
 
 // When the spell creation system is added to the game, we will also add the ablity to output the created spell in "spellbook" JSON
-// files which can be shared between games. For this reason, this is one of the few Managers that will be built with the ability to load
+// files which can be shared between games. For this reason, this is one of the Managers that will be built with the ability to load
 // multiple scripts - any spellbook_*.json file in the scripts folder will be loaded.
+
+// Spell descriptors:
+// Name: Obvious
+// Source: Arcane/Divine (maybe Eldritch later)
+// Level: Casting level (for spellmaker spells this is after experimentation etc, for "common spells" in the book this is the level specified which is usually low)
+// Type: Spell school. Blast, Death, Detection, Enchantment, Healing, Illusion, Movement, Protection, Summoning, Transmogrifcation, Wall. First division.
+// Effect: Effect within school. Primary determinant of effect.
+// Duration: Dependent on school. Variations on instant/rounds/turns/minutes/hours/days/concentration/until dispelled/permanent
+// DurationModifiers: Effect ends early or late on specific contexts
+// Range: Range in feet (indoors) or yards (outdoors)
+// Target: List of targets. Dependent on school. Wide variety of options like "1 target"/"5 per level" and so on.
+// TargetModifiers: Target only applies in specific contexts or in a particualr order (eg "LivingOnly","Separate")
+// Dice: Dice of damage or healing, if applicable. Usually expressed as "nD6/level"
+// DiceLimit: Maximum dice
+// SavingThrow: "Spells","BlastBreath", "Death", "PoisonParalysis", "StaffsWands"
+// AdditionalEffects: Extra effect(s) within school that apply to targets affected by primary
+// EffectModifiers: Overall effect modifiers such as "SaveHalf"
+// ProficiencyBonus: Spell benefits from proficiency (eg elemental spells for Elementalism,Transmogrification for transform spells, Enchantment and Illusion etc)
+// ReversesTo: This spell can be reversed into the specified spell. Divine get both automatically, Arcane have to learn them both, there is a bonus for researching the reversed version
 
 class Spell
 {
@@ -122,6 +141,8 @@ class SpellManager
 
 	std::map<std::string, int> spellLookup;	// spells by name
 
+	std::map<std::string, std::vector<std::vector<int>>> spellMatrix; // spell lookup by magic type and level
+
 	int nextSpellIndex;
 
 public:
@@ -133,4 +154,10 @@ public:
 	}
 
 	void LoadSpellSet(std::string path);
+
+	std::vector<int>& getSpellsAtLevel(std::string magicType, int level);
+
+	Spell& getSpell(int index);
+	Spell& getSpell(std::string name) { return getSpell(spellLookup[name]); }
+
 };

@@ -173,6 +173,7 @@ class CharacterManager
 	std::vector<int> pcCurrentArmourClass;
 
 	std::vector<std::vector<int>> pcDailySpells;
+	std::vector<std::vector<std::vector<int>>> pcSpellRepertoire;
 
 	std::vector<std::map<std::string, int>> pcCollectedTags;
 
@@ -326,6 +327,7 @@ public:
 	int GetCurrentDamageBonus(int characterID, bool missile);
 
 	// spell management
+	void BuildRepertoire(int characterID);
 	void RefreshDailySpells(int characterID);
 
 	int GetSpellsPerDay(int characterID, int spellLevel);

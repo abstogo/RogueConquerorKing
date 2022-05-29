@@ -83,6 +83,12 @@
         },
         {
           "Level": 2,
+          "Name": "Spellcasting",
+          "Type": "Capability:Magic",
+          "Value": 1
+        },
+        {
+          "Level": 2,
           "Name": "Use Divine Magic",
           "Type": "Capability:Magic:Divine",
           "Value": 1

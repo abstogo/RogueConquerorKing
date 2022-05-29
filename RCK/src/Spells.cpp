@@ -42,7 +42,34 @@ void SpellManager::LoadSpellSet(std::string path)
 
 	for (Spell s : spellSet.Spells())
 	{
+		// spells by index
 		masterSpellList.push_back(s);
-		spellLookup[s.Name()] = nextSpellIndex++;
+		int index = nextSpellIndex++;
+
+		// name lookup
+		spellLookup[s.Name()] = index;
+
+		// add magic type to spell matrix if not exists
+		if (spellMatrix.find(s.Source()) == spellMatrix.end())
+		{
+			std::vector<std::vector<int>> spellSource;
+			for (int i = 0; i < 6; i++)
+			{
+				spellSource.push_back(std::vector<int>());
+			}
+			spellMatrix[s.Source()] = spellSource;
+		}
+		// add spell to matrix
+		spellMatrix[s.Source()][s.Level()].push_back(index);
 	}
+}
+
+std::vector<int>& SpellManager::getSpellsAtLevel(std::string magicType, int level)
+{
+	return spellMatrix[magicType][level];
+}
+
+Spell& SpellManager::getSpell(int index)
+{
+	return masterSpellList[index];
 }

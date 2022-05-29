@@ -21,6 +21,26 @@
       "ReversesTo": ""
     },
     {
+      "Name": "Sleep",
+      "Source": "Arcane",
+      "Level": 1,
+      "Type": "Enchantment",
+      "Effect": "ImposeCondition:Slumbering",
+      "AdditionalEffects": [],
+      "EffectModifiers": [],
+      "Duration": "4d4_turns",
+      "DurationModifiers": [],
+      "Range": 240,
+      "Target": "1at4+1|2d8",
+      "TargetModifiers": ["LivingOnly", "LowestHDFirst"],
+      "Dice": "None",
+      "DiceLimit": 0,
+      "DiceModifiers": [],
+      "SavingThrow": "None",
+      "ProficiencyBonus": "",
+      "ReversesTo": ""
+    },
+    {
       "Name": "Cure Light Wounds",
       "Source": "Divine",
       "Level": 1,
