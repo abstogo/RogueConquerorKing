@@ -697,18 +697,19 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				spellPosition--;
 				if (spellPosition < 0)
 				{
+					spellPosition = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel).size();
 					//spellPosition = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
 				}
 			}
 			else if (key->vk == TCODK_DOWN)
 			{
 				spellPosition++;
-				/**
-				if (menuPosition[mode] == mCharacterManager->GetInventory(currentCharacterID).size())
+				
+				if (spellPosition == mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel).size())
 				{
-					menuPosition[mode] = 0;
+					spellPosition = 0;
 				}
-				*/
+				
 			}
 			else if (key->vk == TCODK_LEFT)
 			{
@@ -2110,6 +2111,39 @@ void Game::RenderSpellbook()
 	{
 		std::string output = "Remaining Spells:" + std::to_string(mCharacterManager->GetSpellsPerDay(currentCharacterID, spellbookLevel-1));
 		spellbookScreen->printEx(2, 5, TCOD_BKGND_NONE, TCOD_LEFT, output.c_str());
+
+		auto spells = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel);
+
+		int page = 0;
+
+		const int MAX_SPELLS = SAMPLE_SCREEN_HEIGHT - 3;
+
+		// figure out which page the current position is on
+
+		if (spellPosition > MAX_SPELLS)
+		{
+			// we're off the first page. calculate which page we're actually on
+			page = spellPosition % MAX_SPELLS;
+		}
+
+		auto spl_iter = spells.begin();
+		std::advance(spl_iter, page * MAX_SPELLS);
+
+		for (int i = page * MAX_SPELLS; (i < (page + 1) * MAX_SPELLS && i < spells.size()); i++)
+		{
+			int spellID = *spl_iter++;
+			std::string spellName = mSpellManager->getSpell(spellID).Name();
+			int y_pos = i - page * MAX_SPELLS + 2;
+			TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
+			inventoryScreen->printEx(2, y_pos, backg, TCOD_LEFT, spellName.c_str());
+		}
+
+		int select_y = spellPosition - page * MAX_SPELLS + 2;
+		for (int x = 0; x < SAMPLE_SCREEN_WIDTH; x++)
+		{
+			inventoryScreen->setCharBackground(x, select_y, TCODColor::white, TCOD_BKGND_SET);
+			inventoryScreen->setCharForeground(x, select_y, TCODColor::black);
+		}
 	}
 	else
 	{

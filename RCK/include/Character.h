@@ -172,8 +172,8 @@ class CharacterManager
 	std::vector<int> pcExperience;
 	std::vector<int> pcCurrentArmourClass;
 
-	std::vector<std::vector<int>> pcDailySpells;
-	std::vector<std::vector<std::vector<int>>> pcSpellRepertoire;
+	std::vector<std::vector<int>> pcDailySpells; // pcDailySpells[characterID][level]
+	std::vector<std::vector<std::vector<int>>> pcSpellRepertoire; // pcSpellRepertoire[characterID][level][index]
 
 	std::vector<std::map<std::string, int>> pcCollectedTags;
 
@@ -332,6 +332,7 @@ public:
 
 	int GetSpellsPerDay(int characterID, int spellLevel);
 	int GetMaxSpellLevel(int characterID);
+	std::vector<int>& GetRepertoireAtLevel(int characterID,int level);
 
 	double MoveTo(int entityID, int new_x, int new_y, int currentTime);
 	int GetPlayerX(int characterID) { return pcXPos[characterID]; }
