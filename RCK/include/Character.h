@@ -326,7 +326,7 @@ public:
 
 	int GetCurrentDamageBonus(int characterID, bool missile);
 
-	// spell management
+	// Spell management
 	void BuildRepertoire(int characterID);
 	void RefreshDailySpells(int characterID);
 

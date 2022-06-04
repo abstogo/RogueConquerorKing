@@ -65,7 +65,7 @@ enum TARGET_MODE
 {
 	TARGET_CELL,				// floor location (trap construct, flask/grenade throw) (0:range)
 	TARGET_CREATURE,			// creature (eg missile attack, spell target) (0: range, 1:ally/enemy flags)
-	//TARGET_NEAREST_X,			// nearest X allies/enemies (eg Sleep, Bless) (0: range, 1:ally/enemy flags, 2: X)
+	TARGET_NEAREST_X,			// nearest X allies/enemies (eg Sleep, Bless) (0: range, 1:ally/enemy flags, 2: X)
 	//TARGET_SPHERE,			// floor location to target a sphere attack (eg Fireball) (0: range, 1:ally/enemy flags, 2:radius)
 	//TARGET_CONE				// target cone around character (eg Burning Hands) (0:range, 1:ally/enemy flags, 2:width at widest end)
 };
@@ -195,6 +195,8 @@ public:
 
 	int GetSelectedBaseID() { return currentBaseID; }
 	void SetSelectedBaseID(int baseID) { currentBaseID = baseID; }
+
+	// Attack Handling
 
 	bool ResolveAttacks(int attackerManager, int attackerID, int defenderManager, int defenderID, bool missile); // if returns true we're finished so return to GM_MAIN
 	bool ResolveAttack(int attackBonus, int damageDie, int damageBonus, int defenderMananger, int defenderID, bool missile);

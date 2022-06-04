@@ -135,15 +135,22 @@ JSONCONS_ALL_GETTER_CTOR_TRAITS_DECL(SpellSet, Spells)
 
 class SpellManager
 {
-	std::map<std::string, SpellSet> spellSets;	// spell lists by source file
-	
-	std::vector<Spell> masterSpellList;			// collected spells for the game
+	std::map<std::string, SpellSet> spellSets;							// spell lists by source file
 
-	std::map<std::string, int> spellLookup;	// spells by name
-
-	std::map<std::string, std::vector<std::vector<int>>> spellMatrix; // spell lookup by magic type and level
-
+	std::vector<Spell> masterSpellList;									// collected spells for the game
 	int nextSpellIndex;
+
+	std::map<std::string, int> spellLookup;								// spells by name
+
+	std::map<std::string, std::vector<std::vector<int>>> spellMatrix;	// spell lookup by magic type and level
+	
+	// standing spell effects in the world
+	std::vector<int> spellEffects;										// existing spell effects in the world
+	std::vector<int> spellCasters;										// caster of spells
+	std::vector<int> spellDurations;									// remain spell effect duration in rounds
+	std::vector<std::vector<int>> spellTargets;							// spell target entities
+	std::vector<std::vector<int>> spellLocationsX;						// spell target cells X
+	std::vector<std::vector<int>> spellLocationsY;						// spell target cells Y
 
 public:
 	static SpellManager* LoadSpells();
@@ -159,5 +166,12 @@ public:
 
 	Spell& getSpell(int index);
 	Spell& getSpell(std::string name) { return getSpell(spellLookup[name]); }
+
+	void CastSpell(int managerID, int casterID, int spellID);
+
+	// system handlers
+	bool TurnHandler(int entityID, double time);												// handle spell effects that have effects over turns
+	bool TargetHandler(int entityID, int returnCode);											// return point for targets for spells
+	bool TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months);		// handle expiry of ongoing spells
 
 };

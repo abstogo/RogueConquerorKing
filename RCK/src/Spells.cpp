@@ -73,3 +73,71 @@ Spell& SpellManager::getSpell(int index)
 {
 	return masterSpellList[index];
 }
+
+void SpellManager::CastSpell(int managerID, int casterID, int spellID)
+{
+	// set off the spell. In all cases (apart from pure self-range spells) this triggers a targeting routine.
+
+	Spell spl = getSpell(spellID);
+
+	// first filter: spell type
+	// second filter: effect
+	if (spl.Type() == "Blast")
+	{
+		// blast spells all either inflict damage or some other physical negative effect
+	}
+	else if (spl.Type() == "Enchantment")
+	{
+		// enchantment spells almost all either inflict conditions, control/constrain behaviours or even swap sides
+	}
+	else if (spl.Type() == "Healing")
+	{
+		// healing removes things: HP damage, conditions, or stuff like poison or disease
+	}
+	else if (spl.Type() == "Death")
+	{
+		// death spells are a bit eclectic. Either direct damage (no physical element, no animation when they happen), or undead-related stuff
+	}
+	else if (spl.Type() == "Detection")
+	{
+		// detection spells create look-mode which displays specific information, or just give informational messages in some cases (commune?)
+	}
+	else if (spl.Type() == "Illusion")
+	{
+		// very variable illusion effects
+	}
+	else if (spl.Type() == "Protection")
+	{
+		// protection spells are mostly long duration and serve to prevent some effects from happening, or increase AC, or reduce damage, or even prevent some attacks entirely
+	}
+	else if (spl.Type() == "Summoning")
+	{
+		// summoning spells create new entities
+	}
+	else if (spl.Type() == "Transmogrification")
+	{
+		// transmogrification spells change the target - either granting abilities, or completely changing the target. Can change capabilities entirely!
+	}
+	else if (spl.Type() == "Wall")
+	{
+		// wall spells create objects within the world. (complication - hex maps vs square maps!)
+	}
+}
+
+// handle spell effects that have effects over turns
+bool SpellManager::TurnHandler(int entityID, double time)
+{
+	return true;
+}
+
+// return point for targets for spells
+bool SpellManager::TargetHandler(int entityID, int returnCode)
+{
+	return true;
+}
+
+// handle expiry of ongoing spells
+bool SpellManager::TimeHandler(int rounds, int turns, int hours, int days, int weeks, int months)
+{
+	return true;
+}

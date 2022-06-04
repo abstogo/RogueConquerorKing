@@ -605,6 +605,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 			switch (targetMode)
 			{
 				case(TARGET_CREATURE):
+				case(TARGET_NEAREST_X):
 				{
 					if (key->vk == TCODK_ENTER)
 					{
@@ -698,7 +699,6 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				if (spellPosition < 0)
 				{
 					spellPosition = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel).size() - 1;
-					//spellPosition = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
 				}
 			}
 			else if (key->vk == TCODK_DOWN)
@@ -754,6 +754,8 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 			else if (key->vk == TCODK_ENTER)
 			{
 				// enter attempts to cast the selected spell
+				
+				
 				/**
 				if (mCharacterManager->GetEquipSlotForInventoryItem(currentCharacterID, menuPosition[mode]) != -1)
 				{
@@ -807,6 +809,10 @@ void Game::TriggerTargeting(int targetingMode, int returnManager, int returnCode
 	{
 		targetCursorX = mCharacterManager->GetPlayerX(currentCharacterID);
 		targetCursorY = mCharacterManager->GetPlayerY(currentCharacterID);
+	}
+	else if (targetingMode == TARGET_NEAREST_X)
+	{
+
 	}
 	
 }
@@ -1143,6 +1149,7 @@ bool Game::HexKeyboardTarget(int move_value)
 	switch(targetMode)
 	{
 		case TARGET_CREATURE:
+		case TARGET_NEAREST_X:
 		{
 			// creatures are treated as a list. As a result, we translate hex to ortho and send it there.
 			return OrthoKeyboardTarget(HexToOrtho(move_value));
@@ -1171,6 +1178,7 @@ bool Game::OrthoKeyboardTarget(int move_value)
 	switch (targetMode)
 	{
 		case TARGET_CREATURE:
+		case TARGET_NEAREST_X:
 		{
 			if (move_value == ORTHO_UP)
 			{
@@ -1817,6 +1825,7 @@ void Game::RenderTargets()
 	break;
 
 	case(TARGET_CREATURE):
+	case(TARGET_NEAREST_X):
 	{
 		auto targets = GetTargetedEntities();
 		if (targetingData[3] & TARGET_FLAGS::TF_ENEMY)
