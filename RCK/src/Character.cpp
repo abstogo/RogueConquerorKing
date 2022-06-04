@@ -424,6 +424,15 @@ void CharacterManager::BuildRepertoire(int characterID)
 
 		auto charRep = pcSpellRepertoire[characterID];
 
+		if (charRep.size() == 0)
+		{
+			// create array of levels
+			for (int i = 0; i < 6; i++)
+			{
+				charRep.push_back(std::vector<int>());
+			}
+		}
+
 		// at each level, if our current repertoires do not match, adjust accordingly
 		for (int i = 0; i < charRep.size(); i++)
 		{
@@ -434,11 +443,11 @@ void CharacterManager::BuildRepertoire(int characterID)
 				// too few spells - add random ones we don't already have
 				int toGain = arcaneRepByLevel[i] - repAtLevel.size();
 
-				std::vector<int> allSpells = gGame->mSpellManager->getSpellsAtLevel("Arcane", i);
+				std::vector<int> allSpells = gGame->mSpellManager->getSpellsAtLevel("Arcane", i+1);
 				std::vector<int> newSpells;
 				for (int p : allSpells)
 				{
-					if (std::find(arcaneRepByLevel.begin(), arcaneRepByLevel.end(), p) == arcaneRepByLevel.end())
+					if (std::find(repAtLevel.begin(), repAtLevel.end(), p) == repAtLevel.end())
 					{
 						newSpells.push_back(p);
 					}
@@ -448,10 +457,12 @@ void CharacterManager::BuildRepertoire(int characterID)
 
 				for (int l = 0; l < toGain; l++)
 				{
-					int index = gGame->randomiser->getInt(0, newSpells.size());
+					int index = gGame->randomiser->getInt(0, newSpells.size()-1);
 					repAtLevel.push_back(newSpells[index]);
 					newSpells.erase(newSpells.begin() + index);
 				}
+
+				charRep[i] = repAtLevel;
 			}
 
 			if (repAtLevel.size() > arcaneRepByLevel[i])
@@ -467,12 +478,14 @@ void CharacterManager::BuildRepertoire(int characterID)
 				charRep[i] = newSpellsAtLevel;
 			}
 		}
+
+		pcSpellRepertoire[characterID] = charRep;
 	}
 }
 
 std::vector<int>& CharacterManager::GetRepertoireAtLevel(int characterID, int level)
 {
-	return pcSpellRepertoire[characterID][level];
+	return pcSpellRepertoire[characterID][level-1];
 }
 
 int CharacterManager::GetMaxSpellLevel(int characterID)
@@ -483,7 +496,7 @@ int CharacterManager::GetMaxSpellLevel(int characterID)
 int CharacterManager::GetSpellsPerDay(int characterID, int spellLevel)
 {
 	if (pcDailySpells[characterID].size() == 0) return 0;
-	return pcDailySpells[characterID][spellLevel];
+	return pcDailySpells[characterID][spellLevel-1];
 }
 
 void CharacterManager::RefreshDailySpells(int characterID)

@@ -147,7 +147,7 @@ enum CapabilityFlags : unsigned long long
 };
 
 const std::string CapabilityNames[] = {
-	"Vision", "VisionInfra", "HearingNormal", "HearingUltra", "Smell", "Awareness", "Cognition", "HalfMove", "Move", "ForcedMarch", "Defence", "Magic", "Attack", "UseItem",
+	"Vision", "VisionInfra", "HearingNormal", "HearingUltra", "Smell", "Awareness", "Cognition", "HalfMove", "Move", "ForcedMarch", "Defence", "Spellcasting", "Attack", "UseItem",
 	"Action", "Speech", "TurnUndead", "Climb", "OpenLock", "DetectTrap", "RemoveTrap", "HideInShadows", "MoveSilently", "PickPockets", "Backstab", "UseTwoHanded", "UseShield",
 	"DualWield", "Magic:Arcane", "Magic:Divine", "Magic:Research", "Magic:Ritual", "UseScroll:Arcane", "UseScroll:Divine", "MagicCraft:Scroll", "MagicCraft:Potion", "MagicCraft:Ring",
 	"MagicCraft:Staff", "MagicCraft:Weapon", "MagicCraft:Armour", "MagicCraft:Construct", "MagicCraft:Crossbreed", "MagicCraft:Undead", "TreatWounds", "NaturalHealing"};

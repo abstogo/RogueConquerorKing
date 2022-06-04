@@ -311,7 +311,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 	// "s"/"S" is the "spell" button and opens the Spells window to allow for casting spells
 	if (key->c == 's')
 	{
-		if(mCharacterManager->getCharacterCapabilityFlag(currentCharacterID,"Magic"))
+		if(mCharacterManager->getCharacterCapabilityFlag(currentCharacterID,"Spellcasting"))
 		{
 			if (mode != GM_SPELL)
 			{
@@ -697,7 +697,7 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 				spellPosition--;
 				if (spellPosition < 0)
 				{
-					spellPosition = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel).size();
+					spellPosition = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel).size() - 1;
 					//spellPosition = mCharacterManager->GetInventory(currentCharacterID).size() - 1;
 				}
 			}
@@ -2091,7 +2091,7 @@ void Game::RenderSpellbook()
 
 	for (int i = 0; i < maxSpells; i++)
 	{
-		int spells = mCharacterManager->GetSpellsPerDay(currentCharacterID, i);
+		int spells = mCharacterManager->GetSpellsPerDay(currentCharacterID, i+1);
 		int xPos = 3 + i * 5;
 		int yPos = 3;
 
@@ -2109,14 +2109,14 @@ void Game::RenderSpellbook()
 
 	if (spellbookLevel != 0)
 	{
-		std::string output = "Remaining Spells:" + std::to_string(mCharacterManager->GetSpellsPerDay(currentCharacterID, spellbookLevel-1));
+		std::string output = "Remaining Spells:" + std::to_string(mCharacterManager->GetSpellsPerDay(currentCharacterID, spellbookLevel));
 		spellbookScreen->printEx(2, 5, TCOD_BKGND_NONE, TCOD_LEFT, output.c_str());
 
 		auto spells = mCharacterManager->GetRepertoireAtLevel(currentCharacterID, spellbookLevel);
 
 		int page = 0;
 
-		const int MAX_SPELLS = SAMPLE_SCREEN_HEIGHT - 3;
+		const int MAX_SPELLS = SAMPLE_SCREEN_HEIGHT - 8;
 
 		// figure out which page the current position is on
 
@@ -2133,16 +2133,16 @@ void Game::RenderSpellbook()
 		{
 			int spellID = *spl_iter++;
 			std::string spellName = mSpellManager->getSpell(spellID).Name();
-			int y_pos = i - page * MAX_SPELLS + 2;
+			int y_pos = i - page * MAX_SPELLS + 7;
 			TCOD_bkgnd_flag_t backg = TCOD_BKGND_NONE;
-			inventoryScreen->printEx(2, y_pos, backg, TCOD_LEFT, spellName.c_str());
+			spellbookScreen->printEx(2, y_pos, backg, TCOD_LEFT, spellName.c_str());
 		}
 
-		int select_y = spellPosition - page * MAX_SPELLS + 2;
+		int select_y = spellPosition - page * MAX_SPELLS + 7;
 		for (int x = 0; x < SAMPLE_SCREEN_WIDTH; x++)
 		{
-			inventoryScreen->setCharBackground(x, select_y, TCODColor::white, TCOD_BKGND_SET);
-			inventoryScreen->setCharForeground(x, select_y, TCODColor::black);
+			spellbookScreen->setCharBackground(x, select_y, TCODColor::white, TCOD_BKGND_SET);
+			spellbookScreen->setCharForeground(x, select_y, TCODColor::black);
 		}
 	}
 	else

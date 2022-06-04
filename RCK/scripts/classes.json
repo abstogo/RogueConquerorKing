@@ -84,7 +84,7 @@
         {
           "Level": 2,
           "Name": "Spellcasting",
-          "Type": "Capability:Magic",
+          "Type": "Capability:Spellcasting",
           "Value": 1
         },
         {
@@ -183,7 +183,7 @@
         {
           "Level": 1,
           "Name": "Spellcasting",
-          "Type": "Capability:Magic",
+          "Type": "Capability:Spellcasting",
           "Value": 1
         },
         {
