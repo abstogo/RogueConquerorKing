@@ -109,7 +109,7 @@ class Game
 
 	// target mode data
 	int targetCursorX, targetCursorY; // target cursor for rendering purposes
-	int targetIndex;
+	int targetIndex; // if single-target, use targetIndex[0]
 	int targetMode;
 	std::vector<int> targetIDs; // creature/character IDs to mark
 	std::vector<int> targetingData;

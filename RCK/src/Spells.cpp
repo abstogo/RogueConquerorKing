@@ -74,11 +74,123 @@ Spell& SpellManager::getSpell(int index)
 	return masterSpellList[index];
 }
 
+int SpellManager::GetDurationInRounds(std::string durationString, int casterLevel)
+{
+	// a -1 means permanent or "ends on DurationModifier context"
+	int durationInRounds = -1;
+
+	// instant spells have duration 0, which means they will not remain
+	if (durationString == "Instant") return 0;
+
+	// concentration spells return -1, but should have a DurationModifier for when they end (usually also Concentration, but can be things like ConcentrationOrMove)
+	if (durationString == "Concentration") return -1;
+
+	int per_level = 1;
+
+	// check for "per level" modifier
+	if (durationString.substr(durationString.length() - 9, durationString.length()) == "per_level")
+	{
+		durationString = durationString.substr(0, durationString.length() - 9);
+		per_level = casterLevel;
+	}
+
+	// look for suffixes that correlate to time periods
+
+	// rounds
+	if (durationString.substr(durationString.length() - 6, durationString.length()) == "rounds")
+	{
+		// grab the bit before the underscore
+		int rounds = 0;
+		std::string v = durationString.substr(0, durationString.length() - 7);
+		if (v.find("d"))
+		{
+			// this is a dice value
+			rounds = gGame->randomiser->diceRoll(v.c_str());
+		}
+		else
+		{
+			// assume this is simply a fixed value
+			rounds = std::stoi(v);
+		}
+
+		return rounds * per_level;
+	}
+
+	// turns
+	if (durationString.substr(durationString.length() - 5, durationString.length()) == "turns")
+	{
+		// grab the bit before the underscore
+		int turns = 0;
+		std::string v = durationString.substr(0, durationString.length() - 6);
+		if (v.find("d"))
+		{
+			// this is a dice value
+			turns = gGame->randomiser->diceRoll(v.c_str());
+		}
+		else
+		{
+			// assume this is simply a fixed value
+			turns = std::stoi(v);
+		}
+
+		// calculate upscaled turns (in rounds)
+		return turns * 60 * per_level;
+	}
+
+	// hours
+	if (durationString.substr(durationString.length() - 5, durationString.length()) == "hours")
+	{
+		// grab the bit before the underscore
+		int hours = 0;
+		std::string v = durationString.substr(0, durationString.length() - 6);
+		if (v.find("d"))
+		{
+			// this is a dice value
+			hours = gGame->randomiser->diceRoll(v.c_str());
+		}
+		else
+		{
+			// assume this is simply a fixed value
+			hours = std::stoi(v);
+		}
+
+		// calculate upscaled turns (in rounds)
+		return hours * 360 * per_level;
+	}
+
+	// days
+	if (durationString.substr(durationString.length() - 4, durationString.length()) == "days")
+	{
+		// grab the bit before the underscore
+		int days = 0;
+		std::string v = durationString.substr(0, durationString.length() - 5);
+		if (v.find("d"))
+		{
+			// this is a dice value
+			days = gGame->randomiser->diceRoll(v.c_str());
+		}
+		else
+		{
+			// assume this is simply a fixed value
+			days = std::stoi(v);
+		}
+
+		// calculate upscaled turns (in rounds)
+		return days * 360 * 24 * per_level;
+	}
+}
+
+
 void SpellManager::CastSpell(int managerID, int casterID, int spellID)
 {
 	// set off the spell. In all cases (apart from pure self-range spells) this triggers a targeting routine.
 
 	Spell spl = getSpell(spellID);
+
+	int durationInRounds = GetDurationInRounds(spl.Duration(), gGame->mCharacterManager->getCharacterLevel(casterID));
+
+	// range is in feet indoors, yards outdoors
+	int range = spl.Range();
 
 	// first filter: spell type
 	// second filter: effect
@@ -131,8 +243,13 @@ bool SpellManager::TurnHandler(int entityID, double time)
 }
 
 // return point for targets for spells
-bool SpellManager::TargetHandler(int entityID, int returnCode)
+bool SpellManager::TargetHandler(int entityID, int returnCode, std::vector<int> targetManagersX, std::vector<int> targetIDsY)
 {
+	// TargetHandler is called for every entity in the targeted region, or once if no entities (eg Light on an area)
+	// entityID in this situation indexes into the standing spell effect vectors
+
+	Spell spl = getSpell(spellEffects[returnCode]);
+
 	return true;
 }
 

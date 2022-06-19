@@ -788,18 +788,6 @@ bool Game::MainGameHandleKeyboard(TCOD_key_t* key)
 
 void Game::TriggerTargeting(int targetingMode, int returnManager, int returnCode, int range, int size, bool allies, bool enemies, std::vector<int>& targets)
 {
-	mode = GM_TARGET;
-	targetMode = targetingMode;
-	targetingData.clear();
-	targetingData.push_back(returnManager);
-	targetingData.push_back(returnCode);
-	targetingData.push_back(range);
-	int flags = (allies ? TF_FRIEND : 0) | (enemies ? TF_ENEMY : 0);
-	targetingData.push_back(flags);
-	targetingData.push_back(size);
-
-	targetIDs.clear();
-	targetIDs = std::vector<int>(targets);
 
 	if (targetingMode == TARGET_CREATURE)
 	{
@@ -812,8 +800,22 @@ void Game::TriggerTargeting(int targetingMode, int returnManager, int returnCode
 	}
 	else if (targetingMode == TARGET_NEAREST_X)
 	{
-
+		if (size > targets.size()) size = targets.size(); //we can't have more selections than available targets
+		targetIndex = 0;
 	}
+
+	mode = GM_TARGET;
+	targetMode = targetingMode;
+	targetingData.clear();
+	targetingData.push_back(returnManager);
+	targetingData.push_back(returnCode);
+	targetingData.push_back(range);
+	int flags = (allies ? TF_FRIEND : 0) | (enemies ? TF_ENEMY : 0);
+	targetingData.push_back(flags);
+	targetingData.push_back(size);
+
+	targetIDs.clear();
+	targetIDs = std::vector<int>(targets);
 	
 }
 

@@ -11,8 +11,13 @@
       "Duration": "Instant",
       "DurationModifiers": [],
       "Range": 150,
-      "Target": "1_5lvl",
-      "TargetModifiers": [],
+      "TargetModes": [
+        {
+          "TargetCount": "1",
+          "TargetType": "1_per_5lvl",
+          "TargetModifiers": []
+        }
+      ],
       "Dice": "1d4+1_per_level",
       "DiceLimit": 3,
       "DiceModifiers": [],
@@ -31,8 +36,20 @@
       "Duration": "4d4_turns",
       "DurationModifiers": [],
       "Range": 240,
+      "TargetModes": [
+        {
+          "TargetCount": "1",
+          "TargetType": "up_to_4+1HD",
+          "TargetModifiers": [ "LivingOnly" ]
+        },
+        {
+          "TargetCount": "2d8",
+          "TargetType": "below_4HD",
+          "TargetModifiers": [ "LivingOnly", "LowestHDFirst" ]
+        }
+      ],
       "Target": "1at4+1|2d8",
-      "TargetModifiers": ["LivingOnly", "LowestHDFirst"],
+      "TargetModifiers": [ "LivingOnly", "LowestHDFirst" ],
       "Dice": "None",
       "DiceLimit": 0,
       "DiceModifiers": [],
@@ -51,8 +68,13 @@
       "Duration": "Instant",
       "DurationModifiers": [],
       "Range": 0,
-      "Target": "1",
-      "TargetModifiers": [],
+      "TargetModes": [
+        {
+          "TargetCount": "1",
+          "TargetType": "1",
+          "TargetModifiers": [ "UndeadReverse" ]
+        }
+      ],
       "Dice": "1d6+1",
       "DiceLimit": 1,
       "DiceModifiers": [],
@@ -71,8 +93,13 @@
       "Duration": "Instant",
       "DurationModifiers": [],
       "Range": 0,
-      "Target": "1",
-      "TargetModifiers": [ "AttackRoll" ],
+      "TargetModes": [
+        {
+          "TargetCount": "1",
+          "TargetType": "1",
+          "TargetModifiers": [ "AttackRoll", "UndeadReverse" ]
+        }
+      ],
       "Dice": "1d6+1",
       "DiceLimit": 1,
       "DiceModifiers": [],
