@@ -905,22 +905,67 @@ void MapManager::renderMap(TCODConsole* sampleConsole, int index, int centroid_x
 		int cs = s[0];
 		if (c.HasCondition("Unconscious")) baseColor = baseColor * TCODColor::grey;
 
-		renderAtPosition(sampleConsole, index, gGame->mMobManager->GetMobX(mob), gGame->mMobManager->GetMobY(mob), cs, baseColor);
+		renderAtPosition(sampleConsole, index, centroid_x, centroid_y, gGame->mMobManager->GetMobX(mob), gGame->mMobManager->GetMobY(mob), cs, baseColor);
 	}
 }
 
 
-void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int x, int y, char c, TCODColor foreground)
+void MapManager::renderAtPosition(TCODConsole* sampleConsole, int mapIndex, int centroid_x, int centroid_y, int x, int y, char c, TCODColor foreground)
 {
 	bool outdoor = true;
+	int full_map_height, full_map_width;
 	if (mapIndex != -1)
 	{
-		mapStore[mapIndex]->outdoor;
+		Map* map = mapStore[mapIndex];
+		full_map_height = map->height;
+		full_map_width = map->width;
+		outdoor = map->outdoor;
 	}
-	
+	else
+	{
+		full_map_height = getRegionMap()->height;
+		full_map_width = getRegionMap()->width;
+	}
+
+	int map_width = outdoor ? (SAMPLE_SCREEN_WIDTH / 2) : SAMPLE_SCREEN_WIDTH;
+	int map_height = outdoor ? (SAMPLE_SCREEN_HEIGHT / 2) : SAMPLE_SCREEN_HEIGHT;
+
+	TCODColor baseColor = TCODColor::lighterGrey;
+
+	int screen_map_x0 = centroid_x - int(map_width / 2);
+	int screen_map_x1 = screen_map_x0 + map_width;
+
+	if (screen_map_x0 < 0)
+	{
+		screen_map_x1 -= (screen_map_x0);
+		screen_map_x0 = 0;
+	}
+
+	if (screen_map_x1 > full_map_width)
+	{
+		screen_map_x0 -= (screen_map_x1 - full_map_width);
+		screen_map_x1 = map_width;
+	}
+
+	int screen_map_y0 = centroid_y - int(map_height / 2);
+	int screen_map_y1 = screen_map_y0 + map_height;
+
+	if (screen_map_y0 < 0)
+	{
+		screen_map_y1 -= (screen_map_y0);
+		screen_map_y0 = 0;
+	}
+
+	if (screen_map_y1 > full_map_height)
+	{
+		screen_map_y0 -= (screen_map_y1 - full_map_height);
+		screen_map_y1 = full_map_height;
+	}
+
 	bool stepped = y & 0x1;
-	int render_x = outdoor ? x * 2 : x;
-	int render_y = outdoor ? y * 2 : y;
+
+	int render_x = outdoor ? (x - screen_map_x0) * 2 : (x - screen_map_x0);
+	int render_y = outdoor ? (y - screen_map_y0) * 2 : (y - screen_map_y0);
 	render_x += (outdoor && stepped) ? 1 : 0;
 
 	sampleConsole->putCharEx(render_x, render_y, c, foreground, TCODColor::black);

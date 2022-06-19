@@ -1627,7 +1627,7 @@ void Game::RenderMap()
 	if (currentMapID == -1)
 	{
 		mMapManager->renderRegionMap(sampleConsole,player_x,player_y);
-		mMapManager->renderAtPosition(sampleConsole, -1, player_x, player_y, '@', TCODColor::white);
+		mMapManager->renderAtPosition(sampleConsole, -1, player_x, player_y, player_x, player_y, '@', TCODColor::white);
 	}
 	else
 	{
@@ -1643,11 +1643,11 @@ void Game::RenderMap()
 
 				if (ch == currentCharacterID)
 				{
-					mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', TCODColor::white);
+					mMapManager->renderAtPosition(sampleConsole, currentMapID, player_x, player_y, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', TCODColor::white);
 				}
 				else
 				{
-					mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
+					mMapManager->renderAtPosition(sampleConsole, currentMapID, player_x, player_y, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
 				}
 			}
 		}
@@ -1660,7 +1660,7 @@ void Game::RenderMap()
 
 			if (mCharacterManager->GetPlayerX(ch) != -1)
 			{
-				mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
+				mMapManager->renderAtPosition(sampleConsole, currentMapID, player_x, player_y, mCharacterManager->GetPlayerX(ch), mCharacterManager->GetPlayerY(ch), '@', baseColor);
 			}
 		}
 	}
@@ -1702,7 +1702,7 @@ void Game::RenderTargets()
 	{
 	case(TARGET_CELL):
 	{
-		mMapManager->renderAtPosition(sampleConsole, currentMapID, targetCursorX, targetCursorY, 'X');
+		mMapManager->renderAtPosition(sampleConsole, currentMapID, targetCursorX, targetCursorY, targetCursorX, targetCursorY, 'X');
 	}
 	break;
 
@@ -1715,7 +1715,7 @@ void Game::RenderTargets()
 			{
 				//Creature& c = mMobManager->GetMonster(beastie);
 				
-				mMapManager->renderAtPosition(sampleConsole, currentMapID, mMobManager->GetMobX(beastie), mMobManager->GetMobX(beastie), 'X');
+				mMapManager->renderAtPosition(sampleConsole, currentMapID, mMobManager->GetMobX(beastie), mMobManager->GetMobX(beastie), mMobManager->GetMobX(beastie), mMobManager->GetMobX(beastie), 'X');
 			}
 		}
 
@@ -1723,7 +1723,7 @@ void Game::RenderTargets()
 		{
 			for (int wossname : targets)
 			{
-				mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(wossname), mCharacterManager->GetPlayerY(wossname), 'X');
+				mMapManager->renderAtPosition(sampleConsole, currentMapID, mCharacterManager->GetPlayerX(wossname), mCharacterManager->GetPlayerY(wossname), mCharacterManager->GetPlayerX(wossname), mCharacterManager->GetPlayerY(wossname), 'X');
 			}
 		}
 	}
